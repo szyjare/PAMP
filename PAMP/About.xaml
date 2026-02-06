@@ -1,0 +1,27 @@
+﻿<Window x:Class="PAMP.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAMP"
+        mc:Ignorable="d"
+        Title="O programie" Height="300" Width="400"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid>
+        <Image HorizontalAlignment="Center" Height="85" VerticalAlignment="Top" Width="190" Source="/pamp_logo_min.png" Stretch="UniformToFill"/>
+        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Personal Apache MariaDB PHP" VerticalAlignment="Top" Margin="0,95,0,0"/>
+        <TextBlock x:Name="about_version" HorizontalAlignment="Center" Margin="0,116,0,0" TextWrapping="Wrap" Text="Wersja: ..." VerticalAlignment="Top" FontSize="10"/>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,20" VerticalAlignment="Bottom">
+            <TextBlock Text="© 2026 Szymon Jarecki. Open Source License (MIT)." FontSize="11" Foreground="Gray" HorizontalAlignment="Center"/>
+
+            <TextBlock HorizontalAlignment="Center" Margin="0,5,0,0">
+                <Hyperlink NavigateUri="https://github.com/twoj-nick/pamp" RequestNavigate="Hyperlink_RequestNavigate">
+                    Odwiedź stronę projektu na GitHub
+                </Hyperlink>
+            </TextBlock>
+
+            <Button Content="OK" Width="80" Margin="0,15,0,0" IsDefault="True" Click="BtnOk_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

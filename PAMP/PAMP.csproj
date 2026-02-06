@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>pamp_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="manifest.json" />
+    <None Remove="pamp_icon.png" />
+    <None Remove="pamp_logo_min.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="pamp_icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="pamp_icon.png" />
+    <Resource Include="pamp_logo_min.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+</Project>
