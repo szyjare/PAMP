@@ -10,6 +10,12 @@
 *.userosscache
 *.sln.docstates
 
+# ServerFiles
+ServerFiles/
+
+*.log
+*.pid
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
