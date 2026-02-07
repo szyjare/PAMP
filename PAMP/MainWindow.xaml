@@ -24,25 +24,25 @@
 
         <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Logi" Click="BtnShowLogs_Click"/>
-                <MenuItem Header="Narzędzia">
-                    <MenuItem Header="Otwórz konsolę SQL" Click="BtnOpenSqlShell_Click"/>
-                    <MenuItem Header="Otwórz localhost" Click="BtnOpenLocalhost_Click"/>
-                    <MenuItem Header="Otwórz phpMyAdmin" Click="BtnOpenPma_Click"/>
-                    <MenuItem Header="Otwórz folder WWW" Click="BtnOpenFolder_Click"/>
+                <MenuItem Header="{local:Loc mnuLogs}" Click="BtnShowLogs_Click"/>
+                <MenuItem Header="{local:Loc mnuTools}">
+                    <MenuItem Header="{local:Loc mnuToolsSQL}" Click="BtnOpenSqlShell_Click"/>
+                    <MenuItem Header="{local:Loc mnuToolsLocalhost}" Click="BtnOpenLocalhost_Click"/>
+                    <MenuItem Header="{local:Loc mnuToolsPMA}" Click="BtnOpenPma_Click"/>
+                    <MenuItem Header="{local:Loc mnuToolsWWW}" Click="BtnOpenFolder_Click"/>
                     <Separator/>
-                    <MenuItem Header="Resetuj bazę danych" FontWeight="Bold" Foreground="Red" Click="BtnFactoryReset_Click"/>
+                    <MenuItem Header="{local:Loc mnuToolsWipe}" FontWeight="Bold" Foreground="Red" Click="BtnFactoryReset_Click"/>
                 </MenuItem>
-                <MenuItem Header="Pomoc">
-                    <MenuItem Header="O programie" Click="BtnShowAbout_Click"/>
+                <MenuItem Header="{local:Loc mnuHelp}">
+                    <MenuItem Header="{local:Loc mnuHelpAbout}" Click="BtnShowAbout_Click"/>
                 </MenuItem>
-                <MenuItem Header="Wyjdź" Click="Exit_Click"/>
+                <MenuItem Header="{local:Loc mnuExit}" Click="Exit_Click"/>
             </Menu>
         </DockPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <StackPanel Orientation="Vertical" Grid.Column="0">
                 <Image Height="100" Width="213" Source="/pamp_logo_min.png" Stretch="UniformToFill" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="TxtPampVersion" Text="Wersja 1.0" Foreground="Black" FontSize="15" Margin="0,0,0,0" Width="auto" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="TxtPampVersion" Text="{local:Loc version}" Foreground="Black" FontSize="15" Margin="0,0,0,0" Width="auto" HorizontalAlignment="Center"/>
             </StackPanel>
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
@@ -55,10 +55,10 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Apache:" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="MariaDB:" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="phpMyAdmin:" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="PHP:" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="{local:Loc apache}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="{local:Loc mariadb}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="{local:Loc pma}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="{local:Loc php}" FontWeight="Bold"></TextBlock>
 
                 <TextBlock x:Name="TxtApacheVersion" Grid.Column="1" Grid.Row="0" Text="2.4.58" Margin="15 0 0 0"></TextBlock>
                 <TextBlock x:Name="TxtMariaDbVersion" Grid.Column="1" Grid.Row="1" Text="10.4.32" Margin="15 0 0 0"></TextBlock>
@@ -81,20 +81,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <!-- Header -->
-                <TextBlock Grid.Row="0" Grid.Column="1" Margin="2" Text="Nazwa" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Grid.Row="0" Grid.Column="2" Margin="2" Text="Port" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="2" Text="{local:Loc modulesModule}" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Margin="2" Text="{local:Loc modulesPort}" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                 <!-- Apache -->
                 <Ellipse Grid.Row="1" Grid.Column="0" Margin="5" x:Name="ApacheStatusDot" Width="15" Height="15" Fill="Red" Stroke="Gray" VerticalAlignment="Center" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="Apache" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{local:Loc apache}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <TextBlock x:Name="apachePortBlock" Grid.Row="1" Grid.Column="2" Text="..." FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="apache" Click="BtnToggleServer_Click">Start</Button>
+                <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="apache" Click="BtnToggleServer_Click" Content="{local:Loc start}"/>
 
                 <!-- MariaDB -->
                 <Ellipse Grid.Row="2" Grid.Column="0" Margin="5" x:Name="DbStatusDot" Width="15" Height="15" Fill="Red" Stroke="Gray" VerticalAlignment="Center"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="MariaDB" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{local:Loc mariadb}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <TextBlock x:Name="dbPortBlock" Grid.Row="2" Grid.Column="2" Text="..." FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="mysql" Click="BtnToggleServer_Click">Start</Button>
+                <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="mysql" Click="BtnToggleServer_Click" Content="{local:Loc start}"/>
 
             </Grid>
         </Border>
@@ -107,10 +107,10 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="1" Grid.RowSpan="2">
-                <Button Content="Otwórz: localhost" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenLocalhost_Click"/>
-                <Button Content="Otwórz: phpMyAdmin" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenPma_Click"/>
-                <Button Content="Folder WWW (htdocs)" Padding="5 0 5 0" Margin="0,0,0,10" Height="22" Click="BtnOpenFolder_Click"/>
-                <Button Content="Konsola SQL" Click="BtnOpenSqlShell_Click"/>
+                <Button Content="{local:Loc btnLocalhost}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenLocalhost_Click"/>
+                <Button Content="{local:Loc btnPMA}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenPma_Click"/>
+                <Button Content="{local:Loc btnWWW}" Padding="5 0 5 0" Margin="0,0,0,10" Height="22" Click="BtnOpenFolder_Click"/>
+                <Button Content="{local:Loc btnSQL}" Click="BtnOpenSqlShell_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

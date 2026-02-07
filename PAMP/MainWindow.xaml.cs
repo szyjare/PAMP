@@ -28,7 +28,7 @@ namespace PAMP
             InitializeComponent();
             _envManager = new EnvironmentManager();
 
-            // Nasłuchiwanie na blokadę ekranu (Win+L)
+            // Listen for Win+L
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
             InitializeStatusMonitor();
@@ -46,17 +46,17 @@ namespace PAMP
                 TxtApacheVersion.Text = $"{manifest.Versions.Apache}";
                 TxtMariaDbVersion.Text = $"{manifest.Versions.MariaDb}";
                 TxtPMAVersion.Text = $"{manifest.Versions.PhpMyAdmin}";
-                TxtPampVersion.Text = $"Wersja: {manifest.Versions.Pamp}";
+                TxtPampVersion.Text = $"{TranslationSource.Instance["version"]} {manifest.Versions.Pamp}";
 
                 this.Title = $"PAMP v{manifest.Versions.Pamp}";
             }
         }
 
-        // --- Wyszukiwanie procesów ---
+        // --- Check for processes ---
         private void InitializeStatusMonitor()
         {
             _statusTimer = new DispatcherTimer();
-            _statusTimer.Interval = TimeSpan.FromSeconds(1); // Sprawdzaj co 1 sekundę
+            _statusTimer.Interval = TimeSpan.FromSeconds(1); // Check every second
             _statusTimer.Tick += StatusTimer_Tick;
             _statusTimer.Start();
 
@@ -68,7 +68,7 @@ namespace PAMP
 
             if ((isMariaDbRunning && _mysqlProcess == null) || (isApacheRunning && _mysqlProcess == null))
             {
-                MessageBox.Show($"Wykryto uruchomione procesy Apache lub MySQL, które nie pochodzą od PAMP! \nW celu zapewnienia poprawnego działania programu zamknij pierw te procesy.", "PAMP! Ostrzeżenie", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(TranslationSource.Instance["msgProcessDetected"], TranslationSource.Instance["pampWarning"], MessageBoxButton.OK, MessageBoxImage.Warning);
                 Application.Current.Shutdown();
             }
         }
@@ -80,36 +80,32 @@ namespace PAMP
 
         private void CheckServiceStatus()
         {
-            // Szukamy procesu "httpd"
+            // Looking for "httpd" process
             var apacheProcess = Process.GetProcessesByName("httpd");
             isApacheRunning = apacheProcess.Length > 0;
             UpdateDot(ApacheStatusDot, isApacheRunning);
 
             if (isApacheRunning)
             {
-                // Jeśli właśnie się uruchomił (zmiana stanu z false na true) lub nie znamy portu
                 if (!_wasApacheRunning || _apachePort == 0)
                 {
-                    // Pobieramy port (to może chwilę potrwać, więc normalnie robi się to async,
-                    // ale tutaj przy jednym razie nie zablokuje mocno UI)
                     _apachePort = NetworkHelper.GetPortByPid(apacheProcess[0].Id);
 
-                    // Ustawiamy ToolTip
                     apachePortBlock.Text = $"{_apachePort}";
                     apacheBtn.IsEnabled = true;
-                    apacheBtn.Content = "Stop";
+                    apacheBtn.Content = TranslationSource.Instance["stop"];
                 }
             }
             else
             {
                 apachePortBlock.Text = "...";
                 _apachePort = 0;
-                apacheBtn.Content = "Start";
+                apacheBtn.Content = TranslationSource.Instance["start"];
                 apacheBtn.IsEnabled = true;
             }
             _wasApacheRunning = isApacheRunning;
 
-            // Szukamy procesu "mysqld"
+            // Looking for "mysqld" process
             var dbProcess = Process.GetProcessesByName("mysqld");
             isMariaDbRunning = dbProcess.Length > 0;
             UpdateDot(DbStatusDot, isMariaDbRunning);
@@ -121,14 +117,14 @@ namespace PAMP
                     _mariaDbPort = NetworkHelper.GetPortByPid(dbProcess[0].Id);
                     dbPortBlock.Text = $"{_mariaDbPort}";
                     mysqlBtn.IsEnabled = true;
-                    mysqlBtn.Content = "Stop";
+                    mysqlBtn.Content = TranslationSource.Instance["stop"];
                 }
             }
             else
             {
                 dbPortBlock.Text = "...";
                 _mariaDbPort = 0;
-                mysqlBtn.Content = "Start";
+                mysqlBtn.Content = TranslationSource.Instance["start"];
                 mysqlBtn.IsEnabled = true;
             }
 
@@ -149,7 +145,7 @@ namespace PAMP
             }
         }
 
-        // --- Obsługa Przycisków ---
+        // --- Button Handling ---
 
         private void BtnToggleServer_Click(object sender, RoutedEventArgs e)
         {
@@ -205,7 +201,7 @@ namespace PAMP
             }
             else
             {
-                MessageBox.Show("Folder jeszcze nie istnieje. Uruchom serwer przynajmniej raz.");
+                MessageBox.Show(TranslationSource.Instance["msgDirectoryNotExisting"]);
             }
         }
 
@@ -230,7 +226,7 @@ namespace PAMP
 
                 if (!File.Exists(mysqlExe))
                 {
-                    MessageBox.Show("Nie znaleziono pliku mysql.exe!");
+                    MessageBox.Show(TranslationSource.Instance["msgMysqlExeNotFound"]);
                     return;
                 }
 
@@ -246,15 +242,15 @@ namespace PAMP
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Nie udało się otworzyć konsoli: " + ex.Message);
+                MessageBox.Show(TranslationSource.Instance["msgCantOpenConsole"] + ex.Message);
             }
         }
 
         private async void BtnFactoryReset_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                "UWAGA! Ta operacja bezpowrotnie usunie bazę danych.\nKontynuować?",
-                "Factory Reset", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                TranslationSource.Instance["msgDbWipeAsk"],
+                TranslationSource.Instance["pampWarning"], MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result != MessageBoxResult.Yes) return;
 
@@ -264,7 +260,7 @@ namespace PAMP
 
             if (!stopped)
             {
-                MessageBox.Show("Nie udało się zamknąć MariaDB. Zrestartuj komputer i spróbuj ponownie.");
+                MessageBox.Show(TranslationSource.Instance["msgDbCantClose"]);
                 return;
             }
 
@@ -298,7 +294,7 @@ namespace PAMP
 
             if (!deleted)
             {
-                MessageBox.Show("Błąd: Nie można usunąć folderu 'data'. Pliki są nadal zablokowane przez system.");
+                MessageBox.Show(TranslationSource.Instance["msgCantDeleteDbData"]);
                 return;
             }
 
@@ -317,7 +313,7 @@ namespace PAMP
                 proc.WaitForExit();
             });
 
-            MessageBox.Show("Baza zresetowana pomyślnie!", "Sukces");
+            MessageBox.Show(TranslationSource.Instance["msgDbWiped"], TranslationSource.Instance["pampSuccess"]);
         }
 
         private void InitializePmaDatabase()
@@ -326,7 +322,7 @@ namespace PAMP
             string mysqlExe = Path.Combine(mariadbBin, "mysql.exe");
             string sqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "phpmyadmin", "sql", "create_tables.sql");
 
-            // Walidacja plików
+            // Filwe validation
             if (!File.Exists(mysqlExe) || !File.Exists(sqlFile)) return;
             bool isDbReady = false;
             int maxRetries = 20;
@@ -358,7 +354,7 @@ namespace PAMP
 
             if (!isDbReady)
             {
-                Debug.WriteLine("Timeout: MariaDB nie wstała w ciągu 10 sekund.");
+                Debug.WriteLine(TranslationSource.Instance["msgDbTimeout"]);
                 return;
             }
 
@@ -397,11 +393,11 @@ namespace PAMP
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Błąd inicjalizacji PMA: " + ex.Message);
+                Debug.WriteLine(TranslationSource.Instance["msgPMAInitError"] + ex.Message);
             }
         }
 
-        // --- Logika Start / Stop ---
+        // --- Start / Stop ---
         private void StartApache()
         {
             apacheBtn.IsEnabled = false;
@@ -487,25 +483,20 @@ namespace PAMP
         {
             try
             {
-                // 1. Generowanie konfigów
                 _envManager.InitializeEnvironment();
 
-                // Automatyczna inicjalizacja bazy danych
                 string appDataPamp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP");
                 string mysqlDataDir = Path.Combine(appDataPamp, "mysql_data");
 
-                // Sprawdzamy czy istnieje kluczowy folder systemowy "mysql" wewnątrz mysql_data
                 if (!Directory.Exists(Path.Combine(mysqlDataDir, "mysql")))
                 {
 
-                    // Ścieżka do instalatora
                     string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
                     string installDbExe = Path.Combine(mariadbBin, "mysql_install_db.exe");
 
-                    // Zabezpieczenie na wypadek braku pliku
                     if (!File.Exists(installDbExe))
                     {
-                        throw new FileNotFoundException("Brakuje pliku mysql_install_db.exe w folderze bin/mariadb/bin!");
+                        throw new FileNotFoundException(TranslationSource.Instance["msgNoDbInstallScript"]);
                     }
 
                     var initInfo = new ProcessStartInfo
@@ -516,13 +507,12 @@ namespace PAMP
                         CreateNoWindow = true
                     };
 
-                    // Uruchom i czekaj aż skończy
                     var proc = Process.Start(initInfo);
                     proc.WaitForExit();
 
                     if (proc.ExitCode != 0)
                     {
-                        throw new Exception($"Inicjalizacja bazy zakończona błędem (Kod: {proc.ExitCode}).");
+                        throw new Exception($"{TranslationSource.Instance["msgDbInitFailed"]} {proc.ExitCode}");
                     }
                 }
 
@@ -541,7 +531,7 @@ namespace PAMP
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Błąd podczas uruchamiania: {ex.Message}");
+                MessageBox.Show($"{TranslationSource.Instance["msgFailedToStart"]} {ex.Message}");
                 StopPamp("all");
             }
         }
@@ -569,11 +559,11 @@ namespace PAMP
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Błąd podczas zamykania: {ex.Message}");
+                MessageBox.Show($"{TranslationSource.Instance["msgFailedToStop"]} {ex.Message}");
             }
         }
 
-        // --- Blokada Ekranu ---
+        // --- Screen Lock (Win+L) ---
         private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
             if (e.Reason == SessionSwitchReason.SessionLock)
@@ -582,7 +572,6 @@ namespace PAMP
                 {
                     if (_isRunning)
                     {
-                        Console.WriteLine("Blokada ekranu - autozamykanie serwerów.");
                         StopPamp("all");
                     }
                 });

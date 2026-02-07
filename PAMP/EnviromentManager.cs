@@ -72,7 +72,7 @@ namespace PAMP
             sb.AppendLine($"ServerRoot \"{rootDir}/bin/apache\"");
             sb.AppendLine("Listen 80");
 
-            // --- Ładowanie modułów (Standardowy zestaw XAMPP/Apache) ---
+            // --- Ładowanie modułów ---
             sb.AppendLine("LoadModule access_compat_module modules/mod_access_compat.so");
             sb.AppendLine("LoadModule authz_core_module modules/mod_authz_core.so");
             sb.AppendLine("LoadModule authz_host_module modules/mod_authz_host.so");
