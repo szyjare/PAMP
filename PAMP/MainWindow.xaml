@@ -33,6 +33,7 @@
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsWipe}" FontWeight="Bold" Foreground="Red" Click="BtnFactoryReset_Click"/>
                 </MenuItem>
+                <MenuItem Header="Settings" Click="BtnShowSettings_Click"/>
                 <MenuItem Header="{local:Loc mnuHelp}">
                     <MenuItem Header="{local:Loc mnuHelpAbout}" Click="BtnShowAbout_Click"/>
                 </MenuItem>
@@ -106,7 +107,7 @@
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="1" Grid.RowSpan="2">
+            <StackPanel Grid.Row="1" Grid.RowSpan="1">
                 <Button Content="{local:Loc btnLocalhost}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenLocalhost_Click"/>
                 <Button Content="{local:Loc btnPMA}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenPma_Click"/>
                 <Button Content="{local:Loc btnWWW}" Padding="5 0 5 0" Margin="0,0,0,10" Height="22" Click="BtnOpenFolder_Click"/>

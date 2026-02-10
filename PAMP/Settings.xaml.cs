@@ -14,24 +14,15 @@ using System.Windows.Shapes;
 
 namespace PAMP
 {
-    public partial class About : Window
+    /// <summary>
+    /// Interaction logic for Settings.xaml
+    /// </summary>
+    public partial class Settings : Window
     {
-        public About(Window owner)
+        public Settings(Window owner)
         {
             this.Owner = owner;
             InitializeComponent();
-            var manifest = ManifestLoader.Load();
-            about_version.Text = $"{TranslationSource.Instance["version"]} {manifest.Versions.Pamp}";
-        }
-
-        public void BtnOk_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        public void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

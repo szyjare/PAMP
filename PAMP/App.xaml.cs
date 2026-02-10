@@ -12,7 +12,7 @@ namespace PAMP
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            TranslationSource.Instance.LoadLanguage("en");
+            TranslationSource.Instance.LoadLanguage("pl");
         }
     }
 

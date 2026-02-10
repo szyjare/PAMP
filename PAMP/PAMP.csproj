@@ -16,6 +16,7 @@
     <None Remove="manifest.json" />
     <None Remove="pamp_icon.png" />
     <None Remove="pamp_logo_min.png" />
+    <None Remove="pl.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
   <ItemGroup>
     <Resource Include="pamp_icon.png" />
     <Resource Include="pamp_logo_min.png" />
+    <Resource Include="pl.png" />
   </ItemGroup>
 
   <ItemGroup>

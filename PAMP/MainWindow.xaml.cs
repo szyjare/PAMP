@@ -147,6 +147,12 @@ namespace PAMP
 
         // --- Button Handling ---
 
+        private void BtnShowSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsWindow = new Settings(this);
+            settingsWindow.Show();
+        }
+
         private void BtnToggleServer_Click(object sender, RoutedEventArgs e)
         {
             var context = ((System.Windows.Controls.Button)sender).Tag;

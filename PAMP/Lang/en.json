@@ -37,5 +37,16 @@
 	"msgNoDbInstallScript": "No database installation script found.",
 	"msgDbInitFailed": "Database initialization failed. Error code: ",
 	"msgFailedToStart": "Failed to start the server: ",
-	"msgFailedToStop": "Failed to stop the server: "
+	"msgFailedToStop": "Failed to stop the server: ",
+	"logsTitle": "Log viewer",
+	"logsSelectFile": "Selected log file: ",
+	"logsAutoscroll": "Autoscroll",
+	"logsRefreshNow": "Refresh now",
+	"logsListApacheLogError": "Apache system and error log",
+	"logsListApacheNetwork": "Apache access log",
+	"logsListDbSystem": "MariaDB system log",
+	"logsLogFileDoesntExist": "The log file doesn't exist yet.",
+	"aboutTitle": "About PAMP",
+	"aboutVisitGithub": "Visit the GitHub repository",
+	"aboutOkBtn": "OK"
 }

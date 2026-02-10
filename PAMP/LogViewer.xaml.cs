@@ -33,9 +33,9 @@ namespace PAMP
             string appDataPamp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP");
             string logsDir = Path.Combine(appDataPamp, "logs");
 
-            _logFiles.Add("Apache: System i Błędy", Path.Combine(logsDir, "apache_error.log"));
-            _logFiles.Add("Apache: Ruch sieciowy", Path.Combine(logsDir, "apache_access.log"));
-            _logFiles.Add("MariaDB: System", Path.Combine(logsDir, "mysql_error.log"));
+            _logFiles.Add(TranslationSource.Instance["logsListApacheLogError"], Path.Combine(logsDir, "apache_error.log"));
+            _logFiles.Add(TranslationSource.Instance["logsListApacheNetwork"], Path.Combine(logsDir, "apache_access.log"));
+            _logFiles.Add(TranslationSource.Instance["logsListDbSystem"], Path.Combine(logsDir, "mysql_error.log"));
 
             foreach (var name in _logFiles.Keys)
             {
@@ -80,7 +80,7 @@ namespace PAMP
                 if (forceFullReload)
                 {
                     LogParagraph.Inlines.Clear();
-                    LogParagraph.Inlines.Add(new Run("Plik logu jeszcze nie istnieje.") { Foreground = Brushes.Gray });
+                    LogParagraph.Inlines.Add(new Run(TranslationSource.Instance["logsLogFileDoesntExist"]) { Foreground = Brushes.Gray });
                 }
                 return;
             }
