@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Threading; 
+using System.Windows.Controls;
 using System.Windows.Media;
-using Microsoft.Win32;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading; 
 
 namespace PAMP
 {
@@ -27,12 +29,30 @@ namespace PAMP
         {
             InitializeComponent();
             _envManager = new EnvironmentManager();
-
             // Listen for Win+L
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
             InitializeStatusMonitor();
             LoadVersionsToUI();
+            this.ContentRendered += MainWindow_ContentRendered;
+        }
+
+        private void MainWindow_ContentRendered(object sender, EventArgs e)
+        {
+            this.ContentRendered -= MainWindow_ContentRendered;
+            First_Run();
+        }
+
+        // First open Settings
+        private void First_Run()
+        {
+            if (App.Settings.FirstRun)
+            {
+                App.Settings.FirstRun = false;
+                App.Settings.Save();
+                var settingsWindow = new Settings(this);
+                settingsWindow.Show();
+            }
         }
 
         // --- Version Loader ---
@@ -83,7 +103,7 @@ namespace PAMP
             // Looking for "httpd" process
             var apacheProcess = Process.GetProcessesByName("httpd");
             isApacheRunning = apacheProcess.Length > 0;
-            UpdateDot(ApacheStatusDot, isApacheRunning);
+            UpdateDot(ApacheStatusIcon, isApacheRunning);
 
             if (isApacheRunning)
             {
@@ -108,7 +128,7 @@ namespace PAMP
             // Looking for "mysqld" process
             var dbProcess = Process.GetProcessesByName("mysqld");
             isMariaDbRunning = dbProcess.Length > 0;
-            UpdateDot(DbStatusDot, isMariaDbRunning);
+            UpdateDot(DbStatusIcon, isMariaDbRunning);
 
             if (isMariaDbRunning)
             {
@@ -133,15 +153,15 @@ namespace PAMP
     
         }
 
-        private void UpdateDot(System.Windows.Shapes.Ellipse dot, bool isRunning)
+        private void UpdateDot(Image icon, bool isRunning)
         {
             if (isRunning)
             {
-                dot.Fill = Brushes.LimeGreen;
+                icon.Source = new BitmapImage(new Uri("/Resources/on.png", UriKind.Relative));
             }
             else
             {
-                dot.Fill = Brushes.Red;
+                icon.Source = new BitmapImage(new Uri("/Resources/off.png", UriKind.Relative));
             }
         }
 

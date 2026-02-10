@@ -17,6 +17,12 @@
     <None Remove="pamp_icon.png" />
     <None Remove="pamp_logo_min.png" />
     <None Remove="pl.png" />
+    <None Remove="Resources\localhost.png" />
+    <None Remove="Resources\off.png" />
+    <None Remove="Resources\on.png" />
+    <None Remove="Resources\pma.png" />
+    <None Remove="Resources\sql_shell.png" />
+    <None Remove="Resources\www_dir.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +45,24 @@
     <Resource Include="pamp_icon.png" />
     <Resource Include="pamp_logo_min.png" />
     <Resource Include="pl.png" />
+    <Resource Include="Resources\localhost.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\off.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\on.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\pma.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\sql_shell.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\www_dir.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,12 @@
 {
 	"mnuLogs": "Logs",
 	"mnuTools": "Tools",
-	"mnuToolsSQL": "Open SQL Console",
+	"mnuToolsSQL": "Open SQL Shell",
 	"mnuToolsLocalhost": "Open localhost",
 	"mnuToolsPMA": "Open phpMyAdmin",
 	"mnuToolsWWW": "Open WWW direcotry",
 	"mnuToolsWipe": "Wipe database",
+	"mnuSettings": "Settings",
 	"mnuHelp": "Help",
 	"mnuHelpAbout": "About",
 	"mnuExit": "Exit",
@@ -18,10 +19,10 @@
 	"start": "Start",
 	"stop": "Stop",
 	"version": "Version:",
-	"btnLocalhost": "Open localhost",
-	"btnPMA": "Open phpMyAdmin",
-	"btnWWW": "Open WWW dir",
-	"btnSQL": "SQL Console",
+	"btnLocalhost": "localhost",
+	"btnPMA": "phpMyAdmin",
+	"btnWWW": "htdocs",
+	"btnSQL": "SQL Shell",
 	"pampWarning": "Warning",
 	"pampSuccess": "Success",
 	"msgProcessDetected": "PAMP detected already running Apache and/or MySQL processes. \nIn order to avoid conflicts, PAMP will not start. Please stop the conflicting processes and try again.",
@@ -48,5 +49,7 @@
 	"logsLogFileDoesntExist": "The log file doesn't exist yet.",
 	"aboutTitle": "About PAMP",
 	"aboutVisitGithub": "Visit the GitHub repository",
-	"aboutOkBtn": "OK"
+	"aboutOkBtn": "OK",
+	"settingsTtile": "Settings",
+	"settingsLanguageHeader": "Language"
 }

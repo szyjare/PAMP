@@ -9,10 +9,18 @@ namespace PAMP
     /// </summary>
     public partial class App : Application
     {
+        public static AppSettings Settings { get; private set; }
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            TranslationSource.Instance.LoadLanguage("pl");
+            Settings = AppSettings.Load();
+            TranslationSource.Instance.LoadLanguage(Settings.Language);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Settings.Save();
+            base.OnExit(e);
         }
     }
 

@@ -33,7 +33,7 @@
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsWipe}" FontWeight="Bold" Foreground="Red" Click="BtnFactoryReset_Click"/>
                 </MenuItem>
-                <MenuItem Header="Settings" Click="BtnShowSettings_Click"/>
+                <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click"/>
                 <MenuItem Header="{local:Loc mnuHelp}">
                     <MenuItem Header="{local:Loc mnuHelpAbout}" Click="BtnShowAbout_Click"/>
                 </MenuItem>
@@ -45,27 +45,7 @@
                 <Image Height="100" Width="213" Source="/pamp_logo_min.png" Stretch="UniformToFill" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="TxtPampVersion" Text="{local:Loc version}" Foreground="Black" FontSize="15" Margin="0,0,0,0" Width="auto" HorizontalAlignment="Center"/>
             </StackPanel>
-            <Grid Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="{local:Loc apache}" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="{local:Loc mariadb}" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="{local:Loc pma}" FontWeight="Bold"></TextBlock>
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="{local:Loc php}" FontWeight="Bold"></TextBlock>
-
-                <TextBlock x:Name="TxtApacheVersion" Grid.Column="1" Grid.Row="0" Text="2.4.58" Margin="15 0 0 0"></TextBlock>
-                <TextBlock x:Name="TxtMariaDbVersion" Grid.Column="1" Grid.Row="1" Text="10.4.32" Margin="15 0 0 0"></TextBlock>
-                <TextBlock x:Name="TxtPMAVersion" Grid.Column="1" Grid.Row="2" Text="5.2.1" Margin="15 0 0 0"></TextBlock>
-                <TextBlock x:Name="TxtPhpVersion" Grid.Column="1" Grid.Row="3" Text="8.2.12" Margin="15 0 0 0"></TextBlock>
-            </Grid>
+            
         </StackPanel>
         
         <Border Grid.Column="0" Grid.Row="2" BorderBrush="LightGray" BorderThickness="1" Margin="5">
@@ -86,13 +66,12 @@
                 <TextBlock Grid.Row="0" Grid.Column="2" Margin="2" Text="{local:Loc modulesPort}" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                 <!-- Apache -->
-                <Ellipse Grid.Row="1" Grid.Column="0" Margin="5" x:Name="ApacheStatusDot" Width="15" Height="15" Fill="Red" Stroke="Gray" VerticalAlignment="Center" />
+                <Image Grid.Row="1" Grid.Column="0" Margin="5" x:Name="ApacheStatusIcon" Width="20" Height="20" Source="/Resources/off.png" VerticalAlignment="Center" Visibility="Visible"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{local:Loc apache}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <TextBlock x:Name="apachePortBlock" Grid.Row="1" Grid.Column="2" Text="..." FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="apache" Click="BtnToggleServer_Click" Content="{local:Loc start}"/>
-
                 <!-- MariaDB -->
-                <Ellipse Grid.Row="2" Grid.Column="0" Margin="5" x:Name="DbStatusDot" Width="15" Height="15" Fill="Red" Stroke="Gray" VerticalAlignment="Center"/>
+                <Image Grid.Row="2" Grid.Column="0" Margin="5" x:Name="DbStatusIcon" Width="20" Height="20" Source="/Resources/off.png" VerticalAlignment="Center" Visibility="Visible"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{local:Loc mariadb}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <TextBlock x:Name="dbPortBlock" Grid.Row="2" Grid.Column="2" Text="..." FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="15 5 15 5" Margin="5" Tag="mysql" Click="BtnToggleServer_Click" Content="{local:Loc start}"/>
@@ -108,11 +87,53 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="1" Grid.RowSpan="1">
-                <Button Content="{local:Loc btnLocalhost}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenLocalhost_Click"/>
-                <Button Content="{local:Loc btnPMA}" Height="22" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenPma_Click"/>
-                <Button Content="{local:Loc btnWWW}" Padding="5 0 5 0" Margin="0,0,0,10" Height="22" Click="BtnOpenFolder_Click"/>
-                <Button Content="{local:Loc btnSQL}" Click="BtnOpenSqlShell_Click"/>
+                <Button Height="26" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenLocalhost_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/localhost.png" Margin="0,0,10,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="{local:Loc btnLocalhost}"/>
+                    </StackPanel>
+                </Button>
+                <Button Height="26" Padding="5 0 5 0" Margin="0,0,0,10" Click="BtnOpenPma_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/pma.png" Margin="0,0,10,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="{local:Loc btnPMA}"/>
+                    </StackPanel>
+                </Button>
+                <Button Padding="5 0 5 0" Margin="0,0,0,10" Height="26" Click="BtnOpenFolder_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/www_dir.png" Margin="0,0,10,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="{local:Loc btnWWW}"/>
+                    </StackPanel>
+                </Button>
+                <Button Padding="5 0 5 0" Margin="0,0,0,10" Height="26" Click="BtnOpenSqlShell_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/sql_shell.png" Margin="0,0,10,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="{local:Loc btnSQL}"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
+
+            <Grid Grid.Row="2" Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="{local:Loc apache}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="{local:Loc mariadb}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="{local:Loc pma}" FontWeight="Bold"></TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="{local:Loc php}" FontWeight="Bold"></TextBlock>
+
+                <TextBlock x:Name="TxtApacheVersion" Grid.Column="1" Grid.Row="0" Text="2.4.58" Margin="15 0 0 0"></TextBlock>
+                <TextBlock x:Name="TxtMariaDbVersion" Grid.Column="1" Grid.Row="1" Text="10.4.32" Margin="15 0 0 0"></TextBlock>
+                <TextBlock x:Name="TxtPMAVersion" Grid.Column="1" Grid.Row="2" Text="5.2.1" Margin="15 0 0 0"></TextBlock>
+                <TextBlock x:Name="TxtPhpVersion" Grid.Column="1" Grid.Row="3" Text="8.2.12" Margin="15 0 0 0"></TextBlock>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
