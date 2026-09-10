@@ -1,9 +1,14 @@
-﻿<Application x:Class="PAMP.App"
+<Application x:Class="PAMP.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PAMP"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             ThemeMode="System">
     <Application.Resources>
-         
+        <!-- Domyślne zasoby kolorystyczne (dostosowywane w runtime w App.xaml.cs) -->
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#B0222222"/>
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#28FFFFFF"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0FFFFFF"/>
     </Application.Resources>
 </Application>
