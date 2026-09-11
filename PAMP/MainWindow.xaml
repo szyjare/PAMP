@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="PAMP Launcher" Height="400" Width="580" 
+        Title="PAMP Launcher" Height="410" Width="580" 
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
@@ -34,7 +34,6 @@
                     <MenuItem Header="{local:Loc mnuToolsWWW}" Click="BtnOpenFolder_Click"/>
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsComponents}" FontWeight="Medium" Click="BtnShowComponents_Click"/>
-                    <MenuItem Header="{local:Loc mnuToolsCke}" FontWeight="SemiBold" Click="BtnShowCkeInstall_Click"/>
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsWipe}" FontWeight="SemiBold" Click="BtnFactoryReset_Click"/>
                 </MenuItem>
@@ -114,13 +113,13 @@
                 <Image x:Name="ApacheStatusIcon" Grid.Row="1" Grid.Column="0" Width="18" Height="18" Source="/Resources/off.png" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{local:Loc apache}" FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock x:Name="apachePortBlock" Grid.Row="1" Grid.Column="2" Text="..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,6"/>
-                <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" Content="{local:Loc start}" Width="75" Height="28" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="apache" Click="BtnToggleServer_Click" Margin="0,6"/>
+                <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="apache" Click="BtnToggleServer_Click" Margin="0,4"/>
 
                 <!-- Wiersz MariaDB -->
                 <Image x:Name="DbStatusIcon" Grid.Row="2" Grid.Column="0" Width="18" Height="18" Source="/Resources/off.png" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{local:Loc mariadb}" FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock x:Name="dbPortBlock" Grid.Row="2" Grid.Column="2" Text="..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,6"/>
-                <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" Content="{local:Loc start}" Width="75" Height="28" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="mysql" Click="BtnToggleServer_Click" Margin="0,6"/>
+                <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="mysql" Click="BtnToggleServer_Click" Margin="0,4"/>
             </Grid>
         </Border>
 

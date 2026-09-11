@@ -32,7 +32,7 @@ public static class ComponentCatalog
             TargetSubfolder = "php",
             Versions =
             [
-                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) - CKE / XAMPP", "https://windows.php.net/downloads/releases/archives/php-8.2.12-Win32-vs16-x64.zip", "Wymagane przez CKE", IsRecommended: true, IsCkeCompatible: true),
+                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) - CKE", "https://windows.php.net/downloads/releases/archives/php-8.2.12-Win32-vs16-x64.zip", "Wymagane przez CKE", IsRecommended: true, IsCkeCompatible: true),
                 new("8.3.14", "PHP 8.3.14 (VS16 x64 TS)", "https://windows.php.net/downloads/releases/php-8.3.14-Win32-vs16-x64.zip", "Zalecane dla nowszych projektów"),
                 new("8.4.1", "PHP 8.4.1 (VS16 x64 TS)", "https://windows.php.net/downloads/releases/php-8.4.1-Win32-vs16-x64.zip", "Najnowsze wydanie"),
                 new("8.1.31", "PHP 8.1.31 (VS16 x64 TS)", "https://windows.php.net/downloads/releases/php-8.1.31-Win32-vs16-x64.zip", "Starsze wydanie")
@@ -47,7 +47,7 @@ public static class ComponentCatalog
             TargetSubfolder = "apache",
             Versions =
             [
-                new("2.4.68", "Apache 2.4.68 (VS18 x64) - Stabilne / CKE", "https://www.apachelounge.com/download/VS18/binaries/httpd-2.4.68-260827-Win64-VS18.zip", "Oficjalne wydanie Apache 2.4 dla Windows", IsRecommended: true, IsCkeCompatible: true)
+                new("2.4.68", "Apache 2.4.68 (VS18 x64) - CKE", "https://www.apachelounge.com/download/VS18/binaries/httpd-2.4.68-260827-Win64-VS18.zip", "Oficjalne wydanie Apache 2.4 dla Windows", IsRecommended: true, IsCkeCompatible: true)
             ]
         },
         new ComponentPackage
@@ -59,7 +59,7 @@ public static class ComponentCatalog
             TargetSubfolder = "mariadb",
             Versions =
             [
-                new("10.4.32", "MariaDB 10.4.32 (winx64) - CKE / XAMPP", "https://archive.mariadb.org/mariadb-10.4.32/winx64-packages/mariadb-10.4.32-winx64.zip", "Wymagane przez CKE", IsRecommended: true, IsCkeCompatible: true),
+                new("10.4.32", "MariaDB 10.4.32 (winx64) - CKE", "https://archive.mariadb.org/mariadb-10.4.32/winx64-packages/mariadb-10.4.32-winx64.zip", "Wymagane przez CKE", IsRecommended: true, IsCkeCompatible: true),
                 new("11.4.4", "MariaDB 11.4.4 (winx64)", "https://archive.mariadb.org/mariadb-11.4.4/winx64-packages/mariadb-11.4.4-winx64.zip", "Wydanie LTS (Długoterminowe)"),
                 new("10.11.10", "MariaDB 10.11.10 (winx64)", "https://archive.mariadb.org/mariadb-10.11.10/winx64-packages/mariadb-10.11.10-winx64.zip", "Wydanie LTS")
             ]

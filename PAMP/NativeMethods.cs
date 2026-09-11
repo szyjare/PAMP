@@ -4,6 +4,7 @@ namespace PAMP;
 
 internal static partial class NativeMethods
 {
+    public const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
     public const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
 
     // Typy tła DWM w Windows 11

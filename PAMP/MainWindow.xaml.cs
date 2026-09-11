@@ -11,6 +11,9 @@ namespace PAMP;
 
 public partial class MainWindow : Window
 {
+    private static readonly BitmapImage IconOn = CreateFrozenBitmap("pack://application:,,,/Resources/on.png");
+    private static readonly BitmapImage IconOff = CreateFrozenBitmap("pack://application:,,,/Resources/off.png");
+
     private readonly ServerService _serverService = new();
     private readonly DispatcherTimer _statusTimer = new();
     private bool _isCheckingStatus;
@@ -27,24 +30,23 @@ public partial class MainWindow : Window
         _ = CheckInitialProcessesAsync();
     }
 
+    private static BitmapImage CreateFrozenBitmap(string uri)
+    {
+        var bmp = new BitmapImage(new Uri(uri, UriKind.Absolute));
+        bmp.Freeze();
+        return bmp;
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
         EnableMicaBackdrop();
+        UpdateTitleBarTheme();
     }
 
-    private void EnableMicaBackdrop()
-    {
-        nint handle = new WindowInteropHelper(this).Handle;
-        if (handle == nint.Zero) return;
+    private void EnableMicaBackdrop() => App.EnableMicaBackdrop(this);
 
-        int backdropType = NativeMethods.DWMSBT_MAINWINDOW;
-        _ = NativeMethods.DwmSetWindowAttribute(
-            handle,
-            NativeMethods.DWMWA_SYSTEMBACKDROP_TYPE,
-            ref backdropType,
-            sizeof(int));
-    }
+    public void UpdateTitleBarTheme() => App.UpdateTitleBarTheme(this);
 
     private void MainWindow_ContentRendered(object? sender, EventArgs e)
     {
@@ -105,8 +107,7 @@ public partial class MainWindow : Window
 
     private static void UpdateServiceUI(Image icon, Button btn, TextBlock portBlock, bool isRunning, int port)
     {
-        string iconPath = isRunning ? "/Resources/on.png" : "/Resources/off.png";
-        icon.Source = new BitmapImage(new Uri(iconPath, UriKind.Relative));
+        icon.Source = isRunning ? IconOn : IconOff;
 
         btn.Content = TranslationSource.Instance[isRunning ? "stop" : "start"];
         btn.IsEnabled = true;
@@ -166,12 +167,6 @@ public partial class MainWindow : Window
         new Settings(this).Show();
 
     private void BtnShowComponents_Click(object sender, RoutedEventArgs e)
-    {
-        var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
-        compWindow.ShowDialog();
-    }
-
-    private void BtnShowCkeInstall_Click(object sender, RoutedEventArgs e)
     {
         var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
         compWindow.ShowDialog();
@@ -249,11 +244,11 @@ public partial class MainWindow : Window
         await RefreshStatusAsync();
     }
 
-    private async void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+    private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
     {
         if (e.Reason == SessionSwitchReason.SessionLock)
         {
-            await Dispatcher.InvokeAsync(async () => await _serverService.StopAllAsync());
+            _ = Task.Run(async () => await _serverService.StopAllAsync());
         }
     }
 

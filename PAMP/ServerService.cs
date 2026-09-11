@@ -9,8 +9,14 @@ public sealed class ServerService : IDisposable
     private Process? _apacheProcess;
     private Process? _mysqlProcess;
 
-    public bool IsApacheRunning => _apacheProcess is { HasExited: false };
-    public bool IsMariaDbRunning => _mysqlProcess is { HasExited: false };
+    // Cache portów per PID - eliminacja ciągłego wywoływania procesu netstat
+    private int _cachedApachePid;
+    private int _cachedApachePort;
+    private int _cachedMysqlPid;
+    private int _cachedMysqlPort;
+
+    public bool IsApacheRunning => _apacheProcess is { HasExited: false } || Process.GetProcessesByName("httpd").Length > 0;
+    public bool IsMariaDbRunning => _mysqlProcess is { HasExited: false } || Process.GetProcessesByName("mysqld").Length > 0;
 
     public async Task<bool> CheckForeignProcessesRunningAsync()
     {
@@ -42,8 +48,37 @@ public sealed class ServerService : IDisposable
             int mysqlPid = mysqlActive ? mysqlProcs[0].Id : 0;
             foreach (var p in mysqlProcs) p.Dispose();
 
-            int apachePort = apacheActive ? await NetworkHelper.GetPortByPidAsync(apachePid) : 0;
-            int mysqlPort = mysqlActive ? await NetworkHelper.GetPortByPidAsync(mysqlPid) : 0;
+            int apachePort = 0;
+            if (apacheActive)
+            {
+                if (_cachedApachePid != apachePid || _cachedApachePort == 0)
+                {
+                    _cachedApachePort = await NetworkHelper.GetPortByPidAsync(apachePid);
+                    _cachedApachePid = apachePid;
+                }
+                apachePort = _cachedApachePort;
+            }
+            else
+            {
+                _cachedApachePid = 0;
+                _cachedApachePort = 0;
+            }
+
+            int mysqlPort = 0;
+            if (mysqlActive)
+            {
+                if (_cachedMysqlPid != mysqlPid || _cachedMysqlPort == 0)
+                {
+                    _cachedMysqlPort = await NetworkHelper.GetPortByPidAsync(mysqlPid);
+                    _cachedMysqlPid = mysqlPid;
+                }
+                mysqlPort = _cachedMysqlPort;
+            }
+            else
+            {
+                _cachedMysqlPid = 0;
+                _cachedMysqlPort = 0;
+            }
 
             return (apacheActive, apachePort, mysqlActive, mysqlPort);
         });
@@ -86,6 +121,17 @@ public sealed class ServerService : IDisposable
                 _apacheProcess = null;
             }
         }
+        else
+        {
+            foreach (var p in Process.GetProcessesByName("httpd"))
+            {
+                try { p.Kill(entireProcessTree: true); } catch { }
+                p.Dispose();
+            }
+        }
+
+        _cachedApachePid = 0;
+        _cachedApachePort = 0;
     }
 
     public async Task StartMariaDbAsync()
@@ -112,39 +158,44 @@ public sealed class ServerService : IDisposable
 
     public async Task StopMariaDbAsync()
     {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mysqlAdmin = Path.Combine(mariadbBin, "mysqladmin.exe");
+
+        if (File.Exists(mysqlAdmin))
+        {
+            try
+            {
+                using var proc = Process.Start(new ProcessStartInfo
+                {
+                    FileName = mysqlAdmin,
+                    Arguments = "-u root shutdown",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
+                if (proc is not null)
+                {
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                    await proc.WaitForExitAsync(cts.Token);
+                }
+            }
+            catch { }
+        }
+
         if (_mysqlProcess is { HasExited: false })
         {
-            string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
-            string mysqlAdmin = Path.Combine(mariadbBin, "mysqladmin.exe");
-
-            if (File.Exists(mysqlAdmin))
-            {
-                try
-                {
-                    using var proc = Process.Start(new ProcessStartInfo
-                    {
-                        FileName = mysqlAdmin,
-                        Arguments = "-u root shutdown",
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    });
-                    if (proc is not null)
-                    {
-                        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                        await proc.WaitForExitAsync(cts.Token);
-                    }
-                }
-                catch { }
-            }
-
-            if (_mysqlProcess is { HasExited: false })
-            {
-                try { _mysqlProcess.Kill(entireProcessTree: true); } catch { }
-            }
-
+            try { _mysqlProcess.Kill(entireProcessTree: true); } catch { }
             _mysqlProcess.Dispose();
             _mysqlProcess = null;
         }
+
+        foreach (var p in Process.GetProcessesByName("mysqld"))
+        {
+            try { p.Kill(entireProcessTree: true); } catch { }
+            p.Dispose();
+        }
+
+        _cachedMysqlPid = 0;
+        _cachedMysqlPort = 0;
     }
 
     public async Task StopAllAsync()

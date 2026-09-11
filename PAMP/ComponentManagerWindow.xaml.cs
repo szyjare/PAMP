@@ -28,20 +28,12 @@ public partial class ComponentManagerWindow : Window
     {
         base.OnSourceInitialized(e);
         EnableMicaBackdrop();
+        UpdateTitleBarTheme();
     }
 
-    private void EnableMicaBackdrop()
-    {
-        nint handle = new WindowInteropHelper(this).Handle;
-        if (handle == nint.Zero) return;
+    private void EnableMicaBackdrop() => App.EnableMicaBackdrop(this);
 
-        int backdropType = NativeMethods.DWMSBT_MAINWINDOW;
-        _ = NativeMethods.DwmSetWindowAttribute(
-            handle,
-            NativeMethods.DWMWA_SYSTEMBACKDROP_TYPE,
-            ref backdropType,
-            sizeof(int));
-    }
+    public void UpdateTitleBarTheme() => App.UpdateTitleBarTheme(this);
 
     private void LoadCurrentVersions()
     {
@@ -235,16 +227,6 @@ public partial class ComponentManagerWindow : Window
         {
             currentBtn.Content = busy ? TranslationSource.Instance["compInstalling"] : TranslationSource.Instance["compInstallBtn"];
         }
-    }
-
-    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-    {
-        try
-        {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-        }
-        catch { }
-        e.Handled = true;
     }
 
     private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();

@@ -16,7 +16,7 @@ namespace PAMP
         {
             get
             {
-                if (_translations.TryGetValue(key, out string value))
+                if (_translations.TryGetValue(key, out string? value) && value is not null)
                     return value;
                 return $"!{key}!";
             }
@@ -29,7 +29,7 @@ namespace PAMP
             if (File.Exists(path))
             {
                 var json = File.ReadAllText(path);
-                _translations = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                _translations = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? [];
 
                 OnPropertyChanged("Item[]");
             }

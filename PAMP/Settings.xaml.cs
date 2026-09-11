@@ -1,4 +1,4 @@
-﻿    using System;
+    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,42 +21,40 @@ namespace PAMP
     public partial class Settings : Window
     {
         private bool _isInitialized = false;
+
         public Settings(Window owner)
         {
-            this.Owner = owner;
+            Owner = owner;
             InitializeComponent();
+
             string currentLang = App.Settings.Language;
-            if (currentLang == "pl")
-            {
-                RadioPL.IsChecked = true;
-            }
-            else
-            {
-                RadioEN.IsChecked = true;
-            }
+            CmbLanguage.SelectedIndex = currentLang == "en" ? 1 : 0;
 
             _isInitialized = true;
         }
 
-        private void Language_Checked(object sender, RoutedEventArgs e)
+        protected override void OnSourceInitialized(EventArgs e)
         {
-            // Jeśli okno się dopiero tworzy, nie rób nic (chyba że chcesz przeładować język przy starcie jeszcze raz)
+            base.OnSourceInitialized(e);
+            App.EnableMicaBackdrop(this);
+            App.UpdateTitleBarTheme(this);
+        }
+
+        private void CmbLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
             if (!_isInitialized) return;
 
-            var radioButton = sender as RadioButton;
-
-            // Sprawdzamy czy przycisk jest faktycznie zaznaczony i czy ma Tag
-            if (radioButton != null && radioButton.IsChecked == true && radioButton.Tag != null)
+            if (CmbLanguage.SelectedItem is ComboBoxItem { Tag: string langCode })
             {
-                string langCode = radioButton.Tag.ToString(); // Pobierze "pl" lub "en"
-
-                // A. Zmień język w aplikacji (natychmiastowo)
                 TranslationSource.Instance.LoadLanguage(langCode);
-
-                // B. Zapisz to w ustawieniach
                 App.Settings.Language = langCode;
                 App.Settings.Save();
             }
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

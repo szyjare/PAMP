@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,19 +12,25 @@ namespace PAMP
 {
     public partial class LogViewer : Window
     {
-        private EnvironmentManager _envManager;
-        private DispatcherTimer _timer;
-        private string _currentFilePath;
+        private readonly EnvironmentManager _envManager = new();
+        private readonly DispatcherTimer _timer = new();
+        private string _currentFilePath = string.Empty;
         private long _lastFileSize = 0;
 
-        private Dictionary<string, string> _logFiles = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _logFiles = [];
 
         public LogViewer()
         {
             InitializeComponent();
-            _envManager = new EnvironmentManager();
             InitializeLogs();
             SetupTimer();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            App.EnableMicaBackdrop(this);
+            App.UpdateTitleBarTheme(this);
         }
 
         private void InitializeLogs()
@@ -46,7 +52,6 @@ namespace PAMP
 
         private void SetupTimer()
         {
-            _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(2); // Odświeżaj co 2 sekundy
             _timer.Tick += (s, e) => ReadLogUpdate();
             _timer.Start();
@@ -54,10 +59,9 @@ namespace PAMP
 
         private void ComboLogFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedName = ComboLogFiles.SelectedItem as string;
-            if (selectedName != null && _logFiles.ContainsKey(selectedName))
+            if (ComboLogFiles.SelectedItem is string selectedName && _logFiles.TryGetValue(selectedName, out var filePath))
             {
-                _currentFilePath = _logFiles[selectedName];
+                _currentFilePath = filePath;
                 _lastFileSize = 0;
 
                 // Czyszczenie RichTextBoxa
@@ -73,6 +77,8 @@ namespace PAMP
         }
 
         // Główna funkcja czytająca
+        private static readonly FontFamily ConsoleFont = new("Consolas, Cascadia Mono, Lucida Console, monospace");
+
         private void ReadLogUpdate(bool forceFullReload = false)
         {
             if (string.IsNullOrEmpty(_currentFilePath) || !File.Exists(_currentFilePath))
@@ -80,7 +86,12 @@ namespace PAMP
                 if (forceFullReload)
                 {
                     LogParagraph.Inlines.Clear();
-                    LogParagraph.Inlines.Add(new Run(TranslationSource.Instance["logsLogFileDoesntExist"]) { Foreground = Brushes.Gray });
+                    LogParagraph.Inlines.Add(new Run(TranslationSource.Instance["logsLogFileDoesntExist"]) 
+                    { 
+                        FontFamily = ConsoleFont,
+                        FontSize = 12.5,
+                        Foreground = (Brush)Application.Current.FindResource("TextSecondaryBrush") 
+                    });
                 }
                 return;
             }
@@ -102,12 +113,18 @@ namespace PAMP
                         // Dzieli na linie, żeby każdą pokolorować
                         string[] lines = newContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
+                        var defaultBrush = (Brush)Application.Current.FindResource("TextPrimaryBrush");
+
                         foreach (var line in lines)
                         {
                             if (string.IsNullOrEmpty(line)) continue;
 
-                            // Tworzy element tekstu
-                            Run run = new Run(line + Environment.NewLine);
+                            // Tworzy element tekstu ze ścisłą czcionką konsolową
+                            Run run = new Run(line + Environment.NewLine)
+                            {
+                                FontFamily = ConsoleFont,
+                                FontSize = 12.5
+                            };
 
                             // --- LOGIKA KOLOROWANIA ---
                             string lowerLine = line.ToLower();
@@ -127,12 +144,11 @@ namespace PAMP
                             }
                             else
                             {
-                                run.Foreground = Brushes.Black;
+                                run.Foreground = defaultBrush;
                             }
                             // --------------------------
 
                             LogParagraph.Inlines.Add(run);
-                            LogParagraph.Inlines.Add(new Run("\n") { Foreground = Brushes.Gray });
                         }
 
                         if (ChkAutoScroll.IsChecked == true)
