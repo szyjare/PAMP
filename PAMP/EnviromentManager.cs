@@ -369,16 +369,26 @@ $cfg['SaveDir'] = '';
         {
             string dataDir = Path.Combine(_systemDir, "mysql_data").Replace("\\", "/");
             string socketPath = Path.Combine(_systemDir, "conf", "mysql.sock").Replace("\\", "/");
-            string shareDir = Path.Combine(_appBinDir, "bin", "mariadb", "share").Replace("\\", "/");
+            string baseDirSlash = Path.Combine(_appBinDir, "bin", "mariadb").Replace("\\", "/");
+            string localShareDir = Path.Combine(_appBinDir, "bin", "mariadb", "share");
 
             var sb = new StringBuilder();
             sb.AppendLine("[mysqld]");
+            sb.AppendLine($"basedir=\"{baseDirSlash}\"");
             sb.AppendLine($"datadir=\"{dataDir}\"");
             sb.AppendLine("port=3306");
             sb.AppendLine($"socket=\"{socketPath}\"");
-            // Ważne: ścieżka do share/charsets i messages w katalogu bin/mariadb/share
-            sb.AppendLine($"lc-messages-dir=\"{shareDir}\"");
-            sb.AppendLine("lc-messages=pl_PL");
+
+            // Wskazujemy lc-messages-dir tylko jeśli folder share istnieje w obecnej instalacji bin/mariadb
+            if (Directory.Exists(localShareDir))
+            {
+                sb.AppendLine($"lc-messages-dir=\"{localShareDir.Replace("\\", "/")}\"");
+                // Ustawiamy język polski tylko wtedy, gdy w tej wersji MariaDB istnieje errmsg.sys dla języka polskiego
+                if (File.Exists(Path.Combine(localShareDir, "polish", "errmsg.sys")))
+                {
+                    sb.AppendLine("lc-messages=pl_PL");
+                }
+            }
 
             sb.AppendLine("sql_mode=NO_ENGINE_SUBSTITUTION");
             sb.AppendLine($"log-error=\"{_systemDir.Replace("\\", "/")}/logs/mysql_error.log\"");

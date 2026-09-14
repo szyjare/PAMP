@@ -10,7 +10,7 @@
 ---
 **PAMP!** to nowoczesne, lekkie i w pełni przenośne środowisko serwerowe dla systemu Windows, napisane w C# 14 (.NET 10 WPF). Umożliwia uruchomienie lokalnego serwera WWW w kilka sekund, bez konieczności instalacji, z pełną izolacją użytkowników oraz modułowym zarządzaniem pakietami.
 
-> **Obecna wersja:** `1.2.0`  
+> **Obecna wersja:** `1.2.1`  
 > Obsługiwane języki: **Polski** oraz **Angielski** (wybór w Ustawieniach programu).
 
 ## ❓ Dlaczego kolejny stack?
