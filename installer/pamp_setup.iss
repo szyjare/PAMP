@@ -1,4 +1,4 @@
-﻿#define MyAppName "PAMP!"
+#define MyAppName "PAMP!"
 #define MyAppVersion "1.2.0"
 #define MyAppPublisher "Szymon Jarecki"
 #define MyAppURL "https://github.com/szyjare/PAMP"
@@ -24,12 +24,20 @@ Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
 
+; Pozwala użytkownikowi wybrać tryb instalacji: dla bieżącego użytkownika lub dla wszystkich (system)
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog commandline
+
 [Languages]
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Dirs]
+; Nadaje uprawnienia zapisu dla folderu bin (aby pobieranie modułów działało nawet przy instalacji w Program Files)
+Name: "{app}\bin"; Permissions: users-modify
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
