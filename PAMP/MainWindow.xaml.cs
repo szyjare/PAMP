@@ -52,6 +52,7 @@ public partial class MainWindow : Window
     private void MainWindow_ContentRendered(object? sender, EventArgs e)
     {
         ContentRendered -= MainWindow_ContentRendered;
+        VCRedistHelper.CheckAndPrompt(this);
         FirstRunCheck();
     }
 
@@ -130,14 +131,20 @@ public partial class MainWindow : Window
                     if (_serverService.IsApacheRunning)
                         await _serverService.StopApacheAsync();
                     else
+                    {
+                        if (!VCRedistHelper.CheckAndPrompt(this)) return;
                         await _serverService.StartApacheAsync();
+                    }
                     break;
 
                 case "mysql":
                     if (_serverService.IsMariaDbRunning)
                         await _serverService.StopMariaDbAsync();
                     else
+                    {
+                        if (!VCRedistHelper.CheckAndPrompt(this)) return;
                         await _serverService.StartMariaDbAsync();
+                    }
                     break;
             }
         }

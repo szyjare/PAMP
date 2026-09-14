@@ -15,8 +15,25 @@ public sealed class ServerService : IDisposable
     private int _cachedMysqlPid;
     private int _cachedMysqlPort;
 
+    private static Process[] GetMariaDbProcesses()
+    {
+        var p1 = Process.GetProcessesByName("mysqld");
+        var p2 = Process.GetProcessesByName("mariadbd");
+        return p1.Concat(p2).ToArray();
+    }
+
     public bool IsApacheRunning => _apacheProcess is { HasExited: false } || Process.GetProcessesByName("httpd").Length > 0;
-    public bool IsMariaDbRunning => _mysqlProcess is { HasExited: false } || Process.GetProcessesByName("mysqld").Length > 0;
+    public bool IsMariaDbRunning
+    {
+        get
+        {
+            if (_mysqlProcess is { HasExited: false }) return true;
+            var procs = GetMariaDbProcesses();
+            bool running = procs.Length > 0;
+            foreach (var p in procs) p.Dispose();
+            return running;
+        }
+    }
 
     public async Task<bool> CheckForeignProcessesRunningAsync()
     {
@@ -26,7 +43,7 @@ public sealed class ServerService : IDisposable
             bool hasForeignApache = httpdProcs.Length > 0 && _apacheProcess is null;
             foreach (var p in httpdProcs) p.Dispose();
 
-            var mysqlProcs = Process.GetProcessesByName("mysqld");
+            var mysqlProcs = GetMariaDbProcesses();
             bool hasForeignMysql = mysqlProcs.Length > 0 && _mysqlProcess is null;
             foreach (var p in mysqlProcs) p.Dispose();
 
@@ -43,7 +60,7 @@ public sealed class ServerService : IDisposable
             int apachePid = apacheActive ? apacheProcs[0].Id : 0;
             foreach (var p in apacheProcs) p.Dispose();
 
-            var mysqlProcs = Process.GetProcessesByName("mysqld");
+            var mysqlProcs = GetMariaDbProcesses();
             bool mysqlActive = mysqlProcs.Length > 0;
             int mysqlPid = mysqlActive ? mysqlProcs[0].Id : 0;
             foreach (var p in mysqlProcs) p.Dispose();
@@ -134,6 +151,48 @@ public sealed class ServerService : IDisposable
         _cachedApachePort = 0;
     }
 
+    private string GetMariaDbServerExe()
+    {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mariadbd = Path.Combine(mariadbBin, "mariadbd.exe");
+        if (File.Exists(mariadbd)) return mariadbd;
+        return Path.Combine(mariadbBin, "mysqld.exe");
+    }
+
+    private string GetMariaDbAdminExe()
+    {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mariadbAdmin = Path.Combine(mariadbBin, "mariadb-admin.exe");
+        if (File.Exists(mariadbAdmin)) return mariadbAdmin;
+        return Path.Combine(mariadbBin, "mysqladmin.exe");
+    }
+
+    private string GetMariaDbClientExe()
+    {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mariadbCli = Path.Combine(mariadbBin, "mariadb.exe");
+        if (File.Exists(mariadbCli)) return mariadbCli;
+        return Path.Combine(mariadbBin, "mysql.exe");
+    }
+
+    private string GetMariaDbInstallDbExe()
+    {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mariadbInstall = Path.Combine(mariadbBin, "mariadb-install-db.exe");
+        if (File.Exists(mariadbInstall)) return mariadbInstall;
+        return Path.Combine(mariadbBin, "mysql_install_db.exe");
+    }
+
+    private string? GetMariaDbUpgradeExe()
+    {
+        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
+        string mariadbUpgrade = Path.Combine(mariadbBin, "mariadb-upgrade.exe");
+        if (File.Exists(mariadbUpgrade)) return mariadbUpgrade;
+        string mysqlUpgrade = Path.Combine(mariadbBin, "mysql_upgrade.exe");
+        if (File.Exists(mysqlUpgrade)) return mysqlUpgrade;
+        return null;
+    }
+
     public async Task StartMariaDbAsync()
     {
         if (IsMariaDbRunning) return;
@@ -141,25 +200,49 @@ public sealed class ServerService : IDisposable
         _envManager.InitializeEnvironment();
         await EnsureDatabaseInitializedAsync();
 
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string mysqlExe = Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe");
+        string mysqlExe = GetMariaDbServerExe();
+        if (!File.Exists(mysqlExe))
+            throw new FileNotFoundException($"Nie znaleziono pliku serwera MariaDB: {mysqlExe}");
 
         var startInfo = new ProcessStartInfo
         {
             FileName = mysqlExe,
-            Arguments = $"--defaults-file=\"{_envManager.MariaDbConfigPath}\" --console",
+            Arguments = $"--defaults-file=\"{_envManager.MariaDbConfigPath}\"",
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
+            RedirectStandardError = true
         };
 
         _mysqlProcess = Process.Start(startInfo);
+        if (_mysqlProcess is null)
+            throw new InvalidOperationException("Nie udało się uruchomić procesu MariaDB.");
+
+        // Sprawdzamy czy proces nie wyłożył się natychmiast po uruchomieniu
+        await Task.Delay(1000);
+        if (_mysqlProcess.HasExited)
+        {
+            string errOutput = await _mysqlProcess.StandardError.ReadToEndAsync();
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "logs", "mysql_error.log");
+            string errorDetails = "";
+            if (File.Exists(logPath))
+            {
+                var lines = await File.ReadAllLinesAsync(logPath);
+                var errLines = lines.Where(l => l.Contains("[ERROR]") || l.Contains("Aborting")).TakeLast(6).ToList();
+                if (errLines.Count == 0) errLines = lines.TakeLast(6).ToList();
+                errorDetails = string.Join(Environment.NewLine, errLines);
+            }
+
+            string combined = !string.IsNullOrWhiteSpace(errOutput) ? errOutput : errorDetails;
+            throw new InvalidOperationException($"Serwer MariaDB zakończył działanie z kodem {_mysqlProcess.ExitCode}:\n\n{combined}");
+        }
+
         await InitializePmaDatabaseAsync();
+        await RunDatabaseUpgradeAsync();
     }
 
     public async Task StopMariaDbAsync()
     {
-        string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
-        string mysqlAdmin = Path.Combine(mariadbBin, "mysqladmin.exe");
+        string mysqlAdmin = GetMariaDbAdminExe();
 
         if (File.Exists(mysqlAdmin))
         {
@@ -181,21 +264,60 @@ public sealed class ServerService : IDisposable
             catch { }
         }
 
+        // Czekamy aż proces zamknie się czysto i zapisze checkpoint InnoDB
         if (_mysqlProcess is { HasExited: false })
         {
-            try { _mysqlProcess.Kill(entireProcessTree: true); } catch { }
-            _mysqlProcess.Dispose();
-            _mysqlProcess = null;
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+                await _mysqlProcess.WaitForExitAsync(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                try { _mysqlProcess.Kill(entireProcessTree: true); } catch { }
+            }
+            finally
+            {
+                _mysqlProcess.Dispose();
+                _mysqlProcess = null;
+            }
         }
 
-        foreach (var p in Process.GetProcessesByName("mysqld"))
+        foreach (var p in GetMariaDbProcesses())
         {
-            try { p.Kill(entireProcessTree: true); } catch { }
+            try
+            {
+                if (!p.HasExited) p.Kill(entireProcessTree: true);
+            }
+            catch { }
             p.Dispose();
         }
 
         _cachedMysqlPid = 0;
         _cachedMysqlPort = 0;
+    }
+
+    private async Task RunDatabaseUpgradeAsync()
+    {
+        string? upgradeExe = GetMariaDbUpgradeExe();
+        if (upgradeExe is null || !File.Exists(upgradeExe)) return;
+
+        try
+        {
+            using var proc = Process.Start(new ProcessStartInfo
+            {
+                FileName = upgradeExe,
+                Arguments = $"--defaults-file=\"{_envManager.MariaDbConfigPath}\" -u root --skip-password --force",
+                UseShellExecute = false,
+                CreateNoWindow = true
+            });
+            if (proc is not null)
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+                await proc.WaitForExitAsync(cts.Token);
+            }
+        }
+        catch { }
     }
 
     public async Task StopAllAsync()
@@ -210,11 +332,10 @@ public sealed class ServerService : IDisposable
 
         if (!Directory.Exists(Path.Combine(mysqlDataDir, "mysql")))
         {
-            string mariadbBin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "mariadb", "bin");
-            string installDbExe = Path.Combine(mariadbBin, "mysql_install_db.exe");
+            string installDbExe = GetMariaDbInstallDbExe();
 
             if (!File.Exists(installDbExe))
-                throw new FileNotFoundException("Brakuje pliku mysql_install_db.exe!");
+                throw new FileNotFoundException($"Brakuje pliku instalatora bazy MariaDB ({installDbExe})!");
 
             using var proc = Process.Start(new ProcessStartInfo
             {
@@ -236,7 +357,7 @@ public sealed class ServerService : IDisposable
     private async Task InitializePmaDatabaseAsync()
     {
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string mysqlExe = Path.Combine(baseDir, "bin", "mariadb", "bin", "mysql.exe");
+        string mysqlExe = GetMariaDbClientExe();
         string sqlFile = Path.Combine(baseDir, "bin", "phpmyadmin", "sql", "create_tables.sql");
 
         if (!File.Exists(mysqlExe) || !File.Exists(sqlFile)) return;
@@ -244,6 +365,8 @@ public sealed class ServerService : IDisposable
         bool isReady = false;
         for (int i = 0; i < 20; i++)
         {
+            if (_mysqlProcess is { HasExited: true }) break;
+
             try
             {
                 using var ping = Process.Start(new ProcessStartInfo
@@ -269,7 +392,25 @@ public sealed class ServerService : IDisposable
             await Task.Delay(500);
         }
 
-        if (!isReady) return;
+        if (!isReady)
+        {
+            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "logs", "mysql_error.log");
+            string errorDetails = "";
+            if (File.Exists(logPath))
+            {
+                var lines = await File.ReadAllLinesAsync(logPath);
+                var errLines = lines.Where(l => l.Contains("[ERROR]") || l.Contains("Aborting")).TakeLast(6).ToList();
+                if (errLines.Count == 0) errLines = lines.TakeLast(6).ToList();
+                errorDetails = string.Join(Environment.NewLine, errLines);
+            }
+
+            if (_mysqlProcess is { HasExited: true })
+            {
+                throw new InvalidOperationException($"Serwer MariaDB wyłączył się podczas oczekiwania na gotowość (kod {_mysqlProcess.ExitCode}):\n\n{errorDetails}");
+            }
+
+            throw new TimeoutException($"Przekroczono limit czasu oczekiwania na gotowość bazy MariaDB.\n\n{errorDetails}");
+        }
 
         await Task.Run(async () =>
         {

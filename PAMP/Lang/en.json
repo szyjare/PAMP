@@ -73,5 +73,7 @@
 	"ckeProfileConfirm": "Do you want to download and install the CKE Exam Profile compliant with guidelines?\n\nYour user databases and website files will remain intact.",
 	"ckeProfileSuccess": "CKE Profile has been installed successfully! Your environment is fully compliant with CKE examination guidelines.",
 	"compAlreadyInstalled": "This version is already installed.",
-	"ckeAlreadyInstalled": "All CKE profile components are already installed."
+	"ckeAlreadyInstalled": "All CKE profile components are already installed.",
+	"vcRedistMissingTitle": "Visual C++ Runtime Missing",
+	"vcRedistMissingMessage": "Microsoft Visual C++ 2015–2022 Redistributable (x64) is not installed on this system.\n\nIt is required for Apache, PHP, and MariaDB modules to function properly.\n\nWould you like to download the official installer from Microsoft now?"
 }
