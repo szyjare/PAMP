@@ -22,7 +22,7 @@ namespace PAMP
             this.Owner = owner;
             InitializeComponent();
             var manifest = ManifestLoader.Load();
-            about_version.Text = $"{TranslationSource.Instance["version"]} {manifest.Versions.Pamp}";
+            RunAboutVersionNumber.Text = $" {manifest.Versions.Pamp}";
         }
 
         protected override void OnSourceInitialized(EventArgs e)

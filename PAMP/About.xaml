@@ -13,12 +13,15 @@
     <Grid>
         <Image HorizontalAlignment="Center" Height="85" VerticalAlignment="Top" Width="190" Source="/pamp_logo_min.png" Stretch="Uniform" Margin="0,15,0,0"/>
         <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Personal Apache MariaDB PHP" VerticalAlignment="Top" Margin="0,105,0,0" FontWeight="SemiBold"/>
-        <TextBlock x:Name="about_version" HorizontalAlignment="Center" Margin="0,126,0,0" TextWrapping="Wrap" Text="{local:Loc version}" VerticalAlignment="Top" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}">
+            <Run Text="{local:Loc version}"/>
+            <Run x:Name="RunAboutVersionNumber"/>
+        </TextBlock>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,16" VerticalAlignment="Bottom">
             <TextBlock Text="© 2026 Szymon Jarecki. Open Source License (MIT)." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
 
             <TextBlock HorizontalAlignment="Center" Margin="0,6,0,0">
-                <Hyperlink NavigateUri="https://github.com/twoj-nick/pamp" RequestNavigate="Hyperlink_RequestNavigate">
+                <Hyperlink NavigateUri="https://github.com/szyjare/PAMP" RequestNavigate="Hyperlink_RequestNavigate">
                     <TextBlock Text="{local:Loc aboutVisitGithub}" FontSize="11"/>
                 </Hyperlink>
             </TextBlock>

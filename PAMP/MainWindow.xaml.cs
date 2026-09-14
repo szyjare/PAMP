@@ -27,6 +27,7 @@ public partial class MainWindow : Window
 
         SetupTimer();
         LoadVersionsToUI();
+        TranslationSource.Instance.PropertyChanged += (_, _) => Dispatcher.Invoke(LoadVersionsToUI);
         _ = ComponentCatalog.EnsureLoadedAsync();
         _ = CheckInitialProcessesAsync();
     }
@@ -168,7 +169,7 @@ public partial class MainWindow : Window
         TxtApacheVersion.Text = v.Apache;
         TxtMariaDbVersion.Text = v.MariaDb;
         TxtPMAVersion.Text = v.PhpMyAdmin;
-        TxtPampVersion.Text = $"{TranslationSource.Instance["version"]} {v.Pamp}";
+        RunPampVersionNumber.Text = $" {v.Pamp}";
         Title = $"PAMP v{v.Pamp}";
     }
 
