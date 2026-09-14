@@ -1,0 +1,256 @@
+<Window x:Class="PAMP.ComponentManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAMP"
+        mc:Ignorable="d"
+        Title="{local:Loc compManagerTitle}" Height="580" Width="680"
+        WindowStartupLocation="CenterOwner"
+        Background="Transparent"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        Icon="/pamp_icon.ico">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Nagłówek okna -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Text="{local:Loc compManagerTitle}" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{local:Loc compManagerSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <TextBlock x:Name="TxtRepoStatus" HorizontalAlignment="Right" VerticalAlignment="Top"
+                       Text="repo.sjarecki.pl" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+        </Grid>
+
+        <!-- Lista kart komponentów -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
+            <StackPanel x:Name="ComponentsContainer" Orientation="Vertical">
+
+                <!-- HERO CARD: Zestaw CKE -->
+                <Border Margin="0,0,0,12" Padding="14" CornerRadius="8"
+                        Background="{DynamicResource AccentBackgroundBrush}"
+                        BorderBrush="{DynamicResource AccentBorderBrush}"
+                        BorderThickness="1.5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🎓" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{local:Loc ckeProfileTitle}" FontSize="14" FontWeight="Bold"/>
+                            <Border Margin="8,0,0,0" Padding="8,2" CornerRadius="4" Background="{DynamicResource AccentBrush}">
+                                <TextBlock Text="Zgodny z CKE" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentForegroundBrush}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Loc ckeProfileDesc}" 
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                   Margin="0,6,12,0" TextWrapping="Wrap"/>
+
+                        <!-- Przycisk instalacji profilu CKE -->
+                        <Button x:Name="BtnInstallCke" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                Content="{local:Loc ckeProfileInstallBtn}"
+                                Height="36" Padding="16,0" FontWeight="Bold"
+                                Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentForegroundBrush}" BorderThickness="0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
+                                Click="BtnInstallCke_Click"/>
+
+                        <!-- Pasek postępu dla profilu CKE -->
+                        <StackPanel x:Name="PnlCkeProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgCke" Height="8" Margin="0,0,0,4" Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock x:Name="TxtCkeStatus" Text="Pobieranie profilu CKE..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- PHP -->
+                <Border Margin="0,0,0,10" Padding="12" CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Tytuł i aktualna wersja -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="PHP" FontSize="14" FontWeight="Bold"/>
+                            <Border Margin="10,0,0,0" Padding="6,2" CornerRadius="4" Background="#25107C41">
+                                <TextBlock x:Name="TxtPhpInstalled" Text="8.2.12" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Wybór wersji -->
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ComboBox x:Name="CmbPhpVersions" Tag="php" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
+                        </StackPanel>
+
+                        <!-- Przycisk instalacji -->
+                        <Button x:Name="BtnInstallPhp" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
+                                Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
+                                Tag="php" Click="BtnInstall_Click"/>
+
+                        <!-- Pasek postępu -->
+                        <StackPanel x:Name="PnlPhpProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgPhp" Height="6" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="TxtPhpStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Apache -->
+                <Border Margin="0,0,0,10" Padding="12" CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="Apache" FontSize="14" FontWeight="Bold"/>
+                            <Border Margin="10,0,0,0" Padding="6,2" CornerRadius="4" Background="#25107C41">
+                                <TextBlock x:Name="TxtApacheInstalled" Text="2.4.58" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ComboBox x:Name="CmbApacheVersions" Tag="apache" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
+                        </StackPanel>
+
+                        <Button x:Name="BtnInstallApache" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
+                                Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
+                                Tag="apache" Click="BtnInstall_Click"/>
+
+                        <StackPanel x:Name="PnlApacheProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgApache" Height="6" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="TxtApacheStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- MariaDB -->
+                <Border Margin="0,0,0,10" Padding="12" CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="MariaDB" FontSize="14" FontWeight="Bold"/>
+                            <Border Margin="10,0,0,0" Padding="6,2" CornerRadius="4" Background="#25107C41">
+                                <TextBlock x:Name="TxtMariaDbInstalled" Text="10.4.32" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ComboBox x:Name="CmbMariaDbVersions" Tag="mariadb" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
+                        </StackPanel>
+
+                        <Button x:Name="BtnInstallMariaDb" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
+                                Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
+                                Tag="mariadb" Click="BtnInstall_Click"/>
+
+                        <StackPanel x:Name="PnlMariaDbProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgMariaDb" Height="6" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="TxtMariaDbStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- phpMyAdmin -->
+                <Border Margin="0,0,0,10" Padding="12" CornerRadius="8"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="phpMyAdmin" FontSize="14" FontWeight="Bold"/>
+                            <Border Margin="10,0,0,0" Padding="6,2" CornerRadius="4" Background="#25107C41">
+                                <TextBlock x:Name="TxtPmaInstalled" Text="5.2.1" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <ComboBox x:Name="CmbPmaVersions" Tag="phpmyadmin" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
+                        </StackPanel>
+
+                        <Button x:Name="BtnInstallPma" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
+                                Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
+                                Tag="phpmyadmin" Click="BtnInstall_Click"/>
+
+                        <StackPanel x:Name="PnlPmaProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgPma" Height="6" Margin="0,0,0,4"/>
+                            <TextBlock x:Name="TxtPmaStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Dolny pasek akcji -->
+        <Border Grid.Row="2" Margin="0,8,0,0" Padding="0,8,0,0">
+            <Button Content="{local:Loc compCloseBtn}" Width="100" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" IsCancel="True" Click="BtnClose_Click"/>
+        </Border>
+    </Grid>
+</Window>

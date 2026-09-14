@@ -1,0 +1,46 @@
+<Window x:Class="PAMP.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PAMP"
+        mc:Ignorable="d"
+        Title="{local:Loc settingsTtile}" Height="230" Width="380"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="Transparent"
+        Foreground="{DynamicResource TextPrimaryBrush}">
+    <Grid Margin="16">
+        <Border Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource CardBorderBrush}" 
+                BorderThickness="1" 
+                CornerRadius="8" 
+                Padding="16">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="🌐" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{local:Loc settingsLanguageHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <TextBlock Text="{local:Loc settingsLanguageSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+
+                <ComboBox x:Name="CmbLanguage" Height="34" VerticalContentAlignment="Center" FontSize="13" SelectionChanged="CmbLanguage_SelectionChanged">
+                    <ComboBoxItem Tag="pl">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🇵🇱" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Polski" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="en">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🇬🇧" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="English" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                </ComboBox>
+
+                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,16,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

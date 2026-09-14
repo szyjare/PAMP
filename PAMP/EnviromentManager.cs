@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 
@@ -38,9 +38,209 @@ namespace PAMP
         public void InitializeEnvironment()
         {
             EnsureDirectories();
+            EnsurePhpConfiguration();
+            EnsurePhpMyAdminConfiguration();
             CreateApacheConfig();
             CreateMariaDbConfig();
             CreateDefaultIndexPhp();
+        }
+
+        public void EnsurePhpConfiguration(string? customPhpDir = null)
+        {
+            string phpBinDir = customPhpDir ?? Path.Combine(_appBinDir, "bin", "php");
+            if (!Directory.Exists(phpBinDir)) return;
+
+            string iniPath = Path.Combine(phpBinDir, "php.ini");
+            string iniDevPath = Path.Combine(phpBinDir, "php.ini-development");
+            string iniProdPath = Path.Combine(phpBinDir, "php.ini-production");
+
+            if (!File.Exists(iniPath))
+            {
+                if (File.Exists(iniDevPath))
+                {
+                    File.Copy(iniDevPath, iniPath, true);
+                }
+                else if (File.Exists(iniProdPath))
+                {
+                    File.Copy(iniProdPath, iniPath, true);
+                }
+                else
+                {
+                    File.WriteAllText(iniPath, "[PHP]\nextension_dir = \"ext\"\n");
+                }
+            }
+
+            if (!File.Exists(iniPath)) return;
+
+            string content = File.ReadAllText(iniPath);
+            bool modified = false;
+
+            // 1. Odkomentowanie extension_dir = "ext"
+            if (System.Text.RegularExpressions.Regex.IsMatch(content, @"(?m)^;\s*extension_dir\s*=\s*""ext"""))
+            {
+                content = System.Text.RegularExpressions.Regex.Replace(content, @"(?m)^;\s*extension_dir\s*=\s*""ext""", "extension_dir = \"ext\"");
+                modified = true;
+            }
+            else if (!System.Text.RegularExpressions.Regex.IsMatch(content, @"(?m)^\s*extension_dir\s*="))
+            {
+                content += Environment.NewLine + "extension_dir = \"ext\"";
+                modified = true;
+            }
+
+            // 2. Włączenie wtyczek zgodnych ze standardem XAMPP i wymogami CKE
+            // Uwaga: mbstring musi być załadowany przed exif!
+            string[] xamppExtensions =
+            [
+                "bz2",
+                "curl",
+                "fileinfo",
+                "gd",
+                "gettext",
+                "intl",
+                "mbstring",
+                "exif",
+                "mysqli",
+                "openssl",
+                "pdo_mysql",
+                "pdo_sqlite",
+                "soap",
+                "sockets",
+                "sqlite3",
+                "tidy",
+                "xsl",
+                "zip"
+            ];
+
+            foreach (var ext in xamppExtensions)
+            {
+                // Sprawdzamy, czy dyrektywa jest zakomentowana: ;extension=ext
+                if (System.Text.RegularExpressions.Regex.IsMatch(content, $@"(?m)^;extension={ext}\b"))
+                {
+                    content = System.Text.RegularExpressions.Regex.Replace(content, $@"(?m)^;extension={ext}\b", $"extension={ext}");
+                    modified = true;
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(content, $@"(?m)^extension={ext}\b"))
+                {
+                    content += Environment.NewLine + $"extension={ext}";
+                    modified = true;
+                }
+            }
+
+            // 3. Konfiguracja parametrów pod kątem developmentu i egzaminów CKE (pma/importy/timezone)
+            var regexSettings = new (string Pattern, string Replacement)[]
+            {
+                (@"(?m)^;?\s*upload_max_filesize\s*=.*$", "upload_max_filesize = 128M"),
+                (@"(?m)^;?\s*post_max_size\s*=.*$", "post_max_size = 128M"),
+                (@"(?m)^;?\s*memory_limit\s*=.*$", "memory_limit = 512M"),
+                (@"(?m)^;?\s*max_execution_time\s*=.*$", "max_execution_time = 300"),
+                (@"(?m)^;?\s*max_input_time\s*=.*$", "max_input_time = 120"),
+                (@"(?m)^;?\s*date\.timezone\s*=.*$", "date.timezone = Europe/Warsaw")
+            };
+
+            foreach (var (pattern, replacement) in regexSettings)
+            {
+                if (System.Text.RegularExpressions.Regex.IsMatch(content, pattern))
+                {
+                    string updated = System.Text.RegularExpressions.Regex.Replace(content, pattern, replacement);
+                    if (updated != content)
+                    {
+                        content = updated;
+                        modified = true;
+                    }
+                }
+                else
+                {
+                    content += Environment.NewLine + replacement;
+                    modified = true;
+                }
+            }
+
+            if (modified)
+            {
+                File.WriteAllText(iniPath, content);
+            }
+        }
+
+        public void EnsurePhpMyAdminConfiguration(string? customPmaDir = null)
+        {
+            string pmaBinDir = customPmaDir ?? Path.Combine(_appBinDir, "bin", "phpmyadmin");
+            if (!Directory.Exists(pmaBinDir)) return;
+
+            string configPath = Path.Combine(pmaBinDir, "config.inc.php");
+            string langConfig = @"/* Domyślny język interfejsu (polski) z opcją zmiany przez użytkownika */
+$cfg['DefaultLang'] = 'pl';
+if (empty($_COOKIE['pma_lang']) && empty($_GET['lang']) && empty($_POST['lang'])) {
+    $cfg['Lang'] = 'pl';
+}";
+
+            if (!File.Exists(configPath))
+            {
+                string pmaConfig = $@"<?php
+declare(strict_types=1);
+
+/**
+ * PAMP - Konfiguracja phpMyAdmin
+ * Profil w stylu XAMPP z logowaniem automatycznym (root bez hasła)
+ */
+{langConfig}
+
+$cfg['blowfish_secret'] = 'pamp_secret_key_32_bytes_long_random_string_cke';
+
+$i = 0;
+$i++;
+/* Authentication type */
+$cfg['Servers'][$i]['auth_type'] = 'config';
+$cfg['Servers'][$i]['user'] = 'root';
+$cfg['Servers'][$i]['password'] = '';
+$cfg['Servers'][$i]['host'] = '127.0.0.1';
+$cfg['Servers'][$i]['port'] = '3306';
+$cfg['Servers'][$i]['compress'] = false;
+$cfg['Servers'][$i]['AllowNoPassword'] = true;
+
+/* Storage database and tables */
+$cfg['Servers'][$i]['pmadb'] = 'phpmyadmin';
+$cfg['Servers'][$i]['bookmarktable'] = 'pma__bookmark';
+$cfg['Servers'][$i]['relation'] = 'pma__relation';
+$cfg['Servers'][$i]['table_info'] = 'pma__table_info';
+$cfg['Servers'][$i]['table_coords'] = 'pma__table_coords';
+$cfg['Servers'][$i]['pdf_pages'] = 'pma__pdf_pages';
+$cfg['Servers'][$i]['column_info'] = 'pma__column_info';
+$cfg['Servers'][$i]['history'] = 'pma__history';
+$cfg['Servers'][$i]['table_uiprefs'] = 'pma__table_uiprefs';
+$cfg['Servers'][$i]['tracking'] = 'pma__tracking';
+$cfg['Servers'][$i]['userconfig'] = 'pma__userconfig';
+$cfg['Servers'][$i]['recent'] = 'pma__recent';
+$cfg['Servers'][$i]['favorite'] = 'pma__favorite';
+$cfg['Servers'][$i]['users'] = 'pma__users';
+$cfg['Servers'][$i]['usergroups'] = 'pma__usergroups';
+$cfg['Servers'][$i]['navigationhiding'] = 'pma__navigationhiding';
+$cfg['Servers'][$i]['savedsearches'] = 'pma__savedsearches';
+$cfg['Servers'][$i]['central_columns'] = 'pma__central_columns';
+$cfg['Servers'][$i]['designer_settings'] = 'pma__designer_settings';
+$cfg['Servers'][$i]['export_templates'] = 'pma__export_templates';
+
+$cfg['UploadDir'] = '';
+$cfg['SaveDir'] = '';
+";
+                File.WriteAllText(configPath, pmaConfig);
+            }
+            else
+            {
+                // Jeśli config.inc.php już istnieje, upewnij się że zawiera ustawienia języka polskiego
+                string current = File.ReadAllText(configPath);
+                if (!current.Contains("DefaultLang") || !current.Contains("'pl'"))
+                {
+                    if (current.Contains("<?php"))
+                    {
+                        current = current.Replace("<?php", "<?php" + Environment.NewLine + langConfig + Environment.NewLine);
+                    }
+                    else
+                    {
+                        current = langConfig + Environment.NewLine + current;
+                    }
+                    File.WriteAllText(configPath, current);
+                }
+            }
         }
 
         private void EnsureDirectories()
@@ -70,9 +270,10 @@ namespace PAMP
             var sb = new StringBuilder();
 
             sb.AppendLine($"ServerRoot \"{rootDir}/bin/apache\"");
+            sb.AppendLine("ServerName localhost:80");
             sb.AppendLine("Listen 80");
 
-            // --- Ładowanie modułów (Standardowy zestaw XAMPP/Apache) ---
+            // --- Ładowanie modułów ---
             sb.AppendLine("LoadModule access_compat_module modules/mod_access_compat.so");
             sb.AppendLine("LoadModule authz_core_module modules/mod_authz_core.so");
             sb.AppendLine("LoadModule authz_host_module modules/mod_authz_host.so");
@@ -87,13 +288,15 @@ namespace PAMP
             string phpExtDir = $"{phpDir}/ext";
             string[] dependencyDlls = new string[]
             {
-                "libssh2.dll",
-                "libpq.dll",
-                "libsqlite3.dll",
+                "libcrypto-3-x64.dll",   // Nowsze PHP 8.2+
+                "libssl-3-x64.dll",       // Nowsze PHP 8.2+
                 "libcrypto-1_1-x64.dll", // Starsze PHP 8
                 "libssl-1_1-x64.dll",    // Starsze PHP 8
-                "libcrypto-3-x64.dll",   // Nowsze PHP 8.2+
-                "libssl-3-x64.dll"       // Nowsze PHP 8.2+
+                "libssh2.dll",
+                "nghttp2.dll",
+                "libsqlite3.dll",
+                "libsodium.dll",
+                "libpq.dll"
             };
 
             foreach (var dllName in dependencyDlls)
@@ -166,15 +369,16 @@ namespace PAMP
         {
             string dataDir = Path.Combine(_systemDir, "mysql_data").Replace("\\", "/");
             string socketPath = Path.Combine(_systemDir, "conf", "mysql.sock").Replace("\\", "/");
-            string pluginDir = Path.Combine(_appBinDir, "bin", "mariadb", "lib", "plugin").Replace("\\", "/");
+            string shareDir = Path.Combine(_appBinDir, "bin", "mariadb", "share").Replace("\\", "/");
 
             var sb = new StringBuilder();
             sb.AppendLine("[mysqld]");
             sb.AppendLine($"datadir=\"{dataDir}\"");
             sb.AppendLine("port=3306");
             sb.AppendLine($"socket=\"{socketPath}\"");
-            // Ważne: ścieżka do share/charsets i messages, inaczej MariaDB może nie wstać po przeniesieniu
-            sb.AppendLine($"lc-messages-dir=\"{_appBinDir.Replace("\\", "/")}/mariadb/share\"");
+            // Ważne: ścieżka do share/charsets i messages w katalogu bin/mariadb/share
+            sb.AppendLine($"lc-messages-dir=\"{shareDir}\"");
+            sb.AppendLine("lc-messages=pl_PL");
 
             sb.AppendLine("sql_mode=NO_ENGINE_SUBSTITUTION");
             sb.AppendLine($"log-error=\"{_systemDir.Replace("\\", "/")}/logs/mysql_error.log\"");

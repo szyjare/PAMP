@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Navigation;
 
 namespace PAMP
 {
@@ -21,7 +22,14 @@ namespace PAMP
             this.Owner = owner;
             InitializeComponent();
             var manifest = ManifestLoader.Load();
-            about_version.Text = $"Wersja: {manifest.Versions.Pamp}";
+            about_version.Text = $"{TranslationSource.Instance["version"]} {manifest.Versions.Pamp}";
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            App.EnableMicaBackdrop(this);
+            App.UpdateTitleBarTheme(this);
         }
 
         public void BtnOk_Click(object sender, RoutedEventArgs e)
@@ -29,9 +37,14 @@ namespace PAMP
             this.Close();
         }
 
-        public void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
+        public void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+                e.Handled = true;
+            }
+            catch { }
         }
     }
 }

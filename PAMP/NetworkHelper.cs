@@ -1,61 +1,61 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace PAMP
+namespace PAMP;
+
+public static class NetworkHelper
 {
-    public static class NetworkHelper
+    public static async Task<int> GetPortByPidAsync(int pid, CancellationToken cancellationToken = default)
     {
-        public static int GetPortByPid(int pid)
+        if (pid <= 0) return 0;
+
+        try
         {
-            try
+            using var p = new Process
             {
-                using (Process p = new Process())
+                StartInfo = new ProcessStartInfo
                 {
-                    p.StartInfo = new ProcessStartInfo
+                    FileName = "netstat",
+                    Arguments = "-ano",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            p.Start();
+            string output = await p.StandardOutput.ReadToEndAsync(cancellationToken);
+            await p.WaitForExitAsync(cancellationToken);
+
+            string pidString = pid.ToString();
+            string[] lines = output.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string line in lines)
+            {
+                ReadOnlySpan<char> trimmed = line.AsSpan().Trim();
+                if (!trimmed.EndsWith(pidString.AsSpan()) || !line.Contains("LISTENING"))
+                    continue;
+
+                string[] parts = Regex.Split(line.Trim(), @"\s+");
+                if (parts.Length >= 2)
+                {
+                    string localAddress = parts[1];
+                    int lastColonIndex = localAddress.LastIndexOf(':');
+                    if (lastColonIndex > 0 && int.TryParse(localAddress.AsSpan(lastColonIndex + 1), out int port))
                     {
-                        FileName = "netstat",
-                        Arguments = "-ano",
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    };
-
-                    p.Start();
-                    string output = p.StandardOutput.ReadToEnd();
-                    p.WaitForExit();
-
-                    // Parsuje wynik
-                    string[] lines = output.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-
-                    foreach (string line in lines)
-                    {
-                        // Szuka linii, która kończy się PID
-                        // Format: TCP  0.0.0.0:80  0.0.0.0:0  LISTENING  1234
-                        if (!line.Trim().EndsWith(pid.ToString())) continue;
-
-                        if (!line.Contains("LISTENING")) continue;
-                        var parts = Regex.Split(line.Trim(), @"\s+");
-
-                        if (parts.Length >= 2)
-                        {
-                            string localAddress = parts[1];
-                            int lastColonIndex = localAddress.LastIndexOf(':');
-
-                            if (lastColonIndex > 0)
-                            {
-                                string portStr = localAddress.Substring(lastColonIndex + 1);
-                                if (int.TryParse(portStr, out int port))
-                                {
-                                    return port;
-                                }
-                            }
-                        }
+                        return port;
                     }
                 }
             }
-            catch { }
-
-            return 0;
         }
+        catch { }
+
+        return 0;
+    }
+
+    public static int GetPortByPid(int pid)
+    {
+        // Synchroniczny fallback w razie potrzeby
+        return GetPortByPidAsync(pid).GetAwaiter().GetResult();
     }
 }
