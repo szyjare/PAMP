@@ -73,5 +73,7 @@
 	"ckeProfileConfirm": "Czy chcesz pobrać i zainstalować profil egzaminacyjny CKE zgodny z wytycznymi?\n\nTwoje bazy danych i pliki stron pozostaną nienaruszone.",
 	"ckeProfileSuccess": "Profil CKE został pomyślnie zainstalowany! Środowisko jest w pełni zgodne z wytycznymi egzaminów technicznych CKE.",
 	"compAlreadyInstalled": "Ta wersja jest już zainstalowana.",
-	"ckeAlreadyInstalled": "Wszystkie komponenty profilu CKE są już zainstalowane."
+	"ckeAlreadyInstalled": "Wszystkie komponenty profilu CKE są już zainstalowane.",
+	"vcRedistMissingTitle": "Brakujący pakiet Visual C++",
+	"vcRedistMissingMessage": "W systemie nie znaleziono pakietu Microsoft Visual C++ 2015–2022 Redistributable (x64).\n\nJest on niezbędny do poprawnego działania modułów Apache, PHP oraz MariaDB.\n\nCzy chcesz teraz pobrać oficjalny instalator ze strony Microsoftu?"
 }
