@@ -4,6 +4,14 @@
 #define MyAppURL "https://github.com/szyjare/PAMP"
 #define MyAppExeName "PAMP.exe"
 
+#ifndef OutputBaseFilename
+  #ifdef SelfContained
+    #define OutputBaseFilename "PAMP-Setup-" + MyAppVersion + "-standalone"
+  #else
+    #define OutputBaseFilename "PAMP-Setup-" + MyAppVersion
+  #endif
+#endif
+
 [Setup]
 AppId={{C18F1202-986D-46F2-8116-F1A9346E8203}
 AppName={#MyAppName}
@@ -17,7 +25,7 @@ DefaultDirName={autopf}\PAMP
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE.txt
 OutputDir=..\dist
-OutputBaseFilename=PAMP-Setup-{#MyAppVersion}
+OutputBaseFilename={#OutputBaseFilename}
 SetupIconFile=..\PAMP\pamp_icon.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/ultra64
@@ -72,10 +80,11 @@ end;
 procedure InitializeWizard;
 begin
   // Jeśli PAMP skompilowano w trybie self-contained, .NET 10 jest już wbudowany w PAMP.exe
-  if not FileExists(ExpandConstant('{src}\..\publish\PAMP.dll')) then
-    DotNetNeeded := False
-  else
-    DotNetNeeded := not IsDotNet10DesktopInstalled;
+#ifdef SelfContained
+  DotNetNeeded := False;
+#else
+  DotNetNeeded := not IsDotNet10DesktopInstalled;
+#endif
 
   if DotNetNeeded then
   begin
