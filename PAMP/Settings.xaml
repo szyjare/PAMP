@@ -8,7 +8,7 @@
         Title="{local:Loc settingsTtile}" Height="230" Width="380"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}">
     <Grid Margin="16">
         <Border Background="{DynamicResource CardBackgroundBrush}" 

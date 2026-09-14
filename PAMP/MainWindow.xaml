@@ -8,7 +8,7 @@
         Title="PAMP Launcher" Height="410" Width="580" 
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         Icon="/pamp_icon.ico">
 
@@ -48,10 +48,13 @@
         <!-- Nagłówek: Logo oraz wersja PAMP -->
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,4">
             <Image Height="85" Width="190" Source="/pamp_logo_min.png" Stretch="Uniform" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="TxtPampVersion" Text="{local:Loc version}" 
+            <TextBlock x:Name="TxtPampVersion" 
                        FontSize="13" 
                        Foreground="{DynamicResource TextSecondaryBrush}"
-                       HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                       HorizontalAlignment="Center" Margin="0,2,0,0">
+                <Run Text="{local:Loc version}"/>
+                <Run x:Name="RunPampVersionNumber"/>
+            </TextBlock>
         </StackPanel>
 
         <!-- Przyciski szybkich akcji (Prawa kolumna - Góra) -->

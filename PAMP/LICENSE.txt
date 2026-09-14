@@ -24,9 +24,10 @@ SOFTWARE.
 THIRD-PARTY COMPONENTS
 ==============================================================================
 
-This software distribution bundles the following third-party components, 
-which are subject to their own respective licenses. usage of these components 
-is governed by the terms and conditions of their licenses.
+This application can download, manage, and orchestrate the following 
+third-party open-source components, which are subject to their own respective 
+licenses. Usage of these components is governed by the terms and conditions 
+of their licenses.
 
 1. Apache HTTP Server
    Copyright (c) The Apache Software Foundation.
