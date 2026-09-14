@@ -55,7 +55,7 @@
 	"settingsLanguageSubtitle": "Wybierz język wyświetlania aplikacji:",
 	"settingsOkBtn": "Gotowe",
 	"mnuToolsComponents": "Pobierz i zmień wersje...",
-	"compManagerTitle": "Menedżer Komponentów - Pobieranie i Instalacja",
+	"compManagerTitle": "Menedżer Komponentów",
 	"compManagerSubtitle": "Wybierz wersje pakietów do instalacji. Zmiana wersji nie usuwa Twoich baz danych ani plików stron.",
 	"compInstalledVersion": "Zainstalowana wersja:",
 	"compAvailableVersions": "Dostępne wersje:",
@@ -67,9 +67,11 @@
 	"compCloseBtn": "Zamknij",
 	"mnuToolsCke": "Zainstaluj profil CKE...",
 	"ckeProfileTitle": "Profil Egzaminacyjny CKE",
-	"ckeProfileDesc": "Zestaw komponentów w pełni zgodny ze standardem CKE: PHP 8.2, Apache 2.4, MariaDB 10.4, phpMyAdmin 5.2.",
+	"ckeProfileDesc": "Zestaw komponentów w pełni zgodny z aktualnymi wytycznymi egzaminacyjnymi CKE.",
 	"ckeProfileDbSafe": "Twoje bazy danych w profilu Windows (%LocalAppData%\\PAMP\\mysql_data) pozostają w 100% bezpieczne i nienaruszone.",
 	"ckeProfileInstallBtn": "Zainstaluj profil CKE",
-	"ckeProfileConfirm": "Czy chcesz pobrać i zainstalować profil egzaminacyjny CKE (PHP 8.2, Apache 2.4, MariaDB 10.4, phpMyAdmin 5.2)?\n\nTwoje bazy danych i pliki stron pozostaną nienaruszone.",
-	"ckeProfileSuccess": "Profil CKE został pomyślnie zainstalowany! Środowisko jest w pełni zgodne ze standardem egzaminów technicznych CKE."
+	"ckeProfileConfirm": "Czy chcesz pobrać i zainstalować profil egzaminacyjny CKE zgodny z wytycznymi?\n\nTwoje bazy danych i pliki stron pozostaną nienaruszone.",
+	"ckeProfileSuccess": "Profil CKE został pomyślnie zainstalowany! Środowisko jest w pełni zgodne z wytycznymi egzaminów technicznych CKE.",
+	"compAlreadyInstalled": "Ta wersja jest już zainstalowana.",
+	"ckeAlreadyInstalled": "Wszystkie komponenty profilu CKE są już zainstalowane."
 }

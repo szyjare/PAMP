@@ -79,6 +79,20 @@ public sealed class ComponentInstallerService
                 }
             }
 
+            // Weryfikacja sumy kontrolnej SHA-256 (jeśli dostępna)
+            if (!string.IsNullOrWhiteSpace(versionInfo.Sha256))
+            {
+                progress.Report(new InstallProgress("Weryfikacja sumy kontrolnej SHA-256...", 100, true));
+                using var sha256 = System.Security.Cryptography.SHA256.Create();
+                using var hashStream = File.OpenRead(zipPath);
+                byte[] hashBytes = await sha256.ComputeHashAsync(hashStream, cancellationToken);
+                string actualHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+                if (!actualHash.Equals(versionInfo.Sha256.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Niezgodność sumy kontrolnej SHA-256 dla {versionInfo.DisplayName}.\nOczekiwano: {versionInfo.Sha256}\nOtrzymano: {actualHash}");
+                }
+            }
+
             // Weryfikacja nagłówka ZIP (Magic Bytes: PK)
             using (var checkStream = File.OpenRead(zipPath))
             {
@@ -101,74 +115,21 @@ public sealed class ComponentInstallerService
 
             await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, extractDir, true), cancellationToken);
 
-            // 3. Wykrycie folderu źródłowego
-            string sourceDir = extractDir;
+            // 3. Inteligentne wykrycie folderu źródłowego
+            string sourceDir = DetectSourceDirectory(extractDir, package.Id);
 
-            if (package.Id == "apache")
-            {
-                // Archiwum Apache zawiera podfolder "Apache24"
-                string apache24Dir = Path.Combine(extractDir, "Apache24");
-                if (Directory.Exists(apache24Dir))
-                {
-                    sourceDir = apache24Dir;
-                }
-            }
-            else
-            {
-                var subDirs = Directory.GetDirectories(extractDir);
-                if (subDirs.Length == 1)
-                {
-                    sourceDir = subDirs[0];
-                }
-                else if (subDirs.Length > 1)
-                {
-                    var matching = subDirs.FirstOrDefault(d =>
-                    {
-                        string name = Path.GetFileName(d);
-                        return name.StartsWith("mariadb", StringComparison.OrdinalIgnoreCase) ||
-                               name.StartsWith("phpMyAdmin", StringComparison.OrdinalIgnoreCase);
-                    });
-
-                    if (matching != null)
-                    {
-                        sourceDir = matching;
-                    }
-                }
-            }
-
-            // 4. Podmiana w folderze bin aplikacji (BEZ NARUSZANIA BAZ DANYCH W %LocalAppData%\PAMP\mysql_data!)
+            // 4. Bezpieczna podmiana w folderze bin aplikacji (BEZ NARUSZANIA BAZ DANYCH W %LocalAppData%\PAMP\mysql_data!)
             progress.Report(new InstallProgress("Instalacja plików w katalogu bin...", 100, true));
 
             string targetBinDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", package.TargetSubfolder);
 
             await Task.Run(() =>
             {
-                if (Directory.Exists(targetBinDir))
-                {
-                    try
-                    {
-                        Directory.Delete(targetBinDir, true);
-                    }
-                    catch
-                    {
-                        string trashDir = Path.Combine(appDataTemp, $"trash_{Guid.NewGuid():N}");
-                        Directory.Move(targetBinDir, trashDir);
-                    }
-                }
+                SafeReplaceDirectory(sourceDir, targetBinDir, appDataTemp);
 
-                Directory.CreateDirectory(Path.GetDirectoryName(targetBinDir)!);
-                Directory.Move(sourceDir, targetBinDir);
-
-                // Automatyczna konfiguracja środowiska (php.ini, wtyczki XAMPP, phpMyAdmin config)
+                // Automatyczna konfiguracja środowiska (php.ini, vhosts, konfiguracja MariaDB, phpMyAdmin config)
                 var env = new EnvironmentManager();
-                if (package.Id == "php")
-                {
-                    env.EnsurePhpConfiguration(targetBinDir);
-                }
-                else if (package.Id == "phpmyadmin")
-                {
-                    env.EnsurePhpMyAdminConfiguration(targetBinDir);
-                }
+                env.InitializeEnvironment();
             }, cancellationToken);
 
             // 5. Aktualizacja manifest.json
@@ -230,5 +191,130 @@ public sealed class ComponentInstallerService
         }
 
         progress.Report(new InstallProgress("Pakiet CKE został pomyślnie zainstalowany!", 100));
+    }
+
+    private static string DetectSourceDirectory(string extractDir, string packageId)
+    {
+        try
+        {
+            switch (packageId.ToLowerInvariant())
+            {
+                case "apache":
+                {
+                    var httpdFile = Directory.EnumerateFiles(extractDir, "httpd.exe", SearchOption.AllDirectories).FirstOrDefault();
+                    if (httpdFile != null)
+                    {
+                        var parentDir = Path.GetDirectoryName(httpdFile);
+                        if (parentDir != null)
+                        {
+                            if (Path.GetFileName(parentDir).Equals("bin", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return Directory.GetParent(parentDir)?.FullName ?? parentDir;
+                            }
+                            return parentDir;
+                        }
+                    }
+                    break;
+                }
+                case "mariadb":
+                {
+                    var dbExe = Directory.EnumerateFiles(extractDir, "mariadbd.exe", SearchOption.AllDirectories).FirstOrDefault()
+                             ?? Directory.EnumerateFiles(extractDir, "mysqld.exe", SearchOption.AllDirectories).FirstOrDefault();
+                    if (dbExe != null)
+                    {
+                        var parentDir = Path.GetDirectoryName(dbExe);
+                        if (parentDir != null)
+                        {
+                            if (Path.GetFileName(parentDir).Equals("bin", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return Directory.GetParent(parentDir)?.FullName ?? parentDir;
+                            }
+                            return parentDir;
+                        }
+                    }
+                    break;
+                }
+                case "php":
+                {
+                    var phpExe = Directory.EnumerateFiles(extractDir, "php.exe", SearchOption.AllDirectories).FirstOrDefault();
+                    if (phpExe != null)
+                    {
+                        return Path.GetDirectoryName(phpExe) ?? extractDir;
+                    }
+                    break;
+                }
+                case "phpmyadmin":
+                {
+                    var pmaFile = Directory.EnumerateFiles(extractDir, "config.sample.inc.php", SearchOption.AllDirectories).FirstOrDefault()
+                               ?? Directory.EnumerateFiles(extractDir, "index.php", SearchOption.AllDirectories).FirstOrDefault();
+                    if (pmaFile != null)
+                    {
+                        return Path.GetDirectoryName(pmaFile) ?? extractDir;
+                    }
+                    break;
+                }
+            }
+        }
+        catch
+        {
+            // W razie błędu wyszukiwania, fallback do struktury katalogów
+        }
+
+        var subDirs = Directory.GetDirectories(extractDir);
+        if (subDirs.Length == 1)
+        {
+            return subDirs[0];
+        }
+
+        return extractDir;
+    }
+
+    private static void SafeReplaceDirectory(string sourceDir, string targetDir, string tempDir)
+    {
+        if (Directory.Exists(targetDir))
+        {
+            string trashDir = Path.Combine(tempDir, $"trash_{Guid.NewGuid():N}");
+            try
+            {
+                Directory.Move(targetDir, trashDir);
+                try { Directory.Delete(trashDir, true); } catch { }
+            }
+            catch
+            {
+                try { Directory.Delete(targetDir, true); } catch { }
+            }
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(targetDir)!);
+
+        bool sameVolume = string.Equals(Path.GetPathRoot(sourceDir), Path.GetPathRoot(targetDir), StringComparison.OrdinalIgnoreCase);
+        if (sameVolume)
+        {
+            try
+            {
+                Directory.Move(sourceDir, targetDir);
+                return;
+            }
+            catch
+            {
+                // Fallback do kopiowania w przypadku zablokowanych operacji move
+            }
+        }
+
+        CopyDirectory(sourceDir, targetDir);
+        try { Directory.Delete(sourceDir, true); } catch { }
+    }
+
+    private static void CopyDirectory(string source, string destination)
+    {
+        Directory.CreateDirectory(destination);
+        foreach (var file in Directory.GetFiles(source))
+        {
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);
+        }
+        foreach (var dir in Directory.GetDirectories(source))
+        {
+            CopyDirectory(dir, Path.Combine(destination, Path.GetFileName(dir)));
+        }
     }
 }

@@ -58,29 +58,30 @@
         <Border Grid.Row="1" Grid.Column="1" Margin="6,4,12,4" Padding="8" CornerRadius="8"
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource CardBorderBrush}"
-                BorderThickness="1">
+                BorderThickness="1"
+                RenderOptions.BitmapScalingMode="HighQuality">
             <StackPanel VerticalAlignment="Center">
-                <Button Height="28" Margin="0,0,0,6" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
+                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image VerticalAlignment="Center" Height="16" Width="16" Source="/Resources/localhost.png" Margin="0,0,8,0"/>
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/localhost.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnLocalhost}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="28" Margin="0,0,0,6" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
+                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image VerticalAlignment="Center" Height="16" Width="16" Source="/Resources/pma.png" Margin="0,0,8,0"/>
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/pma.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnPMA}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="28" Margin="0,0,0,6" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenFolder_Click">
+                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenFolder_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image VerticalAlignment="Center" Height="16" Width="16" Source="/Resources/www_dir.png" Margin="0,0,8,0"/>
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/www_dir.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnWWW}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="28" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
+                <Button Height="30" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image VerticalAlignment="Center" Height="16" Width="16" Source="/Resources/sql_shell.png" Margin="0,0,8,0"/>
+                        <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/sql_shell.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnSQL}"/>
                     </StackPanel>
                 </Button>
@@ -91,7 +92,8 @@
         <Border Grid.Row="2" Grid.Column="0" Margin="12,6,6,4" Padding="14,10" CornerRadius="8"
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource CardBorderBrush}"
-                BorderThickness="1">
+                BorderThickness="1"
+                RenderOptions.BitmapScalingMode="HighQuality">
             <Grid VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

@@ -19,10 +19,14 @@
         </Grid.RowDefinitions>
 
         <!-- Nagłówek okna -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,12">
-            <TextBlock Text="{local:Loc compManagerTitle}" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="{local:Loc compManagerSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Text="{local:Loc compManagerTitle}" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{local:Loc compManagerSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <TextBlock x:Name="TxtRepoStatus" HorizontalAlignment="Right" VerticalAlignment="Top"
+                       Text="repo.sjarecki.pl" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+        </Grid>
 
         <!-- Lista kart komponentów -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
@@ -62,6 +66,7 @@
                                 Height="36" Padding="16,0" FontWeight="Bold"
                                 Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentForegroundBrush}" BorderThickness="0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
                                 Click="BtnInstallCke_Click"/>
 
                         <!-- Pasek postępu dla profilu CKE -->
@@ -99,13 +104,14 @@
                         <!-- Wybór wersji -->
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <ComboBox x:Name="CmbPhpVersions" Width="280" Height="28" DisplayMemberPath="DisplayName"/>
+                            <ComboBox x:Name="CmbPhpVersions" Tag="php" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
                         </StackPanel>
 
                         <!-- Przycisk instalacji -->
                         <Button x:Name="BtnInstallPhp" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
                                 Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
                                 Tag="php" Click="BtnInstall_Click"/>
 
                         <!-- Pasek postępu -->
@@ -141,12 +147,13 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <ComboBox x:Name="CmbApacheVersions" Width="280" Height="28" DisplayMemberPath="DisplayName"/>
+                            <ComboBox x:Name="CmbApacheVersions" Tag="apache" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
                         </StackPanel>
 
                         <Button x:Name="BtnInstallApache" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
                                 Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
                                 Tag="apache" Click="BtnInstall_Click"/>
 
                         <StackPanel x:Name="PnlApacheProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
@@ -181,12 +188,13 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <ComboBox x:Name="CmbMariaDbVersions" Width="280" Height="28" DisplayMemberPath="DisplayName"/>
+                            <ComboBox x:Name="CmbMariaDbVersions" Tag="mariadb" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
                         </StackPanel>
 
                         <Button x:Name="BtnInstallMariaDb" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
                                 Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
                                 Tag="mariadb" Click="BtnInstall_Click"/>
 
                         <StackPanel x:Name="PnlMariaDbProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
@@ -221,12 +229,13 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{local:Loc compAvailableVersions}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <ComboBox x:Name="CmbPmaVersions" Width="280" Height="28" DisplayMemberPath="DisplayName"/>
+                            <ComboBox x:Name="CmbPmaVersions" Tag="phpmyadmin" Width="280" Height="28" DisplayMemberPath="DisplayName" SelectionChanged="CmbVersions_SelectionChanged"/>
                         </StackPanel>
 
                         <Button x:Name="BtnInstallPma" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" 
                                 Content="{local:Loc compInstallBtn}" Height="32" Padding="12,0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center"
+                                ToolTipService.ShowOnDisabled="True"
                                 Tag="phpmyadmin" Click="BtnInstall_Click"/>
 
                         <StackPanel x:Name="PnlPmaProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">

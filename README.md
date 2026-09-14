@@ -8,74 +8,79 @@
 
 > 🇵🇱 **Polska wersja:** Kliknij tutaj, aby zobaczyć [dokumentację w języku polskim](README.pl.md).
 ---
-**PAMP!** is a lightweight, portable server environment for Windows, built with C# (WPF / .NET 8). It allows you to launch a local web server stack in seconds, with zero installation or complex configuration required.
+**PAMP!** is a modern, lightweight, and portable server environment for Windows, built with C# 14 (.NET 10 WPF). It allows you to launch a local web server stack in seconds, with zero installation, full user isolation, and modular package management.
 
-> **Current version:** `1.0.0`
-> Current version only supports polish language which is hardcoded. I'm planning on changing it for easy translation.
+> **Current version:** `1.2.0`  
+> Supported languages: **English** and **Polish** (selectable in Settings).
 
 ## ❓ Why create another stack?
-While XAMPP is currently the most popular solution, it has several architectural flaws that PAMP aims to resolve:
+While XAMPP is historically popular, it suffers from several critical architectural flaws that PAMP resolves:
 
-- **Lack of User Isolation** - In XAMPP, all system users share the same `htdocs` directory and database. PAMP gives each user their own isolated environment.
-- **Database Instability** - XAMPP users often encounter database corruption errors that prevent the server from starting. PAMP focuses on safe shutdown procedures to protect data integrity.
-- **Process Management Issues** - A well-known issue in existing solutions is the inability to exit the application cleanly, often requiring forced termination via Task Manager. PAMP handles background processes reliably.
-- **Education-Friendly** - Ideally suited for IT vocational training and computer labs where teachers struggle with XAMPP maintenance. PAMP offers a stable alternative that is significantly easier to deploy, manage, and reset between classes.
+- **Lack of User Isolation** - In XAMPP, all system users share the same `htdocs` directory and database files. PAMP assigns each Windows user their own isolated environment and databases.
+- **Database Instability** - XAMPP users regularly face database corruption or blocked port conflicts. PAMP uses clean process lifecycle handling and volume-safe file swaps.
+- **Safe Multi-Version Switching** - Upgrading or changing module versions in traditional stacks often risks wiping local databases. In PAMP, user databases in `%LocalAppData%\PAMP\mysql_data` remain 100% safe and intact when switching binaries.
+- **Education & Vocational Exams** - Ideally suited for Polish vocational IT education (INF.03). Teachers and students can install the official **CKE Exam Profile** with a single click, or easily switch to bleeding-edge releases.
 
 ## ✨ Key Features
 * 🚀 **Portable & Lightweight** – Runs without installation and requires no administrator privileges.
-* 🎨 **Minimalist UI** – Clean, readable interface focused on functionality.
-* 🛠️ **Built-in Tools** – Includes quick access to the MySQL console, "Factory Reset" for databases, active ports viewer, and a parsed Apache log viewer.
-* 📦 **User Isolation** – Database and configuration files are separated from the engine binaries. Each Windows user gets their own `LocalSites` (htdocs) and database directories, eliminating multi-user permission conflicts.
+* 🎨 **Windows 11 Fluent UI** – Native Dark & Light themes, Windows 11 Mica backdrop material, system Accent Color integration, and refreshed icons.
+* 🌐 **Built-in Component Manager** – Integrated package manager connecting to the official PAMP repository (`repo.sjarecki.pl`). Select, download, and switch versions of Apache, PHP, MariaDB, and phpMyAdmin on the fly.
+* 🎓 **1-Click CKE Exam Profile** – Instant setup of an environment compliant with official CKE vocational exam guidelines.
+* 🛠️ **Developer Tools** – Quick access to MariaDB/MySQL console, "Factory Reset" for user databases, live port conflict monitor, and parsed Apache log viewer.
+* 📦 **User Data Isolation** – Binaries (`bin/`) are completely separated from user data (`LocalSites`) and database tables (`%LocalAppData%\PAMP\mysql_data`).
 
-## 🧱 Stack Components
-The pre-compiled releases include:
+## 🧱 Stack Components & Repository
+PAMP supports dynamic installation and swapping of component versions via the built-in **Component Manager** (`Tools -> Download & Change Versions`):
 
-| Component | Version |
-| :--- | :--- |
-| **PHP** | 8.2.12 |
-| **MariaDB** | 10.4.32 |
-| **phpMyAdmin** | 5.2.1 |
-| **Apache** | 2.4.58 |
+| Component | Available Versions | CKE Exam Compliant |
+| :--- | :--- | :--- |
+| **PHP** | 8.5.x, 8.2.x | Yes (8.2 compatible) |
+| **MariaDB** | 12.3.x, 10.4.x | Yes (10.4 compatible) |
+| **Apache** | 2.4.68, 2.4.58 | Yes (2.4 compatible) |
+| **phpMyAdmin** | 5.2.3, 5.2.1 | Yes (5.2 compatible) |
 
-*Note: Component versions apply only to the portable and installer releases found in the [Releases] section.*
-
-**Why older module versions?**
-The default stack is aligned with **XAMPP 8.2.12** (PHP 8.2), which is currently required by **CKE** (Central Examination Board in Poland) for IT exams. This ensures full compatibility for students preparing for their vocational exams. Releases featuring the latest module versions are planned for the future.
+*Versions are fetched directly from the PAMP repository and sorted semantically with the newest release at the top.*
 
 ## 📂 Directory Structure
 
-* **Websites**
-    Place your projects in:
-    `%UserProfile%\PAMP\LocalSites`
+* **Websites & HTML/PHP Projects**
+    `%UserProfile%\PAMP\LocalSites`  
     *(Usually: `C:\Users\<username>\PAMP\LocalSites`)*
 
-* **Data & Config**
-    User-specific data is stored in `%LocalAppData%\PAMP`:
-    * `conf` – Configuration files for Apache and MariaDB.
-    * `logs` – Apache and MariaDB error/access logs.
-    * `mysql_data` – User's database files.
+* **User Data & Configuration**
+    Stored in `%LocalAppData%\PAMP`:
+    * `conf` – Configuration files for Apache (`httpd_user.conf`) and MariaDB (`my_user.ini`).
+    * `logs` – Apache and MariaDB error and access logs.
+    * `mysql_data` – User database files (preserved across binary upgrades).
+    * `installed_versions.json` – Active component version manifest.
 
 ## 💻 System Requirements
 * Windows 10 / 11 (64-bit)
-* .NET Desktop Runtime 8.0
+* .NET Desktop Runtime 10.0
 
-## 🔮 Roadmap & Future Plans
+## 🔮 Roadmap & Status
 
-I'm constantly working to improve PAMP. Here are some features I'm planning for future releases:
-
-- [ ] **System Tray Icon:** Minimize the app to the system tray with quick context menu actions (Start/Stop/Restart).
-- [ ] **Web Installer:** A lightweight installer that downloads the latest module versions during setup (reducing the initial file size).
-- [ ] **Dark Mode:** Full support for system dark theme.
+- [x] **Multi-language support:** Dynamic English & Polish interface.
+- [x] **Dark & Light Mode:** Windows 11 Mica backdrop and system Accent Color.
+- [x] **Component Manager:** Download and switch versions in real time from `repo.sjarecki.pl`.
+- [x] **1-Click CKE Exam Profile:** One-click compliance with exam guidelines.
+- [x] **First-run setup wizard:** Guided component selection on first startup.
+- [ ] **System Tray Icon:** Minimize to system tray with context menu controls (Start/Stop/Restart).
 - [ ] **SSL/HTTPS Manager:** One-click generation of self-signed certificates for local development.
-- [ ] **Auto-Updater:** Automatic checks for PAMP launcher updates.
-- [ ] **Linux version:** Linux good, we love Linux!
+- [ ] **Auto-Updater:** Automated updates for the PAMP launcher application.
+- [ ] **Linux version:** Experimental cross-platform support.
 
-Have an idea? [Open an issue](https://github.com/szyjare/PAMP/issues) and tell me about it!
+Have an idea or feedback? [Open an issue](https://github.com/szyjare/PAMP/issues)!
 
 ## ⚠️ For Developers
-**Important:** This repository contains the source code for the PAMP! launcher only. It **does not** include the binaries for Apache, MariaDB, PHP, or phpMyAdmin to keep the repo size manageable. You must download and place them in the `ServerFiles` directory manually to build the project.
-
+To build PAMP from source:
+1. Clone the repository: `git clone https://github.com/szyjare/PAMP.git`
+2. Open in Visual Studio 2026 / Rider or build from terminal:
+   ```bash
+   dotnet build
+   ```
+3. Run the executable. On first launch, the Component Manager will automatically prompt you to download and configure your desired component versions.
 
 ## 📜 License
-PAMP! is licensed under the **MIT License**.
-Bundled modules (Apache, PHP, MariaDB, phpMyAdmin) are subject to their respective licenses. See `LICENSE.txt` for details.
+PAMP! is open-source software licensed under the **MIT License**.  
+Downloaded components (Apache, PHP, MariaDB, phpMyAdmin) are subject to their respective open-source licenses (see `LICENSE.txt`).

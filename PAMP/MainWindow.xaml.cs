@@ -27,6 +27,7 @@ public partial class MainWindow : Window
 
         SetupTimer();
         LoadVersionsToUI();
+        _ = ComponentCatalog.EnsureLoadedAsync();
         _ = CheckInitialProcessesAsync();
     }
 
@@ -60,7 +61,8 @@ public partial class MainWindow : Window
         {
             App.Settings.FirstRun = false;
             App.Settings.Save();
-            new Settings(this).Show();
+            var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
+            compWindow.ShowDialog();
         }
     }
 

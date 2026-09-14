@@ -55,7 +55,7 @@
 	"settingsLanguageSubtitle": "Select application display language:",
 	"settingsOkBtn": "Done",
 	"mnuToolsComponents": "Download & Change Versions...",
-	"compManagerTitle": "Component Manager - Download & Install",
+	"compManagerTitle": "Component Manager",
 	"compManagerSubtitle": "Choose package versions to install. Changing versions does not affect your databases or website files.",
 	"compInstalledVersion": "Installed version:",
 	"compAvailableVersions": "Available versions:",
@@ -67,9 +67,11 @@
 	"compCloseBtn": "Close",
 	"mnuToolsCke": "Install CKE Exam Profile...",
 	"ckeProfileTitle": "CKE Exam Profile",
-	"ckeProfileDesc": "Component stack compliant with the CKE examination standard: PHP 8.2, Apache 2.4, MariaDB 10.4, phpMyAdmin 5.2.",
+	"ckeProfileDesc": "Component stack fully compliant with current CKE examination guidelines.",
 	"ckeProfileDbSafe": "Your user databases in Windows profile (%LocalAppData%\\PAMP\\mysql_data) remain 100% safe and intact.",
 	"ckeProfileInstallBtn": "Install CKE Profile",
-	"ckeProfileConfirm": "Do you want to download and install the CKE Exam Profile (PHP 8.2, Apache 2.4, MariaDB 10.4, phpMyAdmin 5.2)?\n\nYour user databases and website files will remain intact.",
-	"ckeProfileSuccess": "CKE Profile has been installed successfully! Your environment is fully compliant with CKE exam standards."
+	"ckeProfileConfirm": "Do you want to download and install the CKE Exam Profile compliant with guidelines?\n\nYour user databases and website files will remain intact.",
+	"ckeProfileSuccess": "CKE Profile has been installed successfully! Your environment is fully compliant with CKE examination guidelines.",
+	"compAlreadyInstalled": "This version is already installed.",
+	"ckeAlreadyInstalled": "All CKE profile components are already installed."
 }
