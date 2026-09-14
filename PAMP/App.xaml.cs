@@ -14,10 +14,19 @@ public partial class App : Application
     private static readonly SolidColorBrush LightCardBackground = CreateFrozenBrush(Color.FromArgb(200, 255, 255, 255));
     private static readonly SolidColorBrush LightCardBorder = CreateFrozenBrush(Color.FromArgb(25, 0, 0, 0));
 
+    // Pędzle dla Windows 10 / środowisk bez obsługi Mica
+    private static readonly SolidColorBrush TransparentBrush = CreateFrozenBrush(Colors.Transparent);
+    private static readonly SolidColorBrush LightWindowBackground = CreateFrozenBrush(Color.FromRgb(243, 243, 243));
+    private static readonly SolidColorBrush DarkWindowBackground = CreateFrozenBrush(Color.FromRgb(32, 32, 32));
+    private static readonly SolidColorBrush LightCardBackgroundSolid = CreateFrozenBrush(Color.FromRgb(255, 255, 255));
+    private static readonly SolidColorBrush DarkCardBackgroundSolid = CreateFrozenBrush(Color.FromRgb(43, 43, 43));
+
     private static readonly SolidColorBrush DarkTextPrimary = CreateFrozenBrush(Color.FromRgb(245, 245, 245));
     private static readonly SolidColorBrush DarkTextSecondary = CreateFrozenBrush(Color.FromArgb(180, 255, 255, 255));
     private static readonly SolidColorBrush LightTextPrimary = CreateFrozenBrush(Color.FromRgb(26, 26, 26));
     private static readonly SolidColorBrush LightTextSecondary = CreateFrozenBrush(Color.FromArgb(160, 0, 0, 0));
+
+    public static bool SupportsMica => Environment.OSVersion.Version.Build >= 22000;
 
     private static SolidColorBrush CreateFrozenBrush(Color color)
     {
@@ -61,7 +70,15 @@ public partial class App : Application
         var textPrimary = isDark ? DarkTextPrimary : LightTextPrimary;
         var textSecondary = isDark ? DarkTextSecondary : LightTextSecondary;
 
-        Current.Resources["CardBackgroundBrush"] = isDark ? DarkCardBackground : LightCardBackground;
+        bool mica = SupportsMica;
+        Current.Resources["WindowBackgroundBrush"] = mica
+            ? TransparentBrush
+            : (isDark ? DarkWindowBackground : LightWindowBackground);
+
+        Current.Resources["CardBackgroundBrush"] = mica
+            ? (isDark ? DarkCardBackground : LightCardBackground)
+            : (isDark ? DarkCardBackgroundSolid : LightCardBackgroundSolid);
+
         Current.Resources["CardBorderBrush"] = isDark ? DarkCardBorder : LightCardBorder;
         Current.Resources["TextPrimaryBrush"] = textPrimary;
         Current.Resources["TextSecondaryBrush"] = textSecondary;
@@ -119,15 +136,29 @@ public partial class App : Application
 
     public static void EnableMicaBackdrop(Window window)
     {
+        if (!SupportsMica)
+        {
+            // Windows 10 lub starszy: brak Mica, wymuszamy solidne tło okna
+            window.Background = (Brush)Current.Resources["WindowBackgroundBrush"];
+            return;
+        }
+
         nint handle = new System.Windows.Interop.WindowInteropHelper(window).Handle;
         if (handle == nint.Zero) return;
 
         int backdropType = NativeMethods.DWMSBT_MAINWINDOW;
-        _ = NativeMethods.DwmSetWindowAttribute(
+        int hr = NativeMethods.DwmSetWindowAttribute(
             handle,
             NativeMethods.DWMWA_SYSTEMBACKDROP_TYPE,
             ref backdropType,
             sizeof(int));
+
+        if (hr != 0)
+        {
+            // Jeśli system zgłosił błąd przy włączaniu Mica, wycofujemy się do jednolitego tła
+            bool isDark = IsDarkTheme();
+            window.Background = isDark ? DarkWindowBackground : LightWindowBackground;
+        }
     }
 
     public static void UpdateTitleBarTheme(Window window)

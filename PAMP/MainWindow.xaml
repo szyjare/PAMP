@@ -8,7 +8,7 @@
         Title="PAMP Launcher" Height="410" Width="580" 
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         Icon="/pamp_icon.ico">
 

@@ -3,7 +3,7 @@
         xmlns:local="clr-namespace:PAMP"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{local:Loc logsTitle}" Height="600" Width="800"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}">
     <Grid Margin="12">
         <Grid.RowDefinitions>

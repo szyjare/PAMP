@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="{local:Loc compManagerTitle}" Height="580" Width="680"
         WindowStartupLocation="CenterOwner"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         Icon="/pamp_icon.ico">
 

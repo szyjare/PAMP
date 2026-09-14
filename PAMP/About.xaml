@@ -8,7 +8,7 @@
         Title="{local:Loc aboutTitle}" Height="300" Width="400"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="Transparent"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}">
     <Grid>
         <Image HorizontalAlignment="Center" Height="85" VerticalAlignment="Top" Width="190" Source="/pamp_logo_min.png" Stretch="Uniform" Margin="0,15,0,0"/>
