@@ -48,3 +48,79 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+var
+  DownloadPage: TDownloadWizardPage;
+  DotNetNeeded: Boolean;
+
+function IsDotNet10DesktopInstalled: Boolean;
+var
+  FindRec: TFindRec;
+begin
+  Result := False;
+  if FindFirst(ExpandConstant('{commonpf64}\dotnet\shared\Microsoft.WindowsDesktop.App\10.*'), FindRec) then
+  begin
+    try
+      Result := True;
+    finally
+      FindClose(FindRec);
+    end;
+  end;
+end;
+
+procedure InitializeWizard;
+begin
+  // Jeśli PAMP skompilowano w trybie self-contained, .NET 10 jest już wbudowany w PAMP.exe
+  if not FileExists(ExpandConstant('{src}\..\publish\PAMP.dll')) then
+    DotNetNeeded := False
+  else
+    DotNetNeeded := not IsDotNet10DesktopInstalled;
+
+  if DotNetNeeded then
+  begin
+    DownloadPage := CreateDownloadPage(SetupMessage(msgWizardPreparing), SetupMessage(msgPreparingDesc), nil);
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  ErrorCode: Integer;
+begin
+  Result := True;
+
+  if (CurPageID = wpReady) and DotNetNeeded then
+  begin
+    DownloadPage.Clear;
+    DownloadPage.Add('https://aka.ms/dotnet/10.0/windowsdesktop-runtime-win-x64.exe', 'dotnet10-runtime-installer.exe', '');
+    DownloadPage.Show;
+    try
+      try
+        DownloadPage.Download;
+        Result := True;
+      except
+        if DownloadPage.AbortedByUser then
+        begin
+          Log('Download aborted by user.');
+          Result := False;
+        end
+        else
+        begin
+          SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+          Result := False;
+        end;
+      end;
+    finally
+      DownloadPage.Hide;
+    end;
+
+    if Result then
+    begin
+      WizardForm.StatusLabel.Caption := 'Instalowanie Microsoft .NET Desktop Runtime 10...';
+      if not Exec(ExpandConstant('{tmp}\dotnet10-runtime-installer.exe'), '/install /quiet /norestart', '', SW_SHOW, ewWaitUntilTerminated, ErrorCode) then
+      begin
+        SuppressibleMsgBox('Nie udalo sie zainstalowac .NET 10. Pobierz go recznie ze strony Microsoftu.', mbError, MB_OK, IDOK);
+      end;
+    end;
+  end;
+end;

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Builds and packages PAMP v1.2.0 release (Portable ZIP + Inno Setup Installer).
 #>
@@ -57,7 +57,7 @@ $isccPaths = @(
     "iscc.exe",
     "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
     "C:\Program Files\Inno Setup 6\ISCC.exe",
-    "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe"
+    (Join-Path $env:LOCALAPPDATA "Programs\Inno Setup 6\ISCC.exe")
 )
 
 $iscc = $null
