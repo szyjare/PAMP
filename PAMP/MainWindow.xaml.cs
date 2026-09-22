@@ -277,6 +277,11 @@ public partial class MainWindow : Window
                 string template = TranslationSource.Instance["updateBannerNewVersion"] ?? "Dostępna nowa wersja: PAMP v{0}!";
                 TxtBannerUpdateMessage.Text = string.Format(template, update.Version);
                 BannerUpdate.Visibility = Visibility.Visible;
+
+                if (update.IsMock)
+                {
+                    new UpdateDialog(this, update, _serverService).ShowDialog();
+                }
             }
         }
         catch { }

@@ -54,7 +54,8 @@ public sealed class UpdateService
                 SelectedAssetName = isInst ? "PAMP-Setup-1.3.0-mock.exe" : "PAMP-v1.3.0-mock.zip",
                 SizeBytes = 2674435,
                 IsInstaller = isInst,
-                IsSelfContained = isSelf
+                IsSelfContained = isSelf,
+                IsMock = true
             };
         }
 
@@ -183,6 +184,29 @@ public sealed class UpdateService
         // 1. Download asset with progress
         string downloadingText = TranslationSource.Instance["updateDownloading"] ?? "Pobieranie aktualizacji...";
         progress.Report(new InstallProgress(downloadingText, 0));
+
+        if (update.IsMock)
+        {
+            long mockTotal = 25 * 1024 * 1024; // 25 MB
+            for (int i = 0; i <= 100; i += 5)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await Task.Delay(75, cancellationToken);
+                double mbRead = (mockTotal * (i / 100.0)) / 1048576.0;
+                double mbTotal = mockTotal / 1048576.0;
+                progress.Report(new InstallProgress($"{downloadingText} {i}% ({mbRead:0.0} / {mbTotal:0.0} MB)", i));
+            }
+
+            string mockFinishedText = TranslationSource.Instance["updateApplying"] ?? "Gotowe!";
+            progress.Report(new InstallProgress(mockFinishedText, 100));
+
+            MessageBox.Show(
+                "Test pobierania i mechanizmu aktualizacji (v1.3.0 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.",
+                "PAMP — Test Aktualizacji (Mock)",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
 
         using (var response = await _httpClient.GetAsync(update.SelectedAssetUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
         {

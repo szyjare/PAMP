@@ -52,4 +52,5 @@ public class UpdatePackageInfo
     public required long SizeBytes { get; init; }
     public required bool IsInstaller { get; init; }
     public required bool IsSelfContained { get; init; }
+    public bool IsMock { get; init; } = false;
 }
