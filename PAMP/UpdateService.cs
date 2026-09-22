@@ -30,6 +30,34 @@ public sealed class UpdateService
 
     public async Task<UpdatePackageInfo?> CheckForUpdatesAsync(bool force = false, CancellationToken cancellationToken = default)
     {
+        // Obsługa testowego mocka aktualizacji (flaga --mock-update lub zmienna środowiskowa PAMP_MOCK_UPDATE=1)
+        bool isMock = Environment.GetCommandLineArgs().Any(arg =>
+            string.Equals(arg, "--mock-update", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(arg, "-mock-update", StringComparison.OrdinalIgnoreCase)) ||
+            Environment.GetEnvironmentVariable("PAMP_MOCK_UPDATE") == "1";
+
+        if (isMock)
+        {
+            bool isInst = IsRunningInstalled();
+            bool isSelf = IsRunningSelfContained();
+            string mockAssetUrl = isInst
+                ? "https://github.com/szyjare/PAMP/releases/download/v1.2.1/PAMP-Setup-1.2.1.exe"
+                : "https://github.com/szyjare/PAMP/releases/download/v1.2.1/PAMP-v1.2.1-win-x64-portable.zip";
+
+            return new UpdatePackageInfo
+            {
+                Version = "1.3.0",
+                Title = "PAMP v1.3.0 — Wydanie testowe (Mock Update)",
+                Changelog = "## 🚀 Co nowego w PAMP v1.3.0:\n\n- Wbudowany mechanizm sprawdzania i instalowania aktualizacji (in-app updater)\n- Automatyczna detekcja wydań z oficjalnego API GitHub Releases\n- Obsługa wersji instalacyjnej (Inno Setup) oraz przenośnej (Portable ZIP)\n- Pasek postępu pobierania w czasie rzeczywistym\n- Dedykowane okno dialogowe z pełnym changelogiem\n- Usprawnienia stabilności i wydajności",
+                ReleaseUrl = "https://github.com/szyjare/PAMP/releases",
+                SelectedAssetUrl = mockAssetUrl,
+                SelectedAssetName = isInst ? "PAMP-Setup-1.3.0-mock.exe" : "PAMP-v1.3.0-mock.zip",
+                SizeBytes = 2674435,
+                IsInstaller = isInst,
+                IsSelfContained = isSelf
+            };
+        }
+
         if (!force)
         {
             if (!App.Settings.AutoCheckUpdates) return null;
