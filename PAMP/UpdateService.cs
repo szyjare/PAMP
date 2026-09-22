@@ -197,12 +197,10 @@ public sealed class UpdateService
                 progress.Report(new InstallProgress($"{downloadingText} {i}% ({mbRead:0.0} / {mbTotal:0.0} MB)", i));
             }
 
-            string mockFinishedText = TranslationSource.Instance["updateApplying"] ?? "Gotowe!";
-            progress.Report(new InstallProgress(mockFinishedText, 100));
-
+            string msg = TranslationSource.Instance["updateMockSuccessMessage"] ?? "Test pobierania i mechanizmu aktualizacji (v1.3.0 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.";
             MessageBox.Show(
-                "Test pobierania i mechanizmu aktualizacji (v1.3.0 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.",
-                "PAMP — Test Aktualizacji (Mock)",
+                msg,
+                "PAMP — Mock Update",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
             return;
@@ -264,7 +262,15 @@ public sealed class UpdateService
             });
 
             // Shutdown PAMP so installer can overwrite files
-            Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (Window w in Application.Current.Windows)
+                {
+                    try { w.Hide(); } catch { }
+                }
+                Application.Current.Shutdown();
+            });
+            _ = Task.Delay(2000).ContinueWith(_ => Environment.Exit(0));
         }
         else
         {
@@ -309,7 +315,15 @@ public sealed class UpdateService
             });
 
             // Shutdown PAMP so the script can copy files
-            Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown());
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (Window w in Application.Current.Windows)
+                {
+                    try { w.Hide(); } catch { }
+                }
+                Application.Current.Shutdown();
+            });
+            _ = Task.Delay(2000).ContinueWith(_ => Environment.Exit(0));
         }
     }
 

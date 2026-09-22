@@ -97,5 +97,7 @@
 	"updateViewOnGithub": "View release on GitHub",
 	"updateBannerNewVersion": "New version available: PAMP v{0}!",
 	"updateBannerBtn": "Update",
+	"updateBtnCancel": "Cancel",
+	"updateMockSuccessMessage": "Update download and mechanism test (v1.3.0 Mock) completed successfully!\n\nThe progress bar, downloaded megabytes counter, and dialog handling work properly.",
 	"msgCantConnectToUpdateServer": "Could not connect to update server."
 }

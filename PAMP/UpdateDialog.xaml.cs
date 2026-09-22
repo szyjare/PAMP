@@ -46,7 +46,8 @@ public partial class UpdateDialog : Window
 
         BtnInstall.IsEnabled = false;
         BtnSkip.IsEnabled = false;
-        BtnLater.IsEnabled = false;
+        BtnLater.Content = TranslationSource.Instance["updateBtnCancel"] ?? "Anuluj";
+        BtnLater.IsEnabled = true;
         PanelProgress.Visibility = Visibility.Visible;
 
         _cts = new CancellationTokenSource();
@@ -67,25 +68,30 @@ public partial class UpdateDialog : Window
         try
         {
             await UpdateService.Instance.DownloadAndApplyUpdateAsync(_update, _serverService, progress, _cts.Token);
+
+            if (_update.IsMock)
+            {
+                Close();
+            }
         }
         catch (OperationCanceledException)
         {
-            _isUpdating = false;
-            BtnInstall.IsEnabled = true;
-            BtnSkip.IsEnabled = true;
-            BtnLater.IsEnabled = true;
-            PanelProgress.Visibility = Visibility.Collapsed;
+            TxtProgressStatus.Text = "";
+            ProgressBarUpdate.Value = 0;
         }
         catch (Exception ex)
+        {
+            string errorPrefix = TranslationSource.Instance["updateCheckError"] ?? "Błąd aktualizacji: ";
+            MessageBox.Show(this, $"{errorPrefix}{ex.Message}", TranslationSource.Instance["pampWarning"] ?? "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
         {
             _isUpdating = false;
             BtnInstall.IsEnabled = true;
             BtnSkip.IsEnabled = true;
+            BtnLater.Content = TranslationSource.Instance["updateBtnLater"] ?? "Przypomnij później";
             BtnLater.IsEnabled = true;
             PanelProgress.Visibility = Visibility.Collapsed;
-
-            string errorPrefix = TranslationSource.Instance["updateCheckError"] ?? "Błąd aktualizacji: ";
-            MessageBox.Show(this, $"{errorPrefix}{ex.Message}", TranslationSource.Instance["pampWarning"] ?? "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -100,7 +106,12 @@ public partial class UpdateDialog : Window
 
     private void BtnLater_Click(object sender, RoutedEventArgs e)
     {
-        if (_isUpdating) return;
+        if (_isUpdating)
+        {
+            _cts?.Cancel();
+            return;
+        }
+
         Close();
     }
 
@@ -116,13 +127,8 @@ public partial class UpdateDialog : Window
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-        if (_isUpdating)
-        {
-            e.Cancel = true;
-            return;
-        }
-
         _cts?.Cancel();
+        _isUpdating = false;
         base.OnClosing(e);
     }
 }
