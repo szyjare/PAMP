@@ -15,8 +15,11 @@ public partial class MainWindow : Window
     private static readonly BitmapImage IconOff = CreateFrozenBitmap("pack://application:,,,/Resources/off.png");
 
     private readonly ServerService _serverService = new();
+    public ServerService ServerService => _serverService;
+
     private readonly DispatcherTimer _statusTimer = new();
     private bool _isCheckingStatus;
+    private UpdatePackageInfo? _pendingUpdate;
 
     public MainWindow()
     {
@@ -55,6 +58,7 @@ public partial class MainWindow : Window
         ContentRendered -= MainWindow_ContentRendered;
         VCRedistHelper.CheckAndPrompt(this);
         FirstRunCheck();
+        _ = CheckUpdatesOnStartupAsync();
     }
 
     private void FirstRunCheck()
@@ -260,6 +264,60 @@ public partial class MainWindow : Window
         {
             _ = Task.Run(async () => await _serverService.StopAllAsync());
         }
+    }
+
+    private async Task CheckUpdatesOnStartupAsync()
+    {
+        try
+        {
+            var update = await UpdateService.Instance.CheckForUpdatesAsync(force: false);
+            if (update != null)
+            {
+                _pendingUpdate = update;
+                string template = TranslationSource.Instance["updateBannerNewVersion"] ?? "Dostępna nowa wersja: PAMP v{0}!";
+                TxtBannerUpdateMessage.Text = string.Format(template, update.Version);
+                BannerUpdate.Visibility = Visibility.Visible;
+            }
+        }
+        catch { }
+    }
+
+    private async void BtnCheckUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var update = await UpdateService.Instance.CheckForUpdatesAsync(force: true);
+            if (update != null)
+            {
+                _pendingUpdate = update;
+                new UpdateDialog(this, update, _serverService).ShowDialog();
+            }
+            else
+            {
+                string msg = string.Format(
+                    TranslationSource.Instance["updateUpToDate"] ?? "Masz najnowszą wersję PAMP ({0}).",
+                    ManifestLoader.GetAppVersion());
+                MessageBox.Show(this, msg, "PAMP", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            string errPrefix = TranslationSource.Instance["updateCheckError"] ?? "Błąd sprawdzania aktualizacji:\n";
+            MessageBox.Show(this, $"{errPrefix}{ex.Message}", TranslationSource.Instance["pampWarning"] ?? "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void BtnBannerUpdate_Click(object sender, RoutedEventArgs e)
+    {
+        if (_pendingUpdate != null)
+        {
+            new UpdateDialog(this, _pendingUpdate, _serverService).ShowDialog();
+        }
+    }
+
+    private void BtnBannerDismiss_Click(object sender, RoutedEventArgs e)
+    {
+        BannerUpdate.Visibility = Visibility.Collapsed;
     }
 
     private async void Exit_Click(object sender, RoutedEventArgs e)

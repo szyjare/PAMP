@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Height="230" Width="380"
+        Title="{local:Loc settingsTtile}" Height="360" Width="430"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -17,12 +17,13 @@
                 CornerRadius="8" 
                 Padding="16">
             <StackPanel Orientation="Vertical">
+                <!-- Język -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                     <TextBlock Text="🌐" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
                     <TextBlock Text="{local:Loc settingsLanguageHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <TextBlock Text="{local:Loc settingsLanguageSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                <TextBlock Text="{local:Loc settingsLanguageSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,10"/>
 
                 <ComboBox x:Name="CmbLanguage" Height="34" VerticalContentAlignment="Center" FontSize="13" SelectionChanged="CmbLanguage_SelectionChanged">
                     <ComboBoxItem Tag="pl">
@@ -39,7 +40,29 @@
                     </ComboBoxItem>
                 </ComboBox>
 
-                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,16,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
+                <Separator Margin="0,16,0,14" Background="{DynamicResource CardBorderBrush}"/>
+
+                <!-- Aktualizacje -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="🚀" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{local:Loc settingsUpdatesHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <CheckBox x:Name="ChkAutoCheckUpdates" 
+                          Content="{local:Loc settingsAutoCheckUpdates}" 
+                          FontSize="12" 
+                          Margin="0,6,0,10" 
+                          Checked="ChkAutoCheckUpdates_Changed" 
+                          Unchecked="ChkAutoCheckUpdates_Changed"/>
+
+                <Button x:Name="BtnCheckUpdatesNow" 
+                        Content="{local:Loc settingsCheckUpdatesNow}" 
+                        Height="30" 
+                        Padding="12,0" 
+                        HorizontalAlignment="Left" 
+                        Click="BtnCheckUpdatesNow_Click"/>
+
+                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,18,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
             </StackPanel>
         </Border>
     </Grid>

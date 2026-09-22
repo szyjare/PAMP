@@ -23,8 +23,8 @@
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Menu zintegrowane z tłem Mica -->
-        <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
+        <!-- Menu zintegrowane z tłem Mica oraz baner aktualizacji -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
             <Menu Background="Transparent" Padding="6,4">
                 <MenuItem Header="{local:Loc mnuLogs}" Click="BtnShowLogs_Click"/>
                 <MenuItem Header="{local:Loc mnuTools}">
@@ -39,11 +39,32 @@
                 </MenuItem>
                 <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click"/>
                 <MenuItem Header="{local:Loc mnuHelp}">
+                    <MenuItem Header="{local:Loc mnuHelpCheckUpdates}" Click="BtnCheckUpdates_Click"/>
+                    <Separator/>
                     <MenuItem Header="{local:Loc mnuHelpAbout}" Click="BtnShowAbout_Click"/>
                 </MenuItem>
                 <MenuItem Header="{local:Loc mnuExit}" Click="Exit_Click"/>
             </Menu>
-        </DockPanel>
+
+            <!-- Baner informujący o nowej wersji -->
+            <Border x:Name="BannerUpdate" 
+                    Background="{DynamicResource AccentBackgroundBrush}" 
+                    BorderBrush="{DynamicResource AccentBorderBrush}" 
+                    BorderThickness="0,1,0,1" 
+                    Padding="12,5" 
+                    Visibility="Collapsed">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🚀" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtBannerUpdateMessage" Text="Dostępna nowa wersja PAMP!" FontSize="12" FontWeight="Medium" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="BtnBannerUpdate" Content="{local:Loc updateBannerBtn}" Height="24" Padding="10,0" FontSize="11" Margin="0,0,6,0" Click="BtnBannerUpdate_Click"/>
+                        <Button x:Name="BtnBannerDismiss" Content="✕" Width="24" Height="24" Padding="0" FontSize="10" Click="BtnBannerDismiss_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
 
         <!-- Nagłówek: Logo oraz wersja PAMP -->
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,4">

@@ -9,6 +9,9 @@ namespace PAMP
 
         public string Language { get; set; } = "en";
         public bool FirstRun { get; set; } = true;
+        public bool AutoCheckUpdates { get; set; } = true;
+        public string? SkippedVersion { get; set; } = null;
+        public DateTime? LastUpdateCheckUtc { get; set; } = null;
 
         public static AppSettings Load()
         {
