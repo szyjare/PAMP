@@ -1,5 +1,5 @@
 #define MyAppName "PAMP!"
-#define MyAppVersion "1.2.1"
+#define MyAppVersion "1.2.2"
 #define MyAppPublisher "Szymon Jarecki"
 #define MyAppURL "https://github.com/szyjare/PAMP"
 #define MyAppExeName "PAMP.exe"
@@ -39,6 +39,7 @@ PrivilegesRequiredOverridesAllowed=dialog commandline
 [Languages]
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
