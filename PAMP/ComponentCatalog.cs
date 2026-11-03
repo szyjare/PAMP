@@ -39,8 +39,24 @@ public class VersionComparer : IComparer<string?>
         string cleanX = x.Trim().TrimStart('v', 'V');
         string cleanY = y.Trim().TrimStart('v', 'V');
 
-        var partsX = cleanX.Split(['.', '-', '_', '+'], StringSplitOptions.RemoveEmptyEntries);
-        var partsY = cleanY.Split(['.', '-', '_', '+'], StringSplitOptions.RemoveEmptyEntries);
+        // Usunięcie metadanych kompilacji (+...)
+        int plusIdxX = cleanX.IndexOf('+');
+        if (plusIdxX >= 0) cleanX = cleanX[..plusIdxX];
+        int plusIdxY = cleanY.IndexOf('+');
+        if (plusIdxY >= 0) cleanY = cleanY[..plusIdxY];
+
+        // Rozdzielenie wersji bazowej od tagu pre-release (np. "1.3.0" oraz "beta.1")
+        string[] splitX = cleanX.Split('-', 2);
+        string[] splitY = cleanY.Split('-', 2);
+
+        string baseX = splitX[0];
+        string baseY = splitY[0];
+        string? preX = splitX.Length > 1 ? splitX[1] : null;
+        string? preY = splitY.Length > 1 ? splitY[1] : null;
+
+        // 1. Porównanie części bazowych (oddzielonych kropkami)
+        var partsX = baseX.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        var partsY = baseY.Split('.', StringSplitOptions.RemoveEmptyEntries);
 
         int maxLen = Math.Max(partsX.Length, partsY.Length);
         for (int i = 0; i < maxLen; i++)
@@ -59,6 +75,48 @@ public class VersionComparer : IComparer<string?>
             else
             {
                 int cmp = string.Compare(px, py, StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+            }
+        }
+
+        // 2. Wersje bazowe są równe - sprawdzamy tag pre-release (SemVer 2.0)
+        // Wersja stabilna (bez pre-release) ma wyższy priorytet niż wersja pre-release
+        if (preX is null && preY is not null) return 1;  // X stabilne, Y pre-release -> X nowsze
+        if (preX is not null && preY is null) return -1; // X pre-release, Y stabilne -> Y nowsze
+        if (preX is null && preY is null) return 0;
+
+        // Obydwie wersje mają tag pre-release (np. "beta.1" vs "beta.2")
+        var prePartsX = preX!.Split(['.', '-', '_'], StringSplitOptions.RemoveEmptyEntries);
+        var prePartsY = preY!.Split(['.', '-', '_'], StringSplitOptions.RemoveEmptyEntries);
+
+        int maxPreLen = Math.Max(prePartsX.Length, prePartsY.Length);
+        for (int i = 0; i < maxPreLen; i++)
+        {
+            if (i >= prePartsX.Length) return -1;
+            if (i >= prePartsY.Length) return 1;
+
+            string ppx = prePartsX[i];
+            string ppy = prePartsY[i];
+
+            bool isNumX = int.TryParse(ppx, out int nx);
+            bool isNumY = int.TryParse(ppy, out int ny);
+
+            if (isNumX && isNumY)
+            {
+                int cmp = nx.CompareTo(ny);
+                if (cmp != 0) return cmp;
+            }
+            else if (isNumX && !isNumY)
+            {
+                return -1;
+            }
+            else if (!isNumX && isNumY)
+            {
+                return 1;
+            }
+            else
+            {
+                int cmp = string.Compare(ppx, ppy, StringComparison.OrdinalIgnoreCase);
                 if (cmp != 0) return cmp;
             }
         }
