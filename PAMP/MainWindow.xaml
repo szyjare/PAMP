@@ -5,12 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="PAMP Launcher" Height="410" Width="580" 
+        Title="PAMP Launcher" Height="465" Width="590" 
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         Icon="/pamp_icon.ico">
+
+    <Window.Resources>
+        <!-- Styl dla przycisków szybkich akcji - wyraźne przyciemnienie gdy nieaktywne -->
+        <Style x:Key="QuickActionButtonStyle" TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.32"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ServerToggleButtonStyle" TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Grid Margin="0,0,0,10">
         <Grid.RowDefinitions>
@@ -67,7 +85,7 @@
         </StackPanel>
 
         <!-- Nagłówek: Logo oraz wersja PAMP -->
-        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,4">
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,6">
             <Image Height="85" Width="190" Source="/pamp_logo_min.png" Stretch="Uniform" HorizontalAlignment="Center"/>
             <TextBlock x:Name="TxtPampVersion" 
                        FontSize="13" 
@@ -85,25 +103,25 @@
                 BorderThickness="1"
                 RenderOptions.BitmapScalingMode="HighQuality">
             <StackPanel VerticalAlignment="Center">
-                <Button x:Name="btnOpenLocalhost" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
+                <Button x:Name="btnOpenLocalhost" Style="{StaticResource QuickActionButtonStyle}" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/localhost.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnLocalhost}"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="btnOpenPma" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
+                <Button x:Name="btnOpenPma" Style="{StaticResource QuickActionButtonStyle}" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/pma.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnPMA}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenFolder_Click">
+                <Button Style="{StaticResource QuickActionButtonStyle}" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenFolder_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/www_dir.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnWWW}"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="btnOpenSqlShell" IsEnabled="False" Height="30" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
+                <Button x:Name="btnOpenSqlShell" Style="{StaticResource QuickActionButtonStyle}" IsEnabled="False" Height="30" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/sql_shell.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnSQL}"/>
@@ -113,7 +131,7 @@
         </Border>
 
         <!-- Karta Statusu Serwerów (Lewa kolumna - Dół) -->
-        <Border Grid.Row="2" Grid.Column="0" Margin="12,6,6,4" Padding="14,10" CornerRadius="8"
+        <Border Grid.Row="2" Grid.Column="0" Margin="12,6,6,6" Padding="14,12" CornerRadius="8"
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource CardBorderBrush}"
                 BorderThickness="1"
@@ -139,18 +157,18 @@
                 <Image x:Name="ApacheStatusIcon" Grid.Row="1" Grid.Column="0" Width="18" Height="18" Source="/Resources/off.png" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{local:Loc apache}" FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock x:Name="apachePortBlock" Grid.Row="1" Grid.Column="2" Text="..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,6"/>
-                <Button x:Name="apacheBtn" Grid.Row="1" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="apache" Click="BtnToggleServer_Click" Margin="0,4"/>
+                <Button x:Name="apacheBtn" Style="{StaticResource ServerToggleButtonStyle}" Grid.Row="1" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="apache" Click="BtnToggleServer_Click" Margin="0,4"/>
 
                 <!-- Wiersz MariaDB -->
                 <Image x:Name="DbStatusIcon" Grid.Row="2" Grid.Column="0" Width="18" Height="18" Source="/Resources/off.png" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{local:Loc mariadb}" FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Margin="0,6"/>
                 <TextBlock x:Name="dbPortBlock" Grid.Row="2" Grid.Column="2" Text="..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,6"/>
-                <Button x:Name="mysqlBtn" Grid.Row="2" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="mysql" Click="BtnToggleServer_Click" Margin="0,4"/>
+                <Button x:Name="mysqlBtn" Style="{StaticResource ServerToggleButtonStyle}" Grid.Row="2" Grid.Column="3" Content="{local:Loc start}" Width="80" Height="32" VerticalContentAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="mysql" Click="BtnToggleServer_Click" Margin="0,4"/>
             </Grid>
         </Border>
 
         <!-- Karta Wersji Komponentów (Prawa kolumna - Dół) -->
-        <Border Grid.Row="2" Grid.Column="1" Margin="6,6,12,4" Padding="12,8" CornerRadius="8"
+        <Border Grid.Row="2" Grid.Column="1" Margin="6,6,12,6" Padding="12,10" CornerRadius="8"
                 Background="{DynamicResource CardBackgroundBrush}"
                 BorderBrush="{DynamicResource CardBorderBrush}"
                 BorderThickness="1">

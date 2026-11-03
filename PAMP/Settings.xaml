@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Width="440" SizeToContent="Height" MinHeight="390"
+        Title="{local:Loc settingsTtile}" Height="415" Width="440"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -26,25 +26,25 @@
                 <TextBlock Text="{local:Loc settingsLanguageSubtitle}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,10"/>
 
                 <ComboBox x:Name="CmbLanguage" Height="34" VerticalContentAlignment="Center" FontSize="13" SelectionChanged="CmbLanguage_SelectionChanged">
-                    <ComboBoxItem Tag="pl">
-                        <StackPanel Orientation="Horizontal">
-                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                    <ComboBoxItem Tag="pl" Padding="6,3">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0" VerticalAlignment="Center">
                                 <TextBlock Text="PL" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </Border>
                             <TextBlock Text="Polski" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="en">
-                        <StackPanel Orientation="Horizontal">
-                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                    <ComboBoxItem Tag="en" Padding="6,3">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0" VerticalAlignment="Center">
                                 <TextBlock Text="EN" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </Border>
                             <TextBlock Text="English" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
-                    <ComboBoxItem Tag="uk">
-                        <StackPanel Orientation="Horizontal">
-                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                    <ComboBoxItem Tag="uk" Padding="6,3">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0" VerticalAlignment="Center">
                                 <TextBlock Text="UK" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </Border>
                             <TextBlock Text="Українська" VerticalAlignment="Center"/>
