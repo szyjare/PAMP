@@ -132,6 +132,7 @@ public partial class ComponentManagerWindow : Window
         UpdateSinglePackageButton(CmbPmaVersions, BtnInstallPma, installed?.PhpMyAdmin);
 
         UpdateCkeButton(installed);
+        UpdateLatestButton(installed);
     }
 
     private void UpdateSinglePackageButton(ComboBox cmb, Button btn, string? installedVersion)
@@ -192,6 +193,43 @@ public partial class ComponentManagerWindow : Window
         {
             BtnInstallCke.IsEnabled = true;
             BtnInstallCke.ToolTip = null;
+        }
+    }
+
+    private void UpdateLatestButton(ComponentVersions? installed)
+    {
+        if (installed == null)
+        {
+            BtnInstallLatest.IsEnabled = true;
+            BtnInstallLatest.ToolTip = null;
+            return;
+        }
+
+        var latestProfile = ComponentCatalog.GetLatestProfile();
+        bool allLatestInstalled = latestProfile.Count > 0 && latestProfile.All(item =>
+        {
+            string? installedVer = item.Package.Id switch
+            {
+                "php" => installed.Php,
+                "apache" => installed.Apache,
+                "mariadb" => installed.MariaDb,
+                "phpmyadmin" => installed.PhpMyAdmin,
+                _ => null
+            };
+
+            return !string.IsNullOrWhiteSpace(installedVer) &&
+                   string.Equals(NormalizeVersion(item.Version.Version), NormalizeVersion(installedVer), StringComparison.OrdinalIgnoreCase);
+        });
+
+        if (allLatestInstalled)
+        {
+            BtnInstallLatest.IsEnabled = false;
+            BtnInstallLatest.ToolTip = TranslationSource.Instance["compLatestAlreadyInstalled"];
+        }
+        else
+        {
+            BtnInstallLatest.IsEnabled = true;
+            BtnInstallLatest.ToolTip = null;
         }
     }
 
@@ -272,6 +310,85 @@ public partial class ComponentManagerWindow : Window
         finally
         {
             SetBusyState(false, BtnInstallCke);
+            PnlCkeProgress.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    public async void BtnInstallLatest_Click(object sender, RoutedEventArgs e)
+    {
+        if (_isBusy) return;
+
+        var result = MessageBox.Show(
+            TranslationSource.Instance["compInstallLatestConfirm"],
+            TranslationSource.Instance["compInstallLatestTitle"],
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+
+        if (result != MessageBoxResult.Yes) return;
+
+        // Ostrzeżenie przed zmianą / downgrade wersji MariaDB przy istniejących danych
+        var latestMaria = ComponentCatalog.GetLatestProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
+        if (latestMaria.Package != null && latestMaria.Version != null)
+        {
+            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            var currentManifest = ManifestLoader.Load();
+            string? currentMaria = currentManifest.Versions?.MariaDb;
+            if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
+            {
+                if (!string.Equals(NormalizeVersion(latestMaria.Version.Version), NormalizeVersion(currentMaria), StringComparison.OrdinalIgnoreCase))
+                {
+                    var warnRes = MessageBox.Show(
+                        TranslationSource.Instance["compMariaDbDowngradeWarn"],
+                        TranslationSource.Instance["pampWarning"],
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (warnRes != MessageBoxResult.Yes) return;
+                }
+            }
+        }
+
+        // Bezpieczne zatrzymanie usług przed aktualizacją binarek
+        if (_serverService.IsApacheRunning || _serverService.IsMariaDbRunning)
+        {
+            await _serverService.StopAllAsync();
+        }
+
+        SetBusyState(true, BtnInstallLatest);
+        PnlCkeProgress.Visibility = Visibility.Visible;
+
+        var progress = new Progress<InstallProgress>(p =>
+        {
+            TxtCkeStatus.Text = p.StatusText;
+            ProgCke.IsIndeterminate = p.IsIndeterminate;
+            if (!p.IsIndeterminate) ProgCke.Value = p.Percentage;
+        });
+
+        try
+        {
+            await _installerService.InstallLatestProfileAsync(progress);
+
+            LoadCurrentVersions();
+            PopulateAvailableVersions();
+            _onInstalledCallback?.Invoke();
+
+            MessageBox.Show(
+                TranslationSource.Instance["compInstallLatestSuccess"],
+                TranslationSource.Instance["pampSuccess"],
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Błąd instalacji najnowszych wersji: {ex.Message}",
+                TranslationSource.Instance["pampWarning"],
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+        finally
+        {
+            SetBusyState(false, BtnInstallLatest);
             PnlCkeProgress.Visibility = Visibility.Collapsed;
         }
     }
@@ -389,6 +506,7 @@ public partial class ComponentManagerWindow : Window
         _isBusy = busy;
         if (busy)
         {
+            BtnInstallLatest.IsEnabled = false;
             BtnInstallCke.IsEnabled = false;
             BtnInstallPhp.IsEnabled = false;
             BtnInstallApache.IsEnabled = false;
@@ -399,6 +517,7 @@ public partial class ComponentManagerWindow : Window
         }
         else
         {
+            BtnInstallLatest.Content = TranslationSource.Instance["compInstallLatestBtn"];
             BtnInstallCke.Content = TranslationSource.Instance["ckeProfileInstallBtn"];
             BtnInstallPhp.Content = TranslationSource.Instance["compInstallBtn"];
             BtnInstallApache.Content = TranslationSource.Instance["compInstallBtn"];

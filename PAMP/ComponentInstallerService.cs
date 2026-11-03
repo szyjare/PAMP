@@ -193,6 +193,32 @@ public sealed class ComponentInstallerService
         progress.Report(new InstallProgress("Pakiet CKE został pomyślnie zainstalowany!", 100));
     }
 
+    public async Task InstallLatestProfileAsync(
+        IProgress<InstallProgress> progress,
+        CancellationToken cancellationToken = default)
+    {
+        var items = ComponentCatalog.GetLatestProfile();
+        int total = items.Count;
+        int current = 0;
+
+        foreach (var (package, versionInfo) in items)
+        {
+            current++;
+            int stepIndex = current;
+            var subProgress = new Progress<InstallProgress>(p =>
+            {
+                double stepBase = (double)(stepIndex - 1) / total * 100.0;
+                double stepWeight = 100.0 / total;
+                double overallPercent = stepBase + (p.Percentage / 100.0 * stepWeight);
+                progress.Report(new InstallProgress($"[{stepIndex}/{total}] {package.Name}: {p.StatusText}", overallPercent, p.IsIndeterminate));
+            });
+
+            await DownloadAndInstallAsync(package, versionInfo, subProgress, cancellationToken);
+        }
+
+        progress.Report(new InstallProgress("Najnowsze pakiety zostały pomyślnie zainstalowane!", 100));
+    }
+
     private static string DetectSourceDirectory(string extractDir, string packageId)
     {
         try

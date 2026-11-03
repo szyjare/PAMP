@@ -286,6 +286,23 @@ public static class ComponentCatalog
 
         return list;
     }
+
+    public static IReadOnlyList<(ComponentPackage Package, ComponentVersionInfo Version)> GetLatestProfile()
+    {
+        var list = new List<(ComponentPackage, ComponentVersionInfo)>();
+
+        foreach (var pkg in Packages)
+        {
+            // Pierwszy element w pkg.Versions to zawsze najnowsza wersja według VersionComparer
+            var latestVer = pkg.Versions.FirstOrDefault();
+            if (latestVer != null)
+            {
+                list.Add((pkg, latestVer));
+            }
+        }
+
+        return list;
+    }
 }
 
 public class RemoteManifestDto
@@ -332,4 +349,3 @@ public class RemoteComponentItemDto
     [JsonPropertyName("notes")]
     public string? Notes { get; set; }
 }
-

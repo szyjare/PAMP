@@ -102,5 +102,11 @@
 	"msgCantConnectToUpdateServer": "Nie można połączyć się z serwerem aktualizacji.",
 	"msgDbWipingInProgress": "Trwa czyszczenie i inicjalizacja bazy danych...",
 	"msgMariaDbIncompatiblePrompt": "Serwer MariaDB nie mógł wystartować. Może to wynikać z niezgodności danych bazy (np. po zmianie lub downgrade wersji MariaDB).\n\nCzy chcesz teraz wyczyścić (zresetować) bazę danych, aby utworzyć kompatybilną strukturę i spróbować uruchomić ją ponownie?\n\nUwaga: dotychczasowe bazy danych zostaną usunięte.",
-	"compMariaDbDowngradeWarn": "Zmiana lub downgrade wersji MariaDB może uniemożliwić uruchomienie serwera ze względu na niezgodność formatu plików bazy (InnoDB). W takim przypadku może być konieczne wyczyszczenie bazy danych z menu Narzędzia.\n\nCzy chcesz kontynuować instalację wybranej wersji?"
+	"compMariaDbDowngradeWarn": "Zmiana lub downgrade wersji MariaDB może uniemożliwić uruchomienie serwera ze względu na niezgodność formatu plików bazy (InnoDB). W takim przypadku może być konieczne wyczyszczenie bazy danych z menu Narzędzia.\n\nCzy chcesz kontynuować instalację wybranej wersji?",
+	"compVersionMixingWarning": "Uwaga: Ręczne mieszanie niestandardowych wersji komponentów może spowodować niestabilność lub błędy kompatybilności (np. modułów PHP z Apache lub plików baz danych MariaDB). PAMP nie ponosi odpowiedzialności za problemy wynikające z łączenia niekompatybilnych wersji.",
+	"compInstallLatestBtn": "Pobierz najnowsze wersje",
+	"compInstallLatestTitle": "Pobieranie najnowszych wersji",
+	"compInstallLatestConfirm": "Czy chcesz pobrać i zainstalować najnowsze dostępne wersje wszystkich komponentów (Apache, PHP, MariaDB, phpMyAdmin)?\n\nTwoje bazy danych i pliki stron pozostaną nienaruszone.",
+	"compInstallLatestSuccess": "Najnowsze wersje komponentów zostały pomyślnie zainstalowane!",
+	"compLatestAlreadyInstalled": "Wszystkie najnowsze wersje komponentów są już zainstalowane."
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Height="360" Width="430"
+        Title="{local:Loc settingsTtile}" Width="440" SizeToContent="Height" MinHeight="390"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -28,19 +28,25 @@
                 <ComboBox x:Name="CmbLanguage" Height="34" VerticalContentAlignment="Center" FontSize="13" SelectionChanged="CmbLanguage_SelectionChanged">
                     <ComboBoxItem Tag="pl">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🇵🇱" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                                <TextBlock Text="PL" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Border>
                             <TextBlock Text="Polski" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem Tag="en">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🇬🇧" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                                <TextBlock Text="EN" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Border>
                             <TextBlock Text="English" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem Tag="uk">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🇺🇦" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <Border Background="{DynamicResource CardBorderBrush}" CornerRadius="3" Padding="6,1" Margin="0,0,10,0">
+                                <TextBlock Text="UK" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Border>
                             <TextBlock Text="Українська" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
@@ -68,7 +74,7 @@
                         HorizontalAlignment="Left" 
                         Click="BtnCheckUpdatesNow_Click"/>
 
-                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,18,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
+                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,20,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
             </StackPanel>
         </Border>
     </Grid>
