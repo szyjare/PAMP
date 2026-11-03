@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -208,6 +209,28 @@ public partial class ComponentManagerWindow : Window
 
         if (result != MessageBoxResult.Yes) return;
 
+        // Ostrzeżenie przed zmianą / downgrade wersji MariaDB przy istniejących danych
+        var ckeMaria = ComponentCatalog.GetCkeProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
+        if (ckeMaria.Package != null && ckeMaria.Version != null)
+        {
+            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            var currentManifest = ManifestLoader.Load();
+            string? currentMaria = currentManifest.Versions?.MariaDb;
+            if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
+            {
+                if (!string.Equals(NormalizeVersion(ckeMaria.Version.Version), NormalizeVersion(currentMaria), StringComparison.OrdinalIgnoreCase))
+                {
+                    var warnRes = MessageBox.Show(
+                        TranslationSource.Instance["compMariaDbDowngradeWarn"],
+                        TranslationSource.Instance["pampWarning"],
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (warnRes != MessageBoxResult.Yes) return;
+                }
+            }
+        }
+
         // Bezpieczne zatrzymanie usług przed aktualizacją binarek
         if (_serverService.IsApacheRunning || _serverService.IsMariaDbRunning)
         {
@@ -286,17 +309,37 @@ public partial class ComponentManagerWindow : Window
             else return;
         }
 
-        if (packageId is "mariadb" && _serverService.IsMariaDbRunning)
+        if (packageId is "mariadb")
         {
-            var res = MessageBox.Show(
-                "MariaDB jest aktualnie uruchomiona. Czy chcesz ją zatrzymać, aby zaktualizować komponenty?",
-                TranslationSource.Instance["pampWarning"], MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (res == MessageBoxResult.Yes)
+            if (_serverService.IsMariaDbRunning)
             {
-                await _serverService.StopMariaDbAsync();
+                var res = MessageBox.Show(
+                    "MariaDB jest aktualnie uruchomiona. Czy chcesz ją zatrzymać, aby zaktualizować komponenty?",
+                    TranslationSource.Instance["pampWarning"], MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (res == MessageBoxResult.Yes)
+                {
+                    await _serverService.StopMariaDbAsync();
+                }
+                else return;
             }
-            else return;
+
+            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            var currentManifest = ManifestLoader.Load();
+            string? currentMaria = currentManifest.Versions?.MariaDb;
+            if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
+            {
+                if (!string.Equals(NormalizeVersion(selectedVersion.Version), NormalizeVersion(currentMaria), StringComparison.OrdinalIgnoreCase))
+                {
+                    var warnRes = MessageBox.Show(
+                        TranslationSource.Instance["compMariaDbDowngradeWarn"],
+                        TranslationSource.Instance["pampWarning"],
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (warnRes != MessageBoxResult.Yes) return;
+                }
+            }
         }
 
         SetBusyState(true, btn);

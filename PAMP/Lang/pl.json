@@ -99,5 +99,8 @@
 	"updateBannerBtn": "Aktualizuj",
 	"updateBtnCancel": "Anuluj",
 	"updateMockSuccessMessage": "Test pobierania i mechanizmu aktualizacji (v1.3.0 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.",
-	"msgCantConnectToUpdateServer": "Nie można połączyć się z serwerem aktualizacji."
+	"msgCantConnectToUpdateServer": "Nie można połączyć się z serwerem aktualizacji.",
+	"msgDbWipingInProgress": "Trwa czyszczenie i inicjalizacja bazy danych...",
+	"msgMariaDbIncompatiblePrompt": "Serwer MariaDB nie mógł wystartować. Może to wynikać z niezgodności danych bazy (np. po zmianie lub downgrade wersji MariaDB).\n\nCzy chcesz teraz wyczyścić (zresetować) bazę danych, aby utworzyć kompatybilną strukturę i spróbować uruchomić ją ponownie?\n\nUwaga: dotychczasowe bazy danych zostaną usunięte.",
+	"compMariaDbDowngradeWarn": "Zmiana lub downgrade wersji MariaDB może uniemożliwić uruchomienie serwera ze względu na niezgodność formatu plików bazy (InnoDB). W takim przypadku może być konieczne wyczyszczenie bazy danych z menu Narzędzia.\n\nCzy chcesz kontynuować instalację wybranej wersji?"
 }

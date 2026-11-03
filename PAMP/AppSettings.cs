@@ -7,11 +7,30 @@ namespace PAMP
     {
         private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "conf", "settings.json");
 
-        public string Language { get; set; } = "en";
+        public string Language { get; set; } = DetectDefaultLanguage();
         public bool FirstRun { get; set; } = true;
         public bool AutoCheckUpdates { get; set; } = true;
         public string? SkippedVersion { get; set; } = null;
         public DateTime? LastUpdateCheckUtc { get; set; } = null;
+
+        public static string DetectDefaultLanguage()
+        {
+            try
+            {
+                var sysLang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
+                var langPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Lang", $"{sysLang}.json");
+                if (File.Exists(langPath))
+                {
+                    return sysLang;
+                }
+            }
+            catch
+            {
+                // Fallback do języka angielskiego w razie błędu
+            }
+
+            return "en";
+        }
 
         public static AppSettings Load()
         {
@@ -21,7 +40,12 @@ namespace PAMP
             try
             {
                 var json = File.ReadAllText(SettingsPath);
-                return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+                var settings = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+                if (string.IsNullOrWhiteSpace(settings.Language))
+                {
+                    settings.Language = DetectDefaultLanguage();
+                }
+                return settings;
             }
             catch
             {

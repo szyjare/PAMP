@@ -28,9 +28,9 @@
             <Menu Background="Transparent" Padding="6,4">
                 <MenuItem Header="{local:Loc mnuLogs}" Click="BtnShowLogs_Click"/>
                 <MenuItem Header="{local:Loc mnuTools}">
-                    <MenuItem Header="{local:Loc mnuToolsSQL}" Click="BtnOpenSqlShell_Click"/>
-                    <MenuItem Header="{local:Loc mnuToolsLocalhost}" Click="BtnOpenLocalhost_Click"/>
-                    <MenuItem Header="{local:Loc mnuToolsPMA}" Click="BtnOpenPma_Click"/>
+                    <MenuItem x:Name="menuToolsSQL" Header="{local:Loc mnuToolsSQL}" IsEnabled="False" Click="BtnOpenSqlShell_Click"/>
+                    <MenuItem x:Name="menuToolsLocalhost" Header="{local:Loc mnuToolsLocalhost}" IsEnabled="False" Click="BtnOpenLocalhost_Click"/>
+                    <MenuItem x:Name="menuToolsPMA" Header="{local:Loc mnuToolsPMA}" IsEnabled="False" Click="BtnOpenPma_Click"/>
                     <MenuItem Header="{local:Loc mnuToolsWWW}" Click="BtnOpenFolder_Click"/>
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsComponents}" FontWeight="Medium" Click="BtnShowComponents_Click"/>
@@ -85,13 +85,13 @@
                 BorderThickness="1"
                 RenderOptions.BitmapScalingMode="HighQuality">
             <StackPanel VerticalAlignment="Center">
-                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
+                <Button x:Name="btnOpenLocalhost" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenLocalhost_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/localhost.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnLocalhost}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
+                <Button x:Name="btnOpenPma" IsEnabled="False" Height="30" Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenPma_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/pma.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnPMA}"/>
@@ -103,7 +103,7 @@
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnWWW}"/>
                     </StackPanel>
                 </Button>
-                <Button Height="30" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
+                <Button x:Name="btnOpenSqlShell" IsEnabled="False" Height="30" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,0" Click="BtnOpenSqlShell_Click">
                     <StackPanel Orientation="Horizontal">
                         <Image VerticalAlignment="Center" Height="18" Width="18" Source="/Resources/sql_shell.png" Margin="0,0,10,0"/>
                         <TextBlock VerticalAlignment="Center" Text="{local:Loc btnSQL}"/>
@@ -177,5 +177,24 @@
                 <TextBlock x:Name="TxtPhpVersion" Grid.Row="3" Grid.Column="1" Text="-" HorizontalAlignment="Right" Margin="0,4"/>
             </Grid>
         </Border>
+
+        <!-- Modalny overlay operacji w toku (np. czyszczenie bazy) -->
+        <Grid x:Name="OverlayLoading" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2"
+              Background="#99000000"
+              Visibility="Collapsed">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
+                    Background="{DynamicResource CardBackgroundBrush}" 
+                    BorderBrush="{DynamicResource CardBorderBrush}" 
+                    BorderThickness="1" CornerRadius="10" Padding="28,24" MinWidth="320">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock x:Name="TxtLoadingMessage" 
+                               Text="{local:Loc msgDbWipingInProgress}" 
+                               FontSize="14" FontWeight="SemiBold" 
+                               TextAlignment="Center" Margin="0,0,0,16" 
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <ProgressBar IsIndeterminate="True" Height="6" Width="260" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

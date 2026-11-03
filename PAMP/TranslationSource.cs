@@ -26,6 +26,11 @@ namespace PAMP
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Lang", $"{langCode}.json");
 
+            if (!File.Exists(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Lang", "en.json");
+            }
+
             if (File.Exists(path))
             {
                 var json = File.ReadAllText(path);

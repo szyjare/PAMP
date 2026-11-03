@@ -67,6 +67,13 @@ public partial class MainWindow : Window
         {
             App.Settings.FirstRun = false;
             App.Settings.Save();
+
+            if (ManifestLoader.AreEssentialComponentsInstalled())
+            {
+                // Pakiety są już zainstalowane (np. przez inne konto Windows lub wersję portable)
+                return;
+            }
+
             var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
             compWindow.ShowDialog();
         }
@@ -106,6 +113,16 @@ public partial class MainWindow : Window
 
             UpdateServiceUI(ApacheStatusIcon, apacheBtn, apachePortBlock, apacheActive, apachePort);
             UpdateServiceUI(DbStatusIcon, mysqlBtn, dbPortBlock, mysqlActive, mysqlPort);
+
+            // Aktualizacja dostępności przycisków i pozycji menu
+            btnOpenLocalhost.IsEnabled = apacheActive;
+            menuToolsLocalhost.IsEnabled = apacheActive;
+
+            btnOpenSqlShell.IsEnabled = mysqlActive;
+            menuToolsSQL.IsEnabled = mysqlActive;
+
+            btnOpenPma.IsEnabled = apacheActive && mysqlActive;
+            menuToolsPMA.IsEnabled = apacheActive && mysqlActive;
         }
         finally
         {
@@ -148,7 +165,49 @@ public partial class MainWindow : Window
                     else
                     {
                         if (!VCRedistHelper.CheckAndPrompt(this)) return;
-                        await _serverService.StartMariaDbAsync();
+                        try
+                        {
+                            await _serverService.StartMariaDbAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+                            if (Directory.Exists(dataDir))
+                            {
+                                var result = MessageBox.Show(
+                                    $"{TranslationSource.Instance["msgMariaDbIncompatiblePrompt"]}\n\n{ex.Message}",
+                                    TranslationSource.Instance["pampWarning"],
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Warning);
+
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    _statusTimer.Stop();
+                                    OverlayLoading.Visibility = Visibility.Visible;
+                                    TxtLoadingMessage.Text = TranslationSource.Instance["msgDbWipingInProgress"];
+                                    try
+                                    {
+                                        bool resetSuccess = await _serverService.ResetDatabaseAsync();
+                                        if (resetSuccess)
+                                        {
+                                            await _serverService.StartMariaDbAsync();
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show(TranslationSource.Instance["msgCantDeleteDbData"], TranslationSource.Instance["pampWarning"], MessageBoxButton.OK, MessageBoxImage.Error);
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        OverlayLoading.Visibility = Visibility.Collapsed;
+                                        _statusTimer.Start();
+                                    }
+                                    return;
+                                }
+                            }
+
+                            throw;
+                        }
                     }
                     break;
             }
@@ -247,8 +306,18 @@ public partial class MainWindow : Window
             return;
 
         _statusTimer.Stop();
-        bool success = await _serverService.ResetDatabaseAsync();
-        _statusTimer.Start();
+        OverlayLoading.Visibility = Visibility.Visible;
+        TxtLoadingMessage.Text = TranslationSource.Instance["msgDbWipingInProgress"];
+        bool success = false;
+        try
+        {
+            success = await _serverService.ResetDatabaseAsync();
+        }
+        finally
+        {
+            OverlayLoading.Visibility = Visibility.Collapsed;
+            _statusTimer.Start();
+        }
 
         if (success)
             MessageBox.Show(TranslationSource.Instance["msgDbWiped"], TranslationSource.Instance["pampSuccess"], MessageBoxButton.OK, MessageBoxImage.Information);

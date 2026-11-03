@@ -37,6 +37,17 @@ public static class ManifestLoader
     private static readonly string LegacyAppManifestPath = Path.Combine(
         AppDomain.CurrentDomain.BaseDirectory, "manifest.json");
 
+    public static bool AreEssentialComponentsInstalled()
+    {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        bool php = File.Exists(Path.Combine(baseDir, "bin", "php", "php.exe"));
+        bool apache = File.Exists(Path.Combine(baseDir, "bin", "apache", "bin", "httpd.exe"));
+        bool maria = File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mariadbd.exe")) ||
+                     File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe"));
+
+        return (php && apache) || maria || File.Exists(LegacyAppManifestPath);
+    }
+
     public static AppManifest Load()
     {
         // 1. Sprawdź plik konfiguracji w AppData użytkownika
