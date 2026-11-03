@@ -14,7 +14,7 @@ public sealed class UpdateService
     public static UpdateService Instance => _instance;
 
     private readonly HttpClient _httpClient;
-    private const string GitHubApiUrl = "https://api.github.com/repos/szyjare/PAMP/releases/latest";
+    private const string GitHubApiUrl = "https://api.github.com/repos/szyjare/PAMP/releases?per_page=5";
     private const string FallbackManifestUrl = "https://repo.sjarecki.pl/api/pamp-manifest";
     private const string InnoAppId = "{C18F1202-986D-46F2-8116-F1A9346E8203}_is1";
 
@@ -79,7 +79,15 @@ public sealed class UpdateService
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync(cancellationToken);
-                release = JsonSerializer.Deserialize<GitHubReleaseDto>(json);
+                if (json.TrimStart().StartsWith("["))
+                {
+                    var list = JsonSerializer.Deserialize<List<GitHubReleaseDto>>(json);
+                    release = list?.FirstOrDefault(r => !r.Draft);
+                }
+                else
+                {
+                    release = JsonSerializer.Deserialize<GitHubReleaseDto>(json);
+                }
             }
         }
         catch

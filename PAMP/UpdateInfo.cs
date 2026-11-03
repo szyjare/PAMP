@@ -22,6 +22,9 @@ public class GitHubReleaseDto
     [JsonPropertyName("prerelease")]
     public bool Prerelease { get; set; }
 
+    [JsonPropertyName("draft")]
+    public bool Draft { get; set; }
+
     [JsonPropertyName("assets")]
     public List<GitHubAssetDto> Assets { get; set; } = [];
 }

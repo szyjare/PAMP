@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -14,7 +15,7 @@ public class AppManifest
 public class ComponentVersions
 {
     [JsonPropertyName("pamp")]
-    public string Pamp { get; set; } = "1.2.2";
+    public string Pamp { get; set; } = "1.3.0-beta.1";
 
     [JsonPropertyName("php")]
     public string Php { get; set; } = "—";
@@ -112,6 +113,15 @@ public static class ManifestLoader
 
     public static string GetAppVersion()
     {
+        var infoVer = typeof(AppManifest).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(infoVer))
+        {
+            return infoVer.Split('+')[0].Trim();
+        }
+
         var ver = typeof(AppManifest).Assembly.GetName().Version;
         return ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "1.2.2";
     }
