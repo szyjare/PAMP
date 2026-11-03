@@ -1,5 +1,6 @@
 <p align="center">
   <img src="PAMP/pamp_logo_min.png" alt="Logo PAMP" width="200" />
+
 </p>
 
 # PAMP! - Portable Apache MariaDB PHP Stack
@@ -8,10 +9,14 @@
 
 > 🇵🇱 **Polska wersja:** Kliknij tutaj, aby zobaczyć [dokumentację w języku polskim](README.pl.md).
 ---
+<p align="center">
+  <img width="566" height="403" alt="image" src="https://github.com/user-attachments/assets/b725e35a-a5e6-458c-926e-f388dabbb73b" />
+</p>
+
 **PAMP!** is a modern, lightweight, and portable server environment for Windows, built with C# 14 (.NET 10 WPF). It allows you to launch a local web server stack in seconds, with zero installation, full user isolation, and modular package management.
 
-> **Current version:** `1.2.1`  
-> Supported languages: **English** and **Polish** (selectable in Settings).
+> **Current version:** `1.2.2`  
+> Supported languages: **English**, **Polish**, and **Ukrainian** (selectable in Settings).
 
 ## ❓ Why create another stack?
 While XAMPP is historically popular, it suffers from several critical architectural flaws that PAMP resolves:

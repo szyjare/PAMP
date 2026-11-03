@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Builds and packages PAMP v1.2.1 release (Portable ZIP + Inno Setup Installer).
+    Builds and packages PAMP v1.2.2 release (Portable ZIP + Inno Setup Installer).
 #>
 param(
     [switch]$SelfContained = $false,
@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $rootDir = $PSScriptRoot
-$version = "1.2.1"
+$version = "1.2.2"
 $distDir = Join-Path $rootDir "dist"
 $publishDir = Join-Path $rootDir "publish"
 

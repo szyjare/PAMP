@@ -1,4 +1,4 @@
-    using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +28,12 @@ namespace PAMP
             InitializeComponent();
 
             string currentLang = App.Settings.Language;
-            CmbLanguage.SelectedIndex = currentLang == "en" ? 1 : 0;
+            CmbLanguage.SelectedItem = CmbLanguage.Items
+                .OfType<ComboBoxItem>()
+                .FirstOrDefault(item => item.Tag is string code &&
+                    string.Equals(code, currentLang, StringComparison.OrdinalIgnoreCase))
+                ?? CmbLanguage.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Tag as string == "en")
+                ?? CmbLanguage.Items.OfType<ComboBoxItem>().First();
             ChkAutoCheckUpdates.IsChecked = App.Settings.AutoCheckUpdates;
 
             _isInitialized = true;

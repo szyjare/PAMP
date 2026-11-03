@@ -8,10 +8,14 @@
 
 > 🇬🇧 **English version:** Click here to see the [English documentation](README.md).
 ---
+<p align="center">
+   <img width="566" height="403" alt="image" src="https://github.com/user-attachments/assets/0a2cfb60-cf3f-49fc-8bd4-339706d9b6ed" />
+</p>
+
 **PAMP!** to nowoczesne, lekkie i w pełni przenośne środowisko serwerowe dla systemu Windows, napisane w C# 14 (.NET 10 WPF). Umożliwia uruchomienie lokalnego serwera WWW w kilka sekund, bez konieczności instalacji, z pełną izolacją użytkowników oraz modułowym zarządzaniem pakietami.
 
-> **Obecna wersja:** `1.2.1`  
-> Obsługiwane języki: **Polski** oraz **Angielski** (wybór w Ustawieniach programu).
+> **Obecna wersja:** `1.2.2`  
+> Obsługiwane języki: **polski**, **angielski** oraz **ukraiński** (wybór w Ustawieniach programu).
 
 ## ❓ Dlaczego kolejny stack?
 Chociaż XAMPP jest historycznie najpopularniejszym rozwiązaniem, posiada kilka poważnych wad architektonicznych, które PAMP skutecznie rozwiązuje:
