@@ -32,6 +32,31 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
             <StackPanel x:Name="ComponentsContainer" Orientation="Vertical">
 
+                <!-- Baner braku uprawnień administratora -->
+                <Border x:Name="BannerNonAdmin" Margin="0,0,0,12" Padding="12,10" CornerRadius="8"
+                        Background="#1AFAA000"
+                        BorderBrush="#55FAA000"
+                        BorderThickness="1"
+                        Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="🔒" FontSize="18" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{local:Loc compAdminRequiredTitle}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{local:Loc compAdminRequiredDesc}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,2,8,0"/>
+                        </StackPanel>
+                        <Button x:Name="BtnRestartAdmin" Grid.Column="2"
+                                Content="{local:Loc compRestartAdminBtn}"
+                                Height="32" Padding="12,0" FontWeight="SemiBold"
+                                VerticalAlignment="Center"
+                                Click="BtnRestartAdmin_Click"/>
+                    </Grid>
+                </Border>
+
                 <!-- HERO CARD: Zestawy komponentów -->
                 <Border Margin="0,0,0,12" Padding="14" CornerRadius="8"
                         Background="{DynamicResource AccentBackgroundBrush}"

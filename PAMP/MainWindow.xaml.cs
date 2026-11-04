@@ -57,6 +57,15 @@ public partial class MainWindow : Window
     {
         ContentRendered -= MainWindow_ContentRendered;
         VCRedistHelper.CheckAndPrompt(this);
+
+        if (AdminHelper.IsAdministrator)
+        {
+            _ = Task.Run(() =>
+            {
+                ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin"));
+            });
+        }
+
         FirstRunCheck();
         _ = CheckUpdatesOnStartupAsync();
     }
@@ -71,6 +80,17 @@ public partial class MainWindow : Window
             if (ManifestLoader.AreEssentialComponentsInstalled())
             {
                 // Pakiety są już zainstalowane (np. przez inne konto Windows lub wersję portable)
+                return;
+            }
+
+            if (!AdminHelper.IsAdministrator)
+            {
+                MessageBox.Show(
+                    this,
+                    TranslationSource.Instance["compAdminRequiredFirstRun"] ?? "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora. Uruchom program PAMP jako administrator, aby przeprowadzić wstępną instalację.",
+                    TranslationSource.Instance["pampWarning"] ?? "Wymagane uprawnienia administratora",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 

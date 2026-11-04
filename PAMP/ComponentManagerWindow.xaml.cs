@@ -26,6 +26,11 @@ public partial class ComponentManagerWindow : Window
 
         Loaded += async (_, _) =>
         {
+            if (AdminHelper.IsAdministrator)
+            {
+                _ = Task.Run(() => ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")));
+            }
+
             TxtRepoStatus.Text = "repo.sjarecki.pl (synchronizacja...)";
             bool success = await ComponentCatalog.EnsureLoadedAsync();
             TxtRepoStatus.Text = success ? "✓ repo.sjarecki.pl" : "repo.sjarecki.pl (offline)";
@@ -123,6 +128,12 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
+        if (!AdminHelper.IsAdministrator)
+        {
+            ApplyNonAdminRestrictions();
+            return;
+        }
+
         var manifest = ManifestLoader.Load();
         var installed = manifest.Versions;
 
@@ -133,6 +144,42 @@ public partial class ComponentManagerWindow : Window
 
         UpdateCkeButton(installed);
         UpdateLatestButton(installed);
+    }
+
+    private void ApplyNonAdminRestrictions()
+    {
+        BannerNonAdmin.Visibility = Visibility.Visible;
+
+        string tooltipMsg = TranslationSource.Instance["compAdminRequiredTooltip"]
+            ?? "Instalacja i zmiana wersji komponentów wymaga uruchomienia programu z uprawnieniami administratora.";
+
+        BtnInstallLatest.IsEnabled = false;
+        BtnInstallLatest.ToolTip = tooltipMsg;
+
+        BtnInstallCke.IsEnabled = false;
+        BtnInstallCke.ToolTip = tooltipMsg;
+
+        BtnInstallPhp.IsEnabled = false;
+        BtnInstallPhp.ToolTip = tooltipMsg;
+
+        BtnInstallApache.IsEnabled = false;
+        BtnInstallApache.ToolTip = tooltipMsg;
+
+        BtnInstallMariaDb.IsEnabled = false;
+        BtnInstallMariaDb.ToolTip = tooltipMsg;
+
+        BtnInstallPma.IsEnabled = false;
+        BtnInstallPma.ToolTip = tooltipMsg;
+
+        CmbPhpVersions.IsEnabled = false;
+        CmbApacheVersions.IsEnabled = false;
+        CmbMariaDbVersions.IsEnabled = false;
+        CmbPmaVersions.IsEnabled = false;
+    }
+
+    private void BtnRestartAdmin_Click(object sender, RoutedEventArgs e)
+    {
+        AdminHelper.RestartAsAdministrator();
     }
 
     private void UpdateSinglePackageButton(ComboBox cmb, Button btn, string? installedVersion)
@@ -239,6 +286,17 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
+        if (!AdminHelper.IsAdministrator)
+        {
+            MessageBox.Show(
+                this,
+                TranslationSource.Instance["compAdminRequiredDesc"] ?? "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora.",
+                TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
         var result = MessageBox.Show(
             TranslationSource.Instance["ckeProfileConfirm"],
             TranslationSource.Instance["ckeProfileTitle"],
@@ -317,6 +375,17 @@ public partial class ComponentManagerWindow : Window
     public async void BtnInstallLatest_Click(object sender, RoutedEventArgs e)
     {
         if (_isBusy) return;
+
+        if (!AdminHelper.IsAdministrator)
+        {
+            MessageBox.Show(
+                this,
+                TranslationSource.Instance["compAdminRequiredDesc"] ?? "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora.",
+                TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
 
         var result = MessageBox.Show(
             TranslationSource.Instance["compInstallLatestConfirm"],
@@ -410,7 +479,18 @@ public partial class ComponentManagerWindow : Window
             _ => (null, null, null, null, null)
         };
 
-        if (cmb?.SelectedItem is not ComponentVersionInfo selectedVersion) return;
+        if (cmb?.SelectedItem is not ComponentVersionInfo selectedVersion) return;
+
+        if (!AdminHelper.IsAdministrator)
+        {
+            MessageBox.Show(
+                this,
+                TranslationSource.Instance["compAdminRequiredDesc"] ?? "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora.",
+                TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
 
         // Sprawdzenie czy powiązana usługa nie jest włączona
         if (packageId is "php" or "apache" && _serverService.IsApacheRunning)

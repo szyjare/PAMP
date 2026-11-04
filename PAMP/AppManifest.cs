@@ -32,9 +32,19 @@ public class ComponentVersions
 
 public static class ManifestLoader
 {
+    // Wspólny manifest w katalogu bin (dostępny dla wszystkich użytkowników)
+    private static readonly string SharedBinManifestPath = Path.Combine(
+        AppDomain.CurrentDomain.BaseDirectory, "bin", "installed_versions.json");
+
+    // Wspólny manifest w ProgramData (dla całego komputera)
+    private static readonly string CommonDataManifestPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PAMP", "installed_versions.json");
+
+    // Manifest w AppData bieżącego użytkownika
     private static readonly string UserManifestPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "installed_versions.json");
 
+    // Manifest w głównym katalogu aplikacji (wersja portable)
     private static readonly string LegacyAppManifestPath = Path.Combine(
         AppDomain.CurrentDomain.BaseDirectory, "manifest.json");
 
@@ -46,46 +56,34 @@ public static class ManifestLoader
         bool maria = File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mariadbd.exe")) ||
                      File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe"));
 
-        return (php && apache) || maria || File.Exists(LegacyAppManifestPath);
+        return (php && apache) || maria || File.Exists(SharedBinManifestPath) || File.Exists(CommonDataManifestPath) || File.Exists(LegacyAppManifestPath);
     }
 
     public static AppManifest Load()
     {
-        // 1. Sprawdź plik konfiguracji w AppData użytkownika
-        if (File.Exists(UserManifestPath))
+        // Sprawdzamy po kolei lokalizacje manifestów (priorytet mają pliki współdzielone)
+        string[] candidates = [SharedBinManifestPath, CommonDataManifestPath, UserManifestPath, LegacyAppManifestPath];
+
+        foreach (var path in candidates)
         {
-            try
+            if (File.Exists(path))
             {
-                string json = File.ReadAllText(UserManifestPath);
-                var manifest = JsonSerializer.Deserialize<AppManifest>(json);
-                if (manifest?.Versions != null)
+                try
                 {
-                    manifest.Versions.Pamp = GetAppVersion();
-                    FillMissingFromDetection(manifest.Versions);
-                    return manifest;
+                    string json = File.ReadAllText(path);
+                    var manifest = JsonSerializer.Deserialize<AppManifest>(json);
+                    if (manifest?.Versions != null)
+                    {
+                        manifest.Versions.Pamp = GetAppVersion();
+                        FillMissingFromDetection(manifest.Versions);
+                        return manifest;
+                    }
                 }
+                catch { }
             }
-            catch { }
         }
 
-        // 2. Sprawdź ewentualny manifest w katalogu aplikacji
-        if (File.Exists(LegacyAppManifestPath))
-        {
-            try
-            {
-                string json = File.ReadAllText(LegacyAppManifestPath);
-                var manifest = JsonSerializer.Deserialize<AppManifest>(json);
-                if (manifest?.Versions != null)
-                {
-                    manifest.Versions.Pamp = GetAppVersion();
-                    FillMissingFromDetection(manifest.Versions);
-                    return manifest;
-                }
-            }
-            catch { }
-        }
-
-        // 3. Fallback: wykryj wersje z obecnych plików binarnych
+        // Fallback: bezpośrednie wykrycie obecności i wersji z plików binarnych
         var fallback = new AppManifest();
         fallback.Versions.Pamp = GetAppVersion();
         TryDetectBinaries(fallback.Versions);
@@ -99,9 +97,31 @@ public static class ManifestLoader
             manifest.Versions.Pamp = GetAppVersion();
             string json = JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true });
 
-            Directory.CreateDirectory(Path.GetDirectoryName(UserManifestPath)!);
-            File.WriteAllText(UserManifestPath, json);
+            // 1. Zapisz w katalogu bin (wspólnym dla wszystkich użytkowników)
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(SharedBinManifestPath)!);
+                File.WriteAllText(SharedBinManifestPath, json);
+            }
+            catch { }
 
+            // 2. Zapisz w ProgramData (wspólnym dla całego komputera)
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(CommonDataManifestPath)!);
+                File.WriteAllText(CommonDataManifestPath, json);
+            }
+            catch { }
+
+            // 3. Zapisz w AppData bieżącego użytkownika
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(UserManifestPath)!);
+                File.WriteAllText(UserManifestPath, json);
+            }
+            catch { }
+
+            // 4. Zapisz w katalogu aplikacji (dla wersji portable)
             try
             {
                 File.WriteAllText(LegacyAppManifestPath, json);
@@ -182,11 +202,11 @@ public static class ManifestLoader
         }
 
         // phpMyAdmin
-        string pmaVersionFile = Path.Combine(baseDir, "bin", "phpmyadmin", "RELEASE_DATE");
-        if (File.Exists(pmaVersionFile))
+        string pmaDir = Path.Combine(baseDir, "bin", "phpmyadmin");
+        if (Directory.Exists(pmaDir))
         {
-            // Możliwa wersja w nazwach folderów lub package.json
-            string packageJson = Path.Combine(baseDir, "bin", "phpmyadmin", "package.json");
+            // 1. Sprawdź package.json
+            string packageJson = Path.Combine(pmaDir, "package.json");
             if (File.Exists(packageJson))
             {
                 try
@@ -194,10 +214,62 @@ public static class ManifestLoader
                     using var doc = JsonDocument.Parse(File.ReadAllText(packageJson));
                     if (doc.RootElement.TryGetProperty("version", out var verProp))
                     {
-                        v.PhpMyAdmin = verProp.GetString() ?? v.PhpMyAdmin;
+                        string? ver = verProp.GetString();
+                        if (!string.IsNullOrWhiteSpace(ver))
+                        {
+                            v.PhpMyAdmin = ver.Trim();
+                        }
                     }
                 }
                 catch { }
+            }
+
+            // 2. Jeśli nie odczytano z package.json, sprawdź plik RELEASE-DATE-*
+            if (v.PhpMyAdmin == "—" || string.IsNullOrWhiteSpace(v.PhpMyAdmin))
+            {
+                try
+                {
+                    var relFile = Directory.EnumerateFiles(pmaDir, "RELEASE-DATE-*").FirstOrDefault()
+                                  ?? Directory.EnumerateFiles(pmaDir, "RELEASE_DATE*").FirstOrDefault();
+                    if (relFile != null)
+                    {
+                        string fn = Path.GetFileName(relFile);
+                        string verFromFn = fn.Replace("RELEASE-DATE-", "", StringComparison.OrdinalIgnoreCase)
+                                             .Replace("RELEASE_DATE-", "", StringComparison.OrdinalIgnoreCase)
+                                             .Replace("RELEASE_DATE", "", StringComparison.OrdinalIgnoreCase)
+                                             .Trim();
+                        if (!string.IsNullOrWhiteSpace(verFromFn))
+                        {
+                            v.PhpMyAdmin = verFromFn;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            // 3. Fallback: sprawdź Version.php
+            if (v.PhpMyAdmin == "—" || string.IsNullOrWhiteSpace(v.PhpMyAdmin))
+            {
+                string versionPhp = Path.Combine(pmaDir, "libraries", "classes", "Version.php");
+                if (File.Exists(versionPhp))
+                {
+                    try
+                    {
+                        string content = File.ReadAllText(versionPhp);
+                        var match = System.Text.RegularExpressions.Regex.Match(content, @"VERSION\s*=\s*'([^']+)'");
+                        if (match.Success)
+                        {
+                            v.PhpMyAdmin = match.Groups[1].Value.Trim();
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            // 4. Jeśli nadal nieznana, ale folder istnieje i ma index.php
+            if ((v.PhpMyAdmin == "—" || string.IsNullOrWhiteSpace(v.PhpMyAdmin)) && File.Exists(Path.Combine(pmaDir, "index.php")))
+            {
+                v.PhpMyAdmin = "5.x";
             }
         }
     }

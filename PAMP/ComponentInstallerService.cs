@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -295,6 +296,28 @@ public sealed class ComponentInstallerService
         return extractDir;
     }
 
+    public static void EnsureDirectoryPermissions(string targetDir)
+    {
+        if (!Directory.Exists(targetDir)) return;
+
+        try
+        {
+            // Nadajemy pełne uprawnienia odczytu, zapisu i wykonywania dla grupy Użytkownicy (BUILTIN\Users: *S-1-5-32-545)
+            // Dzięki temu każdy użytkownik lokalny na tym komputerze widzi i może uruchamiać moduły
+            var psi = new ProcessStartInfo
+            {
+                FileName = "icacls.exe",
+                Arguments = $"\"{targetDir}\" /grant \"*S-1-5-32-545:(OI)(CI)M\" /t /c /q",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            using var proc = Process.Start(psi);
+            proc?.WaitForExit(4000);
+        }
+        catch { }
+    }
+
     private static void SafeReplaceDirectory(string sourceDir, string targetDir, string tempDir)
     {
         if (Directory.Exists(targetDir))
@@ -311,24 +334,15 @@ public sealed class ComponentInstallerService
             }
         }
 
-        Directory.CreateDirectory(Path.GetDirectoryName(targetDir)!);
+        Directory.CreateDirectory(targetDir);
 
-        bool sameVolume = string.Equals(Path.GetPathRoot(sourceDir), Path.GetPathRoot(targetDir), StringComparison.OrdinalIgnoreCase);
-        if (sameVolume)
-        {
-            try
-            {
-                Directory.Move(sourceDir, targetDir);
-                return;
-            }
-            catch
-            {
-                // Fallback do kopiowania w przypadku zablokowanych operacji move
-            }
-        }
-
+        // Kopiujemy pliki zamiast przenosić z folderu Temp użytkownika Admina,
+        // dzięki czemu nowe pliki dziedziczą uprawnienia katalogu docelowego bin
         CopyDirectory(sourceDir, targetDir);
         try { Directory.Delete(sourceDir, true); } catch { }
+
+        // Dodatkowo wymuszamy uprawnienia dla wszystkich kont użytkowników
+        EnsureDirectoryPermissions(targetDir);
     }
 
     private static void CopyDirectory(string source, string destination)

@@ -108,5 +108,10 @@
 	"compInstallLatestTitle": "Download Latest Versions",
 	"compInstallLatestConfirm": "Do you want to download and install the latest available versions of all components (Apache, PHP, MariaDB, phpMyAdmin)?\n\nYour databases and website files will remain intact.",
 	"compInstallLatestSuccess": "The latest component versions have been installed successfully!",
-	"compLatestAlreadyInstalled": "All latest component versions are already installed."
+	"compLatestAlreadyInstalled": "All latest component versions are already installed.",
+	"compAdminRequiredTitle": "Administrator Privileges Required",
+	"compAdminRequiredDesc": "Installing or changing component versions requires administrator privileges. Relaunch as administrator to make changes.",
+	"compRestartAdminBtn": "Relaunch as Admin",
+	"compAdminRequiredTooltip": "Installing and changing component versions requires running the program with administrator privileges.",
+	"compAdminRequiredFirstRun": "PAMP does not have essential components installed yet (Apache, PHP, MariaDB).\n\nAdministrator privileges are required to install them. Please run PAMP as administrator to complete the initial setup."
 }
