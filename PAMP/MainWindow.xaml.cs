@@ -63,26 +63,46 @@ public partial class MainWindow : Window
             _ = Task.Run(() =>
             {
                 ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin"));
+                string progData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PAMP");
+                ComponentInstallerService.EnsureDirectoryPermissions(progData);
             });
         }
 
         FirstRunCheck();
+
+        bool openComponents = Environment.GetCommandLineArgs().Any(arg =>
+            string.Equals(arg, "--manage-components", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(arg, "--components", StringComparison.OrdinalIgnoreCase));
+
+        if (openComponents)
+        {
+            var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
+            compWindow.ShowDialog();
+        }
+
         _ = CheckUpdatesOnStartupAsync();
     }
 
     private void FirstRunCheck()
     {
-        if (App.Settings.FirstRun)
+        bool isFirstRun = App.Settings.FirstRun;
+        bool hasAnyComponents = ManifestLoader.HasAnyComponentInstalled();
+
+        if (isFirstRun)
         {
             App.Settings.FirstRun = false;
             App.Settings.Save();
+        }
 
-            if (ManifestLoader.AreEssentialComponentsInstalled())
-            {
-                // Pakiety są już zainstalowane (np. przez inne konto Windows lub wersję portable)
-                return;
-            }
+        if (ManifestLoader.AreEssentialComponentsInstalled())
+        {
+            // Wszystkie wymagane pakiety są już zainstalowane
+            return;
+        }
 
+        // Jeśli to pierwsze uruchomienie LUB na komputerze w ogóle brak zainstalowanych komponentów PAMP:
+        if (isFirstRun || !hasAnyComponents)
+        {
             if (!AdminHelper.IsAdministrator)
             {
                 MessageBox.Show(

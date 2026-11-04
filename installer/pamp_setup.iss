@@ -1,5 +1,5 @@
 #define MyAppName "PAMP!"
-#define MyAppVersion "1.3.0-beta.2"
+#define MyAppVersion "1.3.0-beta.3"
 #define MyAppPublisher "Szymon Jarecki"
 #define MyAppURL "https://github.com/szyjare/PAMP"
 #define MyAppExeName "PAMP.exe"
@@ -48,6 +48,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; Nadaje uprawnienia zapisu dla folderu bin (aby pobieranie modułów działało nawet przy instalacji w Program Files)
 Name: "{app}\bin"; Permissions: users-modify
 Name: "{commonappdata}\PAMP"; Permissions: users-modify
+
+[UninstallDelete]
+; Czyszczenie pobranych pakietów i wspólnych danych po dezinstalacji programu
+Type: filesandordirs; Name: "{app}\bin"
+Type: filesandordirs; Name: "{app}\temp"
+Type: filesandordirs; Name: "{commonappdata}\PAMP"
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

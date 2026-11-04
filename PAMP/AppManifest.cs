@@ -15,7 +15,7 @@ public class AppManifest
 public class ComponentVersions
 {
     [JsonPropertyName("pamp")]
-    public string Pamp { get; set; } = "1.3.0-beta.2";
+    public string Pamp { get; set; } = "1.3.0-beta.3";
 
     [JsonPropertyName("php")]
     public string Php { get; set; } = "—";
@@ -40,8 +40,8 @@ public static class ManifestLoader
     private static readonly string CommonDataManifestPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PAMP", "installed_versions.json");
 
-    // Manifest w AppData bieżącego użytkownika
-    private static readonly string UserManifestPath = Path.Combine(
+    // Przestarzały manifest w AppData bieżącego użytkownika (usuwany, aby zapobiec rozbieżnościom między kontami)
+    private static readonly string StaleUserManifestPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "installed_versions.json");
 
     // Manifest w głównym katalogu aplikacji (wersja portable)
@@ -56,13 +56,36 @@ public static class ManifestLoader
         bool maria = File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mariadbd.exe")) ||
                      File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe"));
 
-        return (php && apache) || maria || File.Exists(SharedBinManifestPath) || File.Exists(CommonDataManifestPath) || File.Exists(LegacyAppManifestPath);
+        // Weryfikacja fizycznej obecności plików na dysku
+        return php && apache && maria;
+    }
+
+    public static bool HasAnyComponentInstalled()
+    {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        bool php = File.Exists(Path.Combine(baseDir, "bin", "php", "php.exe"));
+        bool apache = File.Exists(Path.Combine(baseDir, "bin", "apache", "bin", "httpd.exe"));
+        bool maria = File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mariadbd.exe")) ||
+                     File.Exists(Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe"));
+
+        return php || apache || maria;
     }
 
     public static AppManifest Load()
     {
-        // Sprawdzamy po kolei lokalizacje manifestów (priorytet mają pliki współdzielone)
-        string[] candidates = [SharedBinManifestPath, CommonDataManifestPath, UserManifestPath, LegacyAppManifestPath];
+        // 1. Usuń przestarzały manifest z AppData bieżącego użytkownika jeśli istnieje
+        try
+        {
+            if (File.Exists(StaleUserManifestPath))
+            {
+                File.Delete(StaleUserManifestPath);
+            }
+        }
+        catch { }
+
+        // 2. Szukamy wyłącznie w lokalizacjach współdzielonych
+        string[] candidates = [SharedBinManifestPath, CommonDataManifestPath, LegacyAppManifestPath];
+        AppManifest? loaded = null;
 
         foreach (var path in candidates)
         {
@@ -74,20 +97,23 @@ public static class ManifestLoader
                     var manifest = JsonSerializer.Deserialize<AppManifest>(json);
                     if (manifest?.Versions != null)
                     {
-                        manifest.Versions.Pamp = GetAppVersion();
-                        FillMissingFromDetection(manifest.Versions);
-                        return manifest;
+                        loaded = manifest;
+                        break;
                     }
                 }
                 catch { }
             }
         }
 
-        // Fallback: bezpośrednie wykrycie obecności i wersji z plików binarnych
-        var fallback = new AppManifest();
-        fallback.Versions.Pamp = GetAppVersion();
-        TryDetectBinaries(fallback.Versions);
-        return fallback;
+        var result = loaded ?? new AppManifest();
+        result.Versions ??= new ComponentVersions();
+        result.Versions.Pamp = GetAppVersion();
+
+        // 3. KLUCZOWE: Zawsze synchronizujemy z fizycznym stanem dysku!
+        // Jeśli pliki nie istnieją na dysku, wersja MUSI być "—"
+        ValidateAndSyncWithDisk(result.Versions);
+
+        return result;
     }
 
     public static void Save(AppManifest manifest)
@@ -95,6 +121,8 @@ public static class ManifestLoader
         try
         {
             manifest.Versions.Pamp = GetAppVersion();
+            ValidateAndSyncWithDisk(manifest.Versions);
+
             string json = JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true });
 
             // 1. Zapisz w katalogu bin (wspólnym dla wszystkich użytkowników)
@@ -108,20 +136,18 @@ public static class ManifestLoader
             // 2. Zapisz w ProgramData (wspólnym dla całego komputera)
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(CommonDataManifestPath)!);
+                string progDataDir = Path.GetDirectoryName(CommonDataManifestPath)!;
+                Directory.CreateDirectory(progDataDir);
                 File.WriteAllText(CommonDataManifestPath, json);
+
+                if (AdminHelper.IsAdministrator)
+                {
+                    ComponentInstallerService.EnsureDirectoryPermissions(progDataDir);
+                }
             }
             catch { }
 
-            // 3. Zapisz w AppData bieżącego użytkownika
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(UserManifestPath)!);
-                File.WriteAllText(UserManifestPath, json);
-            }
-            catch { }
-
-            // 4. Zapisz w katalogu aplikacji (dla wersji portable)
+            // 3. Zapisz w katalogu aplikacji (dla wersji portable)
             try
             {
                 File.WriteAllText(LegacyAppManifestPath, json);
@@ -143,18 +169,59 @@ public static class ManifestLoader
         }
 
         var ver = typeof(AppManifest).Assembly.GetName().Version;
-        return ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "1.2.2";
+        return ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "1.3.0";
     }
 
-    private static void FillMissingFromDetection(ComponentVersions v)
+    private static void ValidateAndSyncWithDisk(ComponentVersions v)
     {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         var detected = new ComponentVersions();
         TryDetectBinaries(detected);
 
-        if (v.Php == "—" || string.IsNullOrWhiteSpace(v.Php) || v.Php == "?.?.?") v.Php = detected.Php;
-        if (v.Apache == "—" || string.IsNullOrWhiteSpace(v.Apache) || v.Apache == "?.?.?") v.Apache = detected.Apache;
-        if (v.MariaDb == "—" || string.IsNullOrWhiteSpace(v.MariaDb) || v.MariaDb == "?.?.?") v.MariaDb = detected.MariaDb;
-        if (v.PhpMyAdmin == "—" || string.IsNullOrWhiteSpace(v.PhpMyAdmin) || v.PhpMyAdmin == "?.?.?") v.PhpMyAdmin = detected.PhpMyAdmin;
+        // PHP
+        string phpExe = Path.Combine(baseDir, "bin", "php", "php.exe");
+        if (!File.Exists(phpExe))
+        {
+            v.Php = "—";
+        }
+        else if (v.Php == "—" || string.IsNullOrWhiteSpace(v.Php) || v.Php == "?.?.?")
+        {
+            v.Php = detected.Php;
+        }
+
+        // Apache
+        string httpdExe = Path.Combine(baseDir, "bin", "apache", "bin", "httpd.exe");
+        if (!File.Exists(httpdExe))
+        {
+            v.Apache = "—";
+        }
+        else if (v.Apache == "—" || string.IsNullOrWhiteSpace(v.Apache) || v.Apache == "?.?.?")
+        {
+            v.Apache = detected.Apache;
+        }
+
+        // MariaDB
+        string mariaExe = Path.Combine(baseDir, "bin", "mariadb", "bin", "mariadbd.exe");
+        if (!File.Exists(mariaExe)) mariaExe = Path.Combine(baseDir, "bin", "mariadb", "bin", "mysqld.exe");
+        if (!File.Exists(mariaExe))
+        {
+            v.MariaDb = "—";
+        }
+        else if (v.MariaDb == "—" || string.IsNullOrWhiteSpace(v.MariaDb) || v.MariaDb == "?.?.?")
+        {
+            v.MariaDb = detected.MariaDb;
+        }
+
+        // phpMyAdmin
+        string pmaDir = Path.Combine(baseDir, "bin", "phpmyadmin");
+        if (!Directory.Exists(pmaDir) || !File.Exists(Path.Combine(pmaDir, "index.php")))
+        {
+            v.PhpMyAdmin = "—";
+        }
+        else if (v.PhpMyAdmin == "—" || string.IsNullOrWhiteSpace(v.PhpMyAdmin) || v.PhpMyAdmin == "?.?.?")
+        {
+            v.PhpMyAdmin = detected.PhpMyAdmin;
+        }
     }
 
     private static void TryDetectBinaries(ComponentVersions v)

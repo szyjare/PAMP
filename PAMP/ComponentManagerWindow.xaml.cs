@@ -179,7 +179,7 @@ public partial class ComponentManagerWindow : Window
 
     private void BtnRestartAdmin_Click(object sender, RoutedEventArgs e)
     {
-        AdminHelper.RestartAsAdministrator();
+        AdminHelper.RestartAsAdministrator("--manage-components");
     }
 
     private void UpdateSinglePackageButton(ComboBox cmb, Button btn, string? installedVersion)
@@ -192,6 +192,7 @@ public partial class ComponentManagerWindow : Window
         }
 
         bool isAlreadyInstalled = !string.IsNullOrWhiteSpace(installedVersion) &&
+                                  installedVersion != "—" &&
                                   string.Equals(NormalizeVersion(selectedVersion.Version), NormalizeVersion(installedVersion), StringComparison.OrdinalIgnoreCase);
 
         if (isAlreadyInstalled)
@@ -228,6 +229,7 @@ public partial class ComponentManagerWindow : Window
             };
 
             return !string.IsNullOrWhiteSpace(installedVer) &&
+                   installedVer != "—" &&
                    string.Equals(NormalizeVersion(item.Version.Version), NormalizeVersion(installedVer), StringComparison.OrdinalIgnoreCase);
         });
 
@@ -265,6 +267,7 @@ public partial class ComponentManagerWindow : Window
             };
 
             return !string.IsNullOrWhiteSpace(installedVer) &&
+                   installedVer != "—" &&
                    string.Equals(NormalizeVersion(item.Version.Version), NormalizeVersion(installedVer), StringComparison.OrdinalIgnoreCase);
         });
 

@@ -46,8 +46,8 @@ public sealed class UpdateService
 
             return new UpdatePackageInfo
             {
-                Version = "1.3.0-beta.2",
-                Title = "PAMP v1.3.0-beta.2 - Pre-release",
+                Version = "1.3.0-beta.3",
+                Title = "PAMP v1.3.0-beta.3 - Pre-release",
                 Changelog = "## What's new in PAMP v1.3.0-beta.1:\n\n- Built-in automatic update checker and in-app updater\n- Real-time download progress bar and dedicated release notes dialog\n- Support for both Inno Setup installer and Portable ZIP self-updating\n- Auto-detection of releases and pre-releases from GitHub API\n- Component Manager: Install latest components profile and version mixing warnings\n- Language support: Added Ukrainian localization and system language auto-detection\n- Visual and accessibility improvements for dark theme and disabled button states\n- General stability, layout, and performance enhancements",
                 ReleaseUrl = "https://github.com/szyjare/PAMP/releases",
                 SelectedAssetUrl = mockAssetUrl,
@@ -66,7 +66,7 @@ public sealed class UpdateService
             if (App.Settings.LastUpdateCheckUtc.HasValue)
             {
                 var elapsed = DateTime.UtcNow - App.Settings.LastUpdateCheckUtc.Value;
-                if (elapsed < TimeSpan.FromHours(24)) return null;
+                if (elapsed < TimeSpan.FromMinutes(15)) return null;
             }
         }
 
