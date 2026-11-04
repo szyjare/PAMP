@@ -113,5 +113,5 @@
 	"compAdminRequiredDesc": "Installing or changing component versions requires administrator privileges. Relaunch as administrator to make changes.",
 	"compRestartAdminBtn": "Relaunch as Admin",
 	"compAdminRequiredTooltip": "Installing and changing component versions requires running the program with administrator privileges.",
-	"compAdminRequiredFirstRun": "PAMP does not have essential components installed yet (Apache, PHP, MariaDB).\n\nAdministrator privileges are required to install them. Please run PAMP as administrator to complete the initial setup."
+	"compAdminRequiredFirstRun": "PAMP does not have essential components installed yet (Apache, PHP, MariaDB).\n\nAdministrator privileges are required to install them.\n\nDo you want to run PAMP as administrator now to open the Component Manager?"
 }

@@ -124,6 +124,13 @@ public sealed class ServerService : IDisposable
 
     public async Task StopApacheAsync()
     {
+        if (!IsApacheRunning)
+        {
+            _cachedApachePid = 0;
+            _cachedApachePort = 0;
+            return;
+        }
+
         if (_apacheProcess is { HasExited: false })
         {
             try
@@ -242,6 +249,13 @@ public sealed class ServerService : IDisposable
 
     public async Task StopMariaDbAsync()
     {
+        if (!IsMariaDbRunning)
+        {
+            _cachedMysqlPid = 0;
+            _cachedMysqlPort = 0;
+            return;
+        }
+
         string mysqlAdmin = GetMariaDbAdminExe();
 
         if (File.Exists(mysqlAdmin))

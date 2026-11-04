@@ -105,13 +105,18 @@ public partial class MainWindow : Window
         {
             if (!AdminHelper.IsAdministrator)
             {
-                MessageBox.Show(
+                var result = MessageBox.Show(
                     this,
-                    TranslationSource.Instance["compAdminRequiredFirstRun"] ?? "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora. Uruchom program PAMP jako administrator, aby przeprowadzić wstępną instalację.",
-                    TranslationSource.Instance["pampWarning"] ?? "Wymagane uprawnienia administratora",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                return;
+                    TranslationSource.Instance["compAdminRequiredFirstRun"] ?? "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora.\n\nCzy chcesz uruchomić program teraz jako administrator, aby otworzyć instalator komponentów?",
+                    TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    AdminHelper.RestartAsAdministrator("--manage-components");
+                    return;
+                }
             }
 
             var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
@@ -436,8 +441,15 @@ public partial class MainWindow : Window
 
     private async void Exit_Click(object sender, RoutedEventArgs e)
     {
-        await _serverService.StopAllAsync();
-        Close();
+        try
+        {
+            await _serverService.StopAllAsync();
+        }
+        catch { }
+        finally
+        {
+            Application.Current.Shutdown();
+        }
     }
 
     protected override void OnClosed(EventArgs e)
