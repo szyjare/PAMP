@@ -135,6 +135,18 @@ public sealed class ServerService : IDisposable
         {
             try
             {
+                // Najpierw zamykamy procesy potomne Apache (workery),
+                // aby zapobiec logowaniu "Parent process exited abruptly" przez proces potomny.
+                int parentPid = _apacheProcess.Id;
+                foreach (var p in Process.GetProcessesByName("httpd"))
+                {
+                    if (p.Id != parentPid)
+                    {
+                        try { p.Kill(); } catch { }
+                    }
+                    p.Dispose();
+                }
+
                 _apacheProcess.Kill(entireProcessTree: true);
                 await _apacheProcess.WaitForExitAsync();
             }
