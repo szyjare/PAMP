@@ -22,12 +22,17 @@ public partial class LogViewer : Window
     }
 
     private readonly DispatcherTimer _timer = new();
+    private readonly DispatcherTimer _searchDebounceTimer = new() { Interval = TimeSpan.FromMilliseconds(180) };
     private string _currentFilePath = string.Empty;
     private long _lastFileSize = 0;
     private readonly Dictionary<string, string> _logFiles = [];
     private readonly List<LogEntry> _allEntries = [];
     private string _currentFilterLevel = "all";
     private string _currentSearchQuery = string.Empty;
+    private bool _isInitialized = false;
+
+    private const int MaxInitialBytes = 150_000;
+    private const int MaxRetainedEntries = 1500;
 
     // Konsolowa czcionka o stałej szerokości
     private static readonly FontFamily ConsoleFont = new("Consolas, Cascadia Mono, Lucida Console, monospace");
@@ -68,8 +73,20 @@ public partial class LogViewer : Window
     public LogViewer()
     {
         InitializeComponent();
+        _isInitialized = true;
+        ComboLogLevelFilter.SelectedIndex = 0;
         InitializeLogs();
         SetupTimer();
+        SetupSearchDebounce();
+    }
+
+    private void SetupSearchDebounce()
+    {
+        _searchDebounceTimer.Tick += (_, _) =>
+        {
+            _searchDebounceTimer.Stop();
+            ApplyFilterToDocument();
+        };
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -104,13 +121,16 @@ public partial class LogViewer : Window
 
     private void ComboLogFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (!_isInitialized) return;
         if (ComboLogFiles.SelectedItem is string selectedName && _logFiles.TryGetValue(selectedName, out var filePath))
         {
             _currentFilePath = filePath;
             _lastFileSize = 0;
             _allEntries.Clear();
-            DocLogs.Blocks.Clear();
-            TxtLogStatus.Text = filePath;
+            if (DocLogs != null)
+                DocLogs.Blocks.Clear();
+            if (TxtLogStatus != null)
+                TxtLogStatus.Text = filePath;
 
             ReadLogUpdate(forceFullReload: true);
         }
@@ -118,6 +138,7 @@ public partial class LogViewer : Window
 
     private void ComboLogLevelFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (!_isInitialized) return;
         if (ComboLogLevelFilter.SelectedItem is ComboBoxItem item && item.Tag is string tag)
         {
             _currentFilterLevel = tag;
@@ -127,9 +148,11 @@ public partial class LogViewer : Window
 
     private void TxtSearchFilter_TextChanged(object sender, TextChangedEventArgs e)
     {
+        if (!_isInitialized) return;
         _currentSearchQuery = TxtSearchFilter.Text.Trim();
         TxtSearchPlaceholder.Visibility = string.IsNullOrEmpty(_currentSearchQuery) ? Visibility.Visible : Visibility.Collapsed;
-        ApplyFilterToDocument();
+        _searchDebounceTimer.Stop();
+        _searchDebounceTimer.Start();
     }
 
     private void BtnRefresh_Click(object sender, RoutedEventArgs e)
@@ -140,8 +163,10 @@ public partial class LogViewer : Window
     private void BtnClearView_Click(object sender, RoutedEventArgs e)
     {
         _allEntries.Clear();
-        DocLogs.Blocks.Clear();
-        TxtLineCount.Text = "0 wpisów";
+        if (DocLogs != null)
+            DocLogs.Blocks.Clear();
+        if (TxtLineCount != null)
+            TxtLineCount.Text = "0 wpisów";
     }
 
     private void BtnOpenInEditor_Click(object sender, RoutedEventArgs e)
@@ -161,9 +186,9 @@ public partial class LogViewer : Window
 
     private void ReadLogUpdate(bool forceFullReload = false)
     {
-        if (string.IsNullOrEmpty(_currentFilePath) || !File.Exists(_currentFilePath))
+        if (!_isInitialized || string.IsNullOrEmpty(_currentFilePath) || !File.Exists(_currentFilePath))
         {
-            if (forceFullReload)
+            if (forceFullReload && DocLogs != null)
             {
                 _allEntries.Clear();
                 DocLogs.Blocks.Clear();
@@ -180,7 +205,8 @@ public partial class LogViewer : Window
                     Foreground = (Brush)Application.Current.FindResource("TextSecondaryBrush")
                 });
                 DocLogs.Blocks.Add(emptyParagraph);
-                TxtLineCount.Text = "0 wpisów";
+                if (TxtLineCount != null)
+                    TxtLineCount.Text = "0 wpisów";
             }
             return;
         }
@@ -192,47 +218,84 @@ public partial class LogViewer : Window
             if (currentLength < _lastFileSize) _lastFileSize = 0;
             if (currentLength == _lastFileSize && !forceFullReload) return;
 
-            // Optymalizacja pamięciowa: jeśli plik jest ogromny przy pierwszym ładowaniu, odczytujemy ostatnie 150 KB
-            if (forceFullReload && currentLength > 150_000)
+            if (forceFullReload)
             {
-                fs.Seek(currentLength - 150_000, SeekOrigin.Begin);
-                using var initialSr = new StreamReader(fs, Encoding.Default);
-                initialSr.ReadLine(); // pomijamy pierwszą uciętą linię
-                _lastFileSize = fs.Position;
+                _allEntries.Clear();
+                if (currentLength > MaxInitialBytes)
+                {
+                    fs.Seek(currentLength - MaxInitialBytes, SeekOrigin.Begin);
+                    // Pomiń pierwszą uciętą linię czytając bajty do znaku nowej linii
+                    int b;
+                    while ((b = fs.ReadByte()) != -1 && b != '\n') { }
+                }
+                else
+                {
+                    fs.Seek(0, SeekOrigin.Begin);
+                }
             }
             else
             {
                 fs.Seek(_lastFileSize, SeekOrigin.Begin);
             }
 
-            using (var sr = new StreamReader(fs, Encoding.Default))
+            using var sr = new StreamReader(fs, Encoding.Default);
+            string? line;
+            bool isAccessLog = _currentFilePath.EndsWith("apache_access.log", StringComparison.OrdinalIgnoreCase);
+            bool isApacheError = _currentFilePath.EndsWith("apache_error.log", StringComparison.OrdinalIgnoreCase);
+            bool isMariaDb = _currentFilePath.EndsWith("mysql_error.log", StringComparison.OrdinalIgnoreCase);
+
+            var newEntries = new List<LogEntry>();
+
+            while ((line = sr.ReadLine()) != null)
             {
-                string? line;
-                bool isAccessLog = _currentFilePath.EndsWith("apache_access.log", StringComparison.OrdinalIgnoreCase);
-                bool isApacheError = _currentFilePath.EndsWith("apache_error.log", StringComparison.OrdinalIgnoreCase);
-                bool isMariaDb = _currentFilePath.EndsWith("mysql_error.log", StringComparison.OrdinalIgnoreCase);
+                if (string.IsNullOrWhiteSpace(line)) continue;
 
-                bool anyAppended = false;
+                LogEntry entry = ParseLine(line, isAccessLog, isApacheError, isMariaDb);
+                newEntries.Add(entry);
+            }
 
-                while ((line = sr.ReadLine()) != null)
+            _lastFileSize = currentLength;
+
+            if (newEntries.Count == 0 && !forceFullReload) return;
+
+            _allEntries.AddRange(newEntries);
+
+            // Bounded buffer: nie pozwalamy na nieskończony wzrost pamięci przy gigantycznych logach
+            if (_allEntries.Count > MaxRetainedEntries)
+            {
+                int removeCount = _allEntries.Count - MaxRetainedEntries;
+                _allEntries.RemoveRange(0, removeCount);
+                ApplyFilterToDocument();
+                return;
+            }
+
+            if (forceFullReload)
+            {
+                ApplyFilterToDocument();
+            }
+            else
+            {
+                bool anyAdded = false;
+                DocLogs.BeginInit();
+                try
                 {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-
-                    LogEntry entry = ParseLine(line, isAccessLog, isApacheError, isMariaDb);
-                    _allEntries.Add(entry);
-
-                    if (MatchesFilter(entry))
+                    foreach (var entry in newEntries)
                     {
-                        DocLogs.Blocks.Add(entry.Paragraph);
-                        anyAppended = true;
+                        if (MatchesFilter(entry))
+                        {
+                            DocLogs.Blocks.Add(entry.Paragraph);
+                            anyAdded = true;
+                        }
                     }
                 }
-
-                _lastFileSize = currentLength;
+                finally
+                {
+                    DocLogs.EndInit();
+                }
 
                 UpdateLineCountText();
 
-                if (anyAppended && ChkAutoScroll.IsChecked == true)
+                if (anyAdded && ChkAutoScroll.IsChecked == true)
                 {
                     RtbLogContent.Dispatcher.InvokeAsync(() =>
                     {
@@ -465,14 +528,24 @@ public partial class LogViewer : Window
 
     private void ApplyFilterToDocument()
     {
-        DocLogs.Blocks.Clear();
+        if (!_isInitialized || DocLogs == null) return;
 
-        foreach (var entry in _allEntries)
+        DocLogs.BeginInit();
+        try
         {
-            if (MatchesFilter(entry))
+            DocLogs.Blocks.Clear();
+
+            foreach (var entry in _allEntries)
             {
-                DocLogs.Blocks.Add(entry.Paragraph);
+                if (MatchesFilter(entry))
+                {
+                    DocLogs.Blocks.Add(entry.Paragraph);
+                }
             }
+        }
+        finally
+        {
+            DocLogs.EndInit();
         }
 
         UpdateLineCountText();
@@ -485,6 +558,7 @@ public partial class LogViewer : Window
 
     private void UpdateLineCountText()
     {
+        if (TxtLineCount == null || DocLogs == null) return;
         int visibleCount = DocLogs.Blocks.Count;
         int totalCount = _allEntries.Count;
         string template = TranslationSource.Instance["logsLinesCount"] ?? "Wyświetlono: {0} z {1} wpisów";
@@ -494,6 +568,7 @@ public partial class LogViewer : Window
     protected override void OnClosed(EventArgs e)
     {
         _timer.Stop();
+        _searchDebounceTimer.Stop();
         base.OnClosed(e);
 
         if (Owner != null)

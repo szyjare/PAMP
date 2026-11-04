@@ -310,7 +310,22 @@ public partial class MainWindow : Window
             MessageBox.Show(TranslationSource.Instance["msgDirectoryNotExisting"], TranslationSource.Instance["pampWarning"], MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
-    private void BtnShowLogs_Click(object sender, RoutedEventArgs e) => new LogViewer().Show();
+    private LogViewer? _logViewer;
+
+    private void BtnShowLogs_Click(object sender, RoutedEventArgs e)
+    {
+        if (_logViewer != null && _logViewer.IsLoaded)
+        {
+            if (_logViewer.WindowState == WindowState.Minimized)
+                _logViewer.WindowState = WindowState.Normal;
+            _logViewer.Activate();
+            return;
+        }
+
+        _logViewer = new LogViewer { Owner = this };
+        _logViewer.Closed += (_, _) => _logViewer = null;
+        _logViewer.Show();
+    }
 
     private void BtnShowAbout_Click(object sender, RoutedEventArgs e) => new About(this).ShowDialog();
 

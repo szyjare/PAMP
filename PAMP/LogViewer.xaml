@@ -20,7 +20,7 @@
                 <ComboBox x:Name="ComboLogFiles" Width="210" Height="32" VerticalContentAlignment="Center" SelectionChanged="ComboLogFiles_SelectionChanged"/>
 
                 <ComboBox x:Name="ComboLogLevelFilter" Width="150" Height="32" VerticalContentAlignment="Center" Margin="10,0,0,0" SelectionChanged="ComboLogLevelFilter_SelectionChanged">
-                    <ComboBoxItem Content="{local:Loc logsFilterAll}" Tag="all" IsSelected="True"/>
+                    <ComboBoxItem Content="{local:Loc logsFilterAll}" Tag="all"/>
                     <ComboBoxItem Content="{local:Loc logsFilterWarnErrors}" Tag="warn_error"/>
                     <ComboBoxItem Content="{local:Loc logsFilterErrors}" Tag="error"/>
                 </ComboBox>
