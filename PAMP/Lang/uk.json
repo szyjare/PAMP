@@ -114,5 +114,12 @@
 	"compRestartAdminBtn": "Запустити як адміністратор",
 	"compAdminRequiredTooltip": "Встановлення та зміна версій компонентів потребує запуску програми з правами адміністратора.",
 	"compAdminRequiredFirstRun": "У PAMP ще не встановлено основних компонентів (Apache, PHP, MariaDB).\n\nДля їх встановлення потрібні права адміністратора.\n\nБажаєте перезапустити PAMP від імені адміністратора зараз, щоб відкрити менеджер компонентів?",
-	"settingsIncludeBetaUpdates": "Отримувати попередні версії (бета)"
+	"settingsIncludeBetaUpdates": "Отримувати попередні версії (бета)",
+	"logsFilterAll": "Всі рівні",
+	"logsFilterWarnErrors": "Попередження та помилки",
+	"logsFilterErrors": "Тільки помилки",
+	"logsSearchPrompt": "Пошук у логах...",
+	"logsOpenInEditor": "Відкрити в редакторі",
+	"logsClearView": "Очистити вигляд",
+	"logsLinesCount": "Відображено: {0} з {1} записів"
 }

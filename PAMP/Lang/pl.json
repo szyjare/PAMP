@@ -114,5 +114,12 @@
 	"compRestartAdminBtn": "Uruchom jako administrator",
 	"compAdminRequiredTooltip": "Instalacja i zmiana wersji komponentów wymaga uruchomienia programu z uprawnieniami administratora.",
 	"compAdminRequiredFirstRun": "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora.\n\nCzy chcesz uruchomić program teraz jako administrator, aby otworzyć instalator komponentów?",
-	"settingsIncludeBetaUpdates": "Otrzymuj wersje przedpremierowe (beta)"
+	"settingsIncludeBetaUpdates": "Otrzymuj wersje przedpremierowe (beta)",
+	"logsFilterAll": "Wszystkie poziomy",
+	"logsFilterWarnErrors": "Ostrzeżenia i błędy",
+	"logsFilterErrors": "Tylko błędy",
+	"logsSearchPrompt": "Szukaj w logach...",
+	"logsOpenInEditor": "Otwórz w edytorze",
+	"logsClearView": "Wyczyść widok",
+	"logsLinesCount": "Wyświetlono: {0} z {1} wpisów"
 }
