@@ -113,5 +113,6 @@
 	"compAdminRequiredDesc": "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora. Uruchom program jako administrator, aby dokonać zmian.",
 	"compRestartAdminBtn": "Uruchom jako administrator",
 	"compAdminRequiredTooltip": "Instalacja i zmiana wersji komponentów wymaga uruchomienia programu z uprawnieniami administratora.",
-	"compAdminRequiredFirstRun": "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora.\n\nCzy chcesz uruchomić program teraz jako administrator, aby otworzyć instalator komponentów?"
+	"compAdminRequiredFirstRun": "PAMP nie posiada jeszcze zainstalowanych komponentów (Apache, PHP, MariaDB).\n\nDo ich zainstalowania wymagane są uprawnienia administratora.\n\nCzy chcesz uruchomić program teraz jako administrator, aby otworzyć instalator komponentów?",
+	"settingsIncludeBetaUpdates": "Otrzymuj wersje przedpremierowe (beta)"
 }

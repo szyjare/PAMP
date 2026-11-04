@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PAMP
 {
@@ -12,6 +13,31 @@ namespace PAMP
         public bool AutoCheckUpdates { get; set; } = true;
         public string? SkippedVersion { get; set; } = null;
         public DateTime? LastUpdateCheckUtc { get; set; } = null;
+
+        private bool? _includeBetaUpdates;
+
+        [JsonPropertyName("includeBetaUpdates")]
+        public bool? IncludeBetaUpdatesRaw
+        {
+            get => _includeBetaUpdates;
+            set => _includeBetaUpdates = value;
+        }
+
+        [JsonIgnore]
+        public bool IncludeBetaUpdates
+        {
+            get => _includeBetaUpdates ?? DetectDefaultIncludeBeta();
+            set => _includeBetaUpdates = value;
+        }
+
+        public static bool DetectDefaultIncludeBeta()
+        {
+            string ver = ManifestLoader.GetAppVersion();
+            return ver.Contains("beta", StringComparison.OrdinalIgnoreCase) ||
+                   ver.Contains("alpha", StringComparison.OrdinalIgnoreCase) ||
+                   ver.Contains("rc", StringComparison.OrdinalIgnoreCase) ||
+                   ver.Contains("preview", StringComparison.OrdinalIgnoreCase);
+        }
 
         public static string DetectDefaultLanguage()
         {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Height="415" Width="440"
+        Title="{local:Loc settingsTtile}" Height="445" Width="440"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -63,9 +63,16 @@
                 <CheckBox x:Name="ChkAutoCheckUpdates" 
                           Content="{local:Loc settingsAutoCheckUpdates}" 
                           FontSize="12" 
-                          Margin="0,6,0,10" 
+                          Margin="0,6,0,6" 
                           Checked="ChkAutoCheckUpdates_Changed" 
                           Unchecked="ChkAutoCheckUpdates_Changed"/>
+
+                <CheckBox x:Name="ChkIncludeBetaUpdates" 
+                          Content="{local:Loc settingsIncludeBetaUpdates}" 
+                          FontSize="12" 
+                          Margin="0,0,0,12" 
+                          Checked="ChkIncludeBetaUpdates_Changed" 
+                          Unchecked="ChkIncludeBetaUpdates_Changed"/>
 
                 <Button x:Name="BtnCheckUpdatesNow" 
                         Content="{local:Loc settingsCheckUpdatesNow}" 

@@ -35,6 +35,7 @@ namespace PAMP
                 ?? CmbLanguage.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Tag as string == "en")
                 ?? CmbLanguage.Items.OfType<ComboBoxItem>().First();
             ChkAutoCheckUpdates.IsChecked = App.Settings.AutoCheckUpdates;
+            ChkIncludeBetaUpdates.IsChecked = App.Settings.IncludeBetaUpdates;
 
             _isInitialized = true;
         }
@@ -63,6 +64,14 @@ namespace PAMP
             if (!_isInitialized) return;
 
             App.Settings.AutoCheckUpdates = ChkAutoCheckUpdates.IsChecked == true;
+            App.Settings.Save();
+        }
+
+        private void ChkIncludeBetaUpdates_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_isInitialized) return;
+
+            App.Settings.IncludeBetaUpdates = ChkIncludeBetaUpdates.IsChecked == true;
             App.Settings.Save();
         }
 

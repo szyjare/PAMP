@@ -82,11 +82,17 @@ public sealed class UpdateService
                 if (json.TrimStart().StartsWith("["))
                 {
                     var list = JsonSerializer.Deserialize<List<GitHubReleaseDto>>(json);
-                    release = list?.FirstOrDefault(r => !r.Draft);
+                    release = App.Settings.IncludeBetaUpdates
+                        ? list?.FirstOrDefault(r => !r.Draft)
+                        : list?.FirstOrDefault(r => !r.Draft && !r.Prerelease);
                 }
                 else
                 {
-                    release = JsonSerializer.Deserialize<GitHubReleaseDto>(json);
+                    var single = JsonSerializer.Deserialize<GitHubReleaseDto>(json);
+                    if (single != null && !single.Draft && (App.Settings.IncludeBetaUpdates || !single.Prerelease))
+                    {
+                        release = single;
+                    }
                 }
             }
         }
@@ -112,6 +118,11 @@ public sealed class UpdateService
                 }
             }
             catch { }
+        }
+
+        if (release != null && release.Prerelease && !App.Settings.IncludeBetaUpdates)
+        {
+            release = null;
         }
 
         if (release == null || string.IsNullOrWhiteSpace(release.TagName))
