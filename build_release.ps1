@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $rootDir = $PSScriptRoot
-$version = "1.3.0-beta.1"
+$version = "1.3.0-beta.2"
 $distDir = Join-Path $rootDir "dist"
 $publishDir = Join-Path $rootDir "publish"
 

@@ -15,7 +15,7 @@ public class AppManifest
 public class ComponentVersions
 {
     [JsonPropertyName("pamp")]
-    public string Pamp { get; set; } = "1.3.0-beta.1";
+    public string Pamp { get; set; } = "1.3.0-beta.2";
 
     [JsonPropertyName("php")]
     public string Php { get; set; } = "—";
