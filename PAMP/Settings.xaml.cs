@@ -113,5 +113,19 @@ namespace PAMP
         {
             Close();
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (Owner != null)
+            {
+                if (Owner.WindowState == WindowState.Minimized)
+                {
+                    Owner.WindowState = WindowState.Normal;
+                }
+                Owner.Activate();
+            }
+        }
     }
 }

@@ -482,17 +482,28 @@ public partial class ComponentManagerWindow : Window
             _ => (null, null, null, null, null)
         };
 
-        if (cmb?.SelectedItem is not ComponentVersionInfo selectedVersion) return;
-
-        if (!AdminHelper.IsAdministrator)
-        {
-            MessageBox.Show(
-                this,
-                TranslationSource.Instance["compAdminRequiredDesc"] ?? "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora.",
-                TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
+        if (cmb?.SelectedItem is not ComponentVersionInfo selectedVersion) return;
+
+
+
+        if (!AdminHelper.IsAdministrator)
+
+        {
+
+            MessageBox.Show(
+
+                this,
+
+                TranslationSource.Instance["compAdminRequiredDesc"] ?? "Instalacja oraz zmiana wersji komponentów wymaga uprawnień administratora.",
+
+                TranslationSource.Instance["compAdminRequiredTitle"] ?? "Wymagane uprawnienia administratora",
+
+                MessageBoxButton.OK,
+
+                MessageBoxImage.Warning);
+
+            return;
+
         }
 
         // Sprawdzenie czy powiązana usługa nie jest włączona
@@ -612,4 +623,18 @@ public partial class ComponentManagerWindow : Window
     }
 
     private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();
+
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+
+        if (Owner != null)
+        {
+            if (Owner.WindowState == WindowState.Minimized)
+            {
+                Owner.WindowState = WindowState.Normal;
+            }
+            Owner.Activate();
+        }
+    }
 }

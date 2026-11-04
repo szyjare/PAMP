@@ -282,7 +282,7 @@ public partial class MainWindow : Window
     }
 
     private void BtnShowSettings_Click(object sender, RoutedEventArgs e) =>
-        new Settings(this).Show();
+        new Settings(this).ShowDialog();
 
     private void BtnShowComponents_Click(object sender, RoutedEventArgs e)
     {
@@ -312,7 +312,7 @@ public partial class MainWindow : Window
 
     private void BtnShowLogs_Click(object sender, RoutedEventArgs e) => new LogViewer().Show();
 
-    private void BtnShowAbout_Click(object sender, RoutedEventArgs e) => new About(this).Show();
+    private void BtnShowAbout_Click(object sender, RoutedEventArgs e) => new About(this).ShowDialog();
 
     private void BtnOpenSqlShell_Click(object sender, RoutedEventArgs e)
     {

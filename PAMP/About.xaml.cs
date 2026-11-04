@@ -37,6 +37,20 @@ namespace PAMP
             this.Close();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (Owner != null)
+            {
+                if (Owner.WindowState == WindowState.Minimized)
+                {
+                    Owner.WindowState = WindowState.Normal;
+                }
+                Owner.Activate();
+            }
+        }
+
         public void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             try
