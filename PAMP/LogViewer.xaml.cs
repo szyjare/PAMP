@@ -18,7 +18,10 @@ public partial class LogViewer : Window
     {
         public required string RawText { get; init; }
         public required LogLevel Level { get; init; }
-        public required Paragraph Paragraph { get; init; }
+        public required bool IsAccessLog { get; init; }
+        public required bool IsApacheError { get; init; }
+        public required bool IsMariaDb { get; init; }
+        public Paragraph? Paragraph { get; set; }
     }
 
     private readonly DispatcherTimer _timer = new();
@@ -37,25 +40,69 @@ public partial class LogViewer : Window
     // Konsolowa czcionka o stałej szerokości
     private static readonly FontFamily ConsoleFont = new("Consolas, Cascadia Mono, Lucida Console, monospace");
 
-    // Zamrożone pędzle zapewniające maksymalną wydajność i doskonały kontrast (WCAG)
-    private static readonly Brush TimestampBrush = CreateFrozenBrush(Color.FromRgb(148, 163, 184)); // Slate 400
-    private static readonly Brush MetadataBrush = CreateFrozenBrush(Color.FromRgb(100, 116, 139));  // Slate 500
-    private static readonly Brush PrimaryTextBrush = CreateFrozenBrush(Color.FromRgb(226, 232, 240)); // Slate 200 (czytelny off-white)
-    private static readonly Brush ErrorTextBrush = CreateFrozenBrush(Color.FromRgb(248, 113, 113));   // Red 400
-    private static readonly Brush ErrorBadgeBrush = CreateFrozenBrush(Color.FromRgb(239, 68, 68));    // Red 500
-    private static readonly Brush WarnTextBrush = CreateFrozenBrush(Color.FromRgb(251, 191, 36));     // Amber 400
-    private static readonly Brush WarnBadgeBrush = CreateFrozenBrush(Color.FromRgb(245, 158, 11));    // Amber 500
-    private static readonly Brush NoteBadgeBrush = CreateFrozenBrush(Color.FromRgb(56, 189, 248));    // Sky 400 (błękitny zamiast ciemnozielonego!)
-    private static readonly Brush NoticeBadgeBrush = CreateFrozenBrush(Color.FromRgb(125, 211, 252)); // Sky 300
-    private static readonly Brush SuccessBrush = CreateFrozenBrush(Color.FromRgb(74, 222, 128));      // Green 400
-    private static readonly Brush MethodGetBrush = CreateFrozenBrush(Color.FromRgb(56, 189, 248));    // Sky 400
-    private static readonly Brush MethodPostBrush = CreateFrozenBrush(Color.FromRgb(74, 222, 128));   // Green 400
-    private static readonly Brush MethodPutBrush = CreateFrozenBrush(Color.FromRgb(251, 191, 36));    // Amber 400
-    private static readonly Brush MethodDeleteBrush = CreateFrozenBrush(Color.FromRgb(248, 113, 113)); // Red 400
-    private static readonly Brush MethodOtherBrush = CreateFrozenBrush(Color.FromRgb(192, 132, 252)); // Purple 400
+    private record class LogPalette(
+        Brush PrimaryText,
+        Brush Timestamp,
+        Brush Metadata,
+        Brush ErrorText,
+        Brush ErrorBadge,
+        Brush WarnText,
+        Brush WarnBadge,
+        Brush NoteBadge,
+        Brush NoticeBadge,
+        Brush Success,
+        Brush MethodGet,
+        Brush MethodPost,
+        Brush MethodPut,
+        Brush MethodDelete,
+        Brush MethodOther,
+        Brush ErrorStripe,
+        Brush WarnStripe
+    );
 
-    private static readonly Brush ErrorStripeBrush = CreateFrozenBrush(Color.FromRgb(239, 68, 68));
-    private static readonly Brush WarnStripeBrush = CreateFrozenBrush(Color.FromRgb(245, 158, 11));
+    // Paleta dla Dark Mode (wysoki kontrast na ciemnym tle)
+    private static readonly LogPalette DarkPalette = new(
+        PrimaryText: CreateFrozenBrush(Color.FromRgb(226, 232, 240)),  // Slate 200
+        Timestamp: CreateFrozenBrush(Color.FromRgb(148, 163, 184)),    // Slate 400
+        Metadata: CreateFrozenBrush(Color.FromRgb(100, 116, 139)),     // Slate 500
+        ErrorText: CreateFrozenBrush(Color.FromRgb(248, 113, 113)),    // Red 400
+        ErrorBadge: CreateFrozenBrush(Color.FromRgb(239, 68, 68)),     // Red 500
+        WarnText: CreateFrozenBrush(Color.FromRgb(251, 191, 36)),      // Amber 400
+        WarnBadge: CreateFrozenBrush(Color.FromRgb(245, 158, 11)),     // Amber 500
+        NoteBadge: CreateFrozenBrush(Color.FromRgb(56, 189, 248)),     // Sky 400
+        NoticeBadge: CreateFrozenBrush(Color.FromRgb(125, 211, 252)),  // Sky 300
+        Success: CreateFrozenBrush(Color.FromRgb(74, 222, 128)),       // Green 400
+        MethodGet: CreateFrozenBrush(Color.FromRgb(56, 189, 248)),     // Sky 400
+        MethodPost: CreateFrozenBrush(Color.FromRgb(74, 222, 128)),    // Green 400
+        MethodPut: CreateFrozenBrush(Color.FromRgb(251, 191, 36)),     // Amber 400
+        MethodDelete: CreateFrozenBrush(Color.FromRgb(248, 113, 113)), // Red 400
+        MethodOther: CreateFrozenBrush(Color.FromRgb(192, 132, 252)),  // Purple 400
+        ErrorStripe: CreateFrozenBrush(Color.FromRgb(239, 68, 68)),    // Red 500
+        WarnStripe: CreateFrozenBrush(Color.FromRgb(245, 158, 11))     // Amber 500
+    );
+
+    // Paleta dla Light Mode (maksymalna czytelność i wyrazisty kontrast na jasnym/białym tle)
+    private static readonly LogPalette LightPalette = new(
+        PrimaryText: CreateFrozenBrush(Color.FromRgb(30, 41, 59)),     // Slate 800 (wyraźny, ciemny antracyt)
+        Timestamp: CreateFrozenBrush(Color.FromRgb(100, 116, 139)),    // Slate 500
+        Metadata: CreateFrozenBrush(Color.FromRgb(71, 85, 105)),       // Slate 600
+        ErrorText: CreateFrozenBrush(Color.FromRgb(220, 38, 38)),      // Red 600
+        ErrorBadge: CreateFrozenBrush(Color.FromRgb(185, 28, 28)),     // Red 700
+        WarnText: CreateFrozenBrush(Color.FromRgb(180, 83, 9)),        // Amber 700 (czytelny brązowo-bursztynowy)
+        WarnBadge: CreateFrozenBrush(Color.FromRgb(146, 64, 14)),      // Amber 800
+        NoteBadge: CreateFrozenBrush(Color.FromRgb(2, 132, 199)),      // Sky 600 (wyrazisty błękit)
+        NoticeBadge: CreateFrozenBrush(Color.FromRgb(2, 132, 199)),    // Sky 600
+        Success: CreateFrozenBrush(Color.FromRgb(22, 163, 74)),        // Green 600
+        MethodGet: CreateFrozenBrush(Color.FromRgb(2, 132, 199)),      // Sky 600
+        MethodPost: CreateFrozenBrush(Color.FromRgb(22, 163, 74)),     // Green 600
+        MethodPut: CreateFrozenBrush(Color.FromRgb(180, 83, 9)),       // Amber 700
+        MethodDelete: CreateFrozenBrush(Color.FromRgb(220, 38, 38)),   // Red 600
+        MethodOther: CreateFrozenBrush(Color.FromRgb(126, 34, 206)),   // Purple 700
+        ErrorStripe: CreateFrozenBrush(Color.FromRgb(220, 38, 38)),    // Red 600
+        WarnStripe: CreateFrozenBrush(Color.FromRgb(217, 119, 6))      // Amber 600
+    );
+
+    private static LogPalette CurrentPalette => App.IsDarkTheme() ? DarkPalette : LightPalette;
     private static readonly Brush TransparentBrush = Brushes.Transparent;
 
     // Wyrażenia regularne do semantycznego parsowania formatów logów
@@ -94,6 +141,22 @@ public partial class LogViewer : Window
         base.OnSourceInitialized(e);
         App.EnableMicaBackdrop(this);
         App.UpdateTitleBarTheme(this);
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+    }
+
+    private void OnUserPreferenceChanged(object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)
+    {
+        if (e.Category is Microsoft.Win32.UserPreferenceCategory.General or Microsoft.Win32.UserPreferenceCategory.Color)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                foreach (var entry in _allEntries)
+                {
+                    entry.Paragraph = null;
+                }
+                ApplyFilterToDocument();
+            });
+        }
     }
 
     private void InitializeLogs()
@@ -250,8 +313,15 @@ public partial class LogViewer : Window
             {
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
-                LogEntry entry = ParseLine(line, isAccessLog, isApacheError, isMariaDb);
-                newEntries.Add(entry);
+                LogLevel level = DetermineLogLevel(line, isAccessLog, isApacheError, isMariaDb);
+                newEntries.Add(new LogEntry
+                {
+                    RawText = line,
+                    Level = level,
+                    IsAccessLog = isAccessLog,
+                    IsApacheError = isApacheError,
+                    IsMariaDb = isMariaDb
+                });
             }
 
             _lastFileSize = currentLength;
@@ -283,7 +353,7 @@ public partial class LogViewer : Window
                     {
                         if (MatchesFilter(entry))
                         {
-                            DocLogs.Blocks.Add(entry.Paragraph);
+                            DocLogs.Blocks.Add(GetOrCreateParagraph(entry));
                             anyAdded = true;
                         }
                     }
@@ -307,8 +377,55 @@ public partial class LogViewer : Window
         catch { }
     }
 
-    private LogEntry ParseLine(string line, bool isAccessLog, bool isApacheError, bool isMariaDb)
+    private static LogLevel DetermineLogLevel(string line, bool isAccessLog, bool isApacheError, bool isMariaDb)
     {
+        if (isMariaDb)
+        {
+            var match = MariaDbRegex.Match(line);
+            if (match.Success)
+            {
+                string lowerLvl = match.Groups[3].Value.ToLowerInvariant();
+                if (lowerLvl.Contains("error") || lowerLvl.Contains("fatal") || lowerLvl.Contains("crit")) return LogLevel.Error;
+                if (lowerLvl.Contains("warn")) return LogLevel.Warning;
+                return LogLevel.Info;
+            }
+        }
+        else if (isApacheError)
+        {
+            var match = ApacheErrorRegex.Match(line);
+            if (match.Success)
+            {
+                string lowerMod = match.Groups[2].Value.ToLowerInvariant();
+                if (lowerMod.Contains(":error") || lowerMod.Contains(":crit") || lowerMod.Contains(":emerg") || lowerMod.Contains(":alert")) return LogLevel.Error;
+                if (lowerMod.Contains(":warn")) return LogLevel.Warning;
+                return LogLevel.Info;
+            }
+        }
+        else if (isAccessLog)
+        {
+            var match = ApacheAccessRegex.Match(line);
+            if (match.Success)
+            {
+                int.TryParse(match.Groups[6].Value, out int statusCode);
+                if (statusCode >= 500) return LogLevel.Error;
+                if (statusCode >= 400) return LogLevel.Warning;
+                return LogLevel.Info;
+            }
+        }
+
+        string lowerGeneric = line.ToLowerInvariant();
+        if (lowerGeneric.Contains("error") || lowerGeneric.Contains("fatal") || lowerGeneric.Contains("crit") || lowerGeneric.Contains("exception"))
+            return LogLevel.Error;
+        if (lowerGeneric.Contains("warn"))
+            return LogLevel.Warning;
+
+        return LogLevel.Info;
+    }
+
+    private Paragraph GetOrCreateParagraph(LogEntry entry)
+    {
+        if (entry.Paragraph != null) return entry.Paragraph;
+
         var p = new Paragraph
         {
             Margin = new Thickness(0, 1.5, 0, 1.5),
@@ -317,10 +434,11 @@ public partial class LogViewer : Window
             FontSize = 12
         };
 
-        LogLevel level = LogLevel.Info;
+        var palette = CurrentPalette;
         Brush stripeBrush = TransparentBrush;
+        string line = entry.RawText;
 
-        if (isMariaDb)
+        if (entry.IsMariaDb)
         {
             var match = MariaDbRegex.Match(line);
             if (match.Success)
@@ -330,38 +448,33 @@ public partial class LogViewer : Window
                 string levelStr = match.Groups[3].Value;
                 string message = match.Groups[4].Value;
 
-                p.Inlines.Add(new Run(timeStr + " ") { Foreground = TimestampBrush });
-                p.Inlines.Add(new Run(threadId + " ") { Foreground = MetadataBrush });
+                p.Inlines.Add(new Run(timeStr + " ") { Foreground = palette.Timestamp });
+                p.Inlines.Add(new Run(threadId + " ") { Foreground = palette.Metadata });
 
-                string lowerLvl = levelStr.ToLowerInvariant();
-                if (lowerLvl.Contains("error") || lowerLvl.Contains("fatal") || lowerLvl.Contains("crit"))
+                if (entry.Level == LogLevel.Error)
                 {
-                    level = LogLevel.Error;
-                    stripeBrush = ErrorStripeBrush;
-                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = ErrorBadgeBrush, FontWeight = FontWeights.Bold });
-                    p.Inlines.Add(new Run(message) { Foreground = ErrorTextBrush });
+                    stripeBrush = palette.ErrorStripe;
+                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = palette.ErrorBadge, FontWeight = FontWeights.Bold });
+                    p.Inlines.Add(new Run(message) { Foreground = palette.ErrorText });
                 }
-                else if (lowerLvl.Contains("warn"))
+                else if (entry.Level == LogLevel.Warning)
                 {
-                    level = LogLevel.Warning;
-                    stripeBrush = WarnStripeBrush;
-                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = WarnBadgeBrush, FontWeight = FontWeights.Bold });
-                    p.Inlines.Add(new Run(message) { Foreground = WarnTextBrush });
+                    stripeBrush = palette.WarnStripe;
+                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = palette.WarnBadge, FontWeight = FontWeights.Bold });
+                    p.Inlines.Add(new Run(message) { Foreground = palette.WarnText });
                 }
                 else
                 {
-                    // [Note] / [Info] w MariaDB — wreszcie w czytelnym błękicie i jasnym tekście zamiast ciemnozielonego!
-                    level = LogLevel.Info;
-                    stripeBrush = TransparentBrush;
-                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = NoteBadgeBrush, FontWeight = FontWeights.Bold });
-                    p.Inlines.Add(new Run(message) { Foreground = PrimaryTextBrush });
+                    p.Inlines.Add(new Run($"[{levelStr}] ") { Foreground = palette.NoteBadge, FontWeight = FontWeights.Bold });
+                    p.Inlines.Add(new Run(message) { Foreground = palette.PrimaryText });
                 }
 
                 ApplyParagraphBorders(p, stripeBrush);
-                return new LogEntry { RawText = line, Level = level, Paragraph = p };
+                entry.Paragraph = p;
+                return p;
             }
         }
-        else if (isApacheError)
+        else if (entry.IsApacheError)
         {
             var match = ApacheErrorRegex.Match(line);
             if (match.Success)
@@ -371,47 +484,43 @@ public partial class LogViewer : Window
                 string pidStr = match.Groups[3].Value;
                 string message = match.Groups[4].Value;
 
-                p.Inlines.Add(new Run($"[{timeStr}] ") { Foreground = TimestampBrush });
+                p.Inlines.Add(new Run($"[{timeStr}] ") { Foreground = palette.Timestamp });
 
-                string lowerMod = moduleLevel.ToLowerInvariant();
-                if (lowerMod.Contains(":error") || lowerMod.Contains(":crit") || lowerMod.Contains(":emerg") || lowerMod.Contains(":alert"))
+                if (entry.Level == LogLevel.Error)
                 {
-                    level = LogLevel.Error;
-                    stripeBrush = ErrorStripeBrush;
-                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = ErrorBadgeBrush, FontWeight = FontWeights.Bold });
+                    stripeBrush = palette.ErrorStripe;
+                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = palette.ErrorBadge, FontWeight = FontWeights.Bold });
                 }
-                else if (lowerMod.Contains(":warn"))
+                else if (entry.Level == LogLevel.Warning)
                 {
-                    level = LogLevel.Warning;
-                    stripeBrush = WarnStripeBrush;
-                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = WarnBadgeBrush, FontWeight = FontWeights.Bold });
+                    stripeBrush = palette.WarnStripe;
+                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = palette.WarnBadge, FontWeight = FontWeights.Bold });
                 }
                 else
                 {
-                    level = LogLevel.Info;
-                    stripeBrush = TransparentBrush;
-                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = NoticeBadgeBrush, FontWeight = FontWeights.Bold });
+                    p.Inlines.Add(new Run($"[{moduleLevel}] ") { Foreground = palette.NoticeBadge, FontWeight = FontWeights.Bold });
                 }
 
                 if (!string.IsNullOrEmpty(pidStr))
                 {
-                    p.Inlines.Add(new Run($"[{pidStr}] ") { Foreground = MetadataBrush });
+                    p.Inlines.Add(new Run($"[{pidStr}] ") { Foreground = palette.Metadata });
                 }
 
-                Brush textBrush = level switch
+                Brush textBrush = entry.Level switch
                 {
-                    LogLevel.Error => ErrorTextBrush,
-                    LogLevel.Warning => WarnTextBrush,
-                    _ => PrimaryTextBrush
+                    LogLevel.Error => palette.ErrorText,
+                    LogLevel.Warning => palette.WarnText,
+                    _ => palette.PrimaryText
                 };
 
                 p.Inlines.Add(new Run(message) { Foreground = textBrush });
 
                 ApplyParagraphBorders(p, stripeBrush);
-                return new LogEntry { RawText = line, Level = level, Paragraph = p };
+                entry.Paragraph = p;
+                return p;
             }
         }
-        else if (isAccessLog)
+        else if (entry.IsAccessLog)
         {
             var match = ApacheAccessRegex.Match(line);
             if (match.Success)
@@ -424,82 +533,71 @@ public partial class LogViewer : Window
                 string statusCodeStr = match.Groups[6].Value;
                 string bytesStr = match.Groups[7].Value;
 
-                p.Inlines.Add(new Run(ip + " ") { Foreground = MetadataBrush });
-                p.Inlines.Add(new Run($"[{timeStr}] ") { Foreground = TimestampBrush });
+                p.Inlines.Add(new Run(ip + " ") { Foreground = palette.Metadata });
+                p.Inlines.Add(new Run($"[{timeStr}] ") { Foreground = palette.Timestamp });
 
                 Brush methodBrush = method.ToUpperInvariant() switch
                 {
-                    "GET" => MethodGetBrush,
-                    "POST" => MethodPostBrush,
-                    "PUT" or "PATCH" => MethodPutBrush,
-                    "DELETE" => MethodDeleteBrush,
-                    _ => MethodOtherBrush
+                    "GET" => palette.MethodGet,
+                    "POST" => palette.MethodPost,
+                    "PUT" or "PATCH" => palette.MethodPut,
+                    "DELETE" => palette.MethodDelete,
+                    _ => palette.MethodOther
                 };
 
                 p.Inlines.Add(new Run(method + " ") { Foreground = methodBrush, FontWeight = FontWeights.Bold });
-                p.Inlines.Add(new Run(url + " ") { Foreground = PrimaryTextBrush });
+                p.Inlines.Add(new Run(url + " ") { Foreground = palette.PrimaryText });
 
                 if (!string.IsNullOrEmpty(proto))
                 {
-                    p.Inlines.Add(new Run(proto + " ") { Foreground = MetadataBrush });
+                    p.Inlines.Add(new Run(proto + " ") { Foreground = palette.Metadata });
                 }
 
-                int.TryParse(statusCodeStr, out int statusCode);
                 Brush statusBrush;
-
-                if (statusCode >= 500)
+                if (entry.Level == LogLevel.Error)
                 {
-                    level = LogLevel.Error;
-                    stripeBrush = ErrorStripeBrush;
-                    statusBrush = ErrorBadgeBrush;
+                    stripeBrush = palette.ErrorStripe;
+                    statusBrush = palette.ErrorBadge;
                 }
-                else if (statusCode >= 400)
+                else if (entry.Level == LogLevel.Warning)
                 {
-                    level = LogLevel.Warning;
-                    stripeBrush = WarnStripeBrush;
-                    statusBrush = WarnBadgeBrush;
-                }
-                else if (statusCode >= 300)
-                {
-                    level = LogLevel.Info;
-                    statusBrush = NoticeBadgeBrush;
+                    stripeBrush = palette.WarnStripe;
+                    statusBrush = palette.WarnBadge;
                 }
                 else
                 {
-                    level = LogLevel.Info;
-                    statusBrush = SuccessBrush;
+                    int.TryParse(statusCodeStr, out int code);
+                    statusBrush = code >= 300 ? palette.NoticeBadge : palette.Success;
                 }
 
                 p.Inlines.Add(new Run(statusCodeStr + " ") { Foreground = statusBrush, FontWeight = FontWeights.Bold });
-                p.Inlines.Add(new Run(bytesStr) { Foreground = MetadataBrush });
+                p.Inlines.Add(new Run(bytesStr) { Foreground = palette.Metadata });
 
                 ApplyParagraphBorders(p, stripeBrush);
-                return new LogEntry { RawText = line, Level = level, Paragraph = p };
+                entry.Paragraph = p;
+                return p;
             }
         }
 
         // Generyczny fallback dla niestandardowych linii
-        string lowerGeneric = line.ToLowerInvariant();
-        if (lowerGeneric.Contains("error") || lowerGeneric.Contains("fatal") || lowerGeneric.Contains("crit") || lowerGeneric.Contains("exception"))
+        if (entry.Level == LogLevel.Error)
         {
-            level = LogLevel.Error;
-            stripeBrush = ErrorStripeBrush;
-            p.Inlines.Add(new Run(line) { Foreground = ErrorTextBrush, FontWeight = FontWeights.Medium });
+            stripeBrush = palette.ErrorStripe;
+            p.Inlines.Add(new Run(line) { Foreground = palette.ErrorText, FontWeight = FontWeights.Medium });
         }
-        else if (lowerGeneric.Contains("warn"))
+        else if (entry.Level == LogLevel.Warning)
         {
-            level = LogLevel.Warning;
-            stripeBrush = WarnStripeBrush;
-            p.Inlines.Add(new Run(line) { Foreground = WarnTextBrush });
+            stripeBrush = palette.WarnStripe;
+            p.Inlines.Add(new Run(line) { Foreground = palette.WarnText });
         }
         else
         {
-            level = LogLevel.Info;
-            p.Inlines.Add(new Run(line) { Foreground = PrimaryTextBrush });
+            p.Inlines.Add(new Run(line) { Foreground = palette.PrimaryText });
         }
 
         ApplyParagraphBorders(p, stripeBrush);
-        return new LogEntry { RawText = line, Level = level, Paragraph = p };
+        entry.Paragraph = p;
+        return p;
     }
 
     private static void ApplyParagraphBorders(Paragraph p, Brush stripeBrush)
@@ -539,7 +637,7 @@ public partial class LogViewer : Window
             {
                 if (MatchesFilter(entry))
                 {
-                    DocLogs.Blocks.Add(entry.Paragraph);
+                    DocLogs.Blocks.Add(GetOrCreateParagraph(entry));
                 }
             }
         }
@@ -567,6 +665,7 @@ public partial class LogViewer : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         _timer.Stop();
         _searchDebounceTimer.Stop();
         base.OnClosed(e);
