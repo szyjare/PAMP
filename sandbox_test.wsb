@@ -1,0 +1,12 @@
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>c:\Users\szymo\PAMP\dist</HostFolder>
+      <SandboxFolder>C:\dist</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell -Command "Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy' -Name 'VerifiedAndReputablePolicyState' -Value 0; CiTool.exe -r; Start-Process explorer.exe 'C:\dist'"</Command>
+  </LogonCommand>
+</Configuration>
