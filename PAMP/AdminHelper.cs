@@ -56,6 +56,36 @@ public static class AdminHelper
         }
     }
 
+    public static async Task<bool> RestartAsAdministratorAsync(ServerService? serverService = null, string? additionalArgs = null)
+    {
+        try
+        {
+            if (serverService != null)
+            {
+                await serverService.StopAllAsync();
+            }
+
+            string exePath = Process.GetCurrentProcess().MainModule?.FileName
+                ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PAMP.exe");
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                UseShellExecute = true,
+                Verb = "runas",
+                Arguments = additionalArgs ?? ""
+            };
+
+            Process.Start(psi);
+            Application.Current.Shutdown();
+            return true;
+        }
+        catch
+        {
+            return false; // Użytkownik odrzucił monit UAC
+        }
+    }
+
     public static bool RestartAsAdministrator(string? additionalArgs = null)
     {
         try

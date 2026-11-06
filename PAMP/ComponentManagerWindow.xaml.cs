@@ -195,9 +195,27 @@ public partial class ComponentManagerWindow : Window
         CmbPmaVersions.IsEnabled = false;
     }
 
-    private void BtnRestartAdmin_Click(object sender, RoutedEventArgs e)
+    private async void BtnRestartAdmin_Click(object sender, RoutedEventArgs e)
     {
-        AdminHelper.RestartAsAdministrator("--manage-components");
+        BtnRestartAdmin.IsEnabled = false;
+        var originalContent = BtnRestartAdmin.Content;
+        BtnRestartAdmin.Content = "⏳ " + (TranslationSource.Instance["compStoppingServices"] ?? "Zatrzymywanie usług...");
+
+        try
+        {
+            bool started = await AdminHelper.RestartAsAdministratorAsync(_serverService, "--manage-components");
+            if (!started)
+            {
+                BtnRestartAdmin.IsEnabled = true;
+                BtnRestartAdmin.Content = originalContent;
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, TranslationSource.Instance["pampError"] ?? "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            BtnRestartAdmin.IsEnabled = true;
+            BtnRestartAdmin.Content = originalContent;
+        }
     }
 
     private void UpdateSinglePackageButton(ComboBox cmb, Button btn, string? installedVersion)

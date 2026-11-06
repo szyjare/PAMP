@@ -119,7 +119,7 @@ public partial class MainWindow : Window
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    AdminHelper.RestartAsAdministrator("--manage-components");
+                    _ = AdminHelper.RestartAsAdministratorAsync(_serverService, "--manage-components");
                     return;
                 }
             }
@@ -473,6 +473,30 @@ public partial class MainWindow : Window
         finally
         {
             Application.Current.Shutdown();
+        }
+    }
+
+    private bool _isClosingServers;
+
+    protected override async void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (_isClosingServers)
+        {
+            base.OnClosing(e);
+            return;
+        }
+
+        e.Cancel = true;
+        _isClosingServers = true;
+
+        try
+        {
+            await _serverService.StopAllAsync();
+        }
+        catch { }
+        finally
+        {
+            Close();
         }
     }
 
