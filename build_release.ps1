@@ -75,10 +75,17 @@ function Build-ReleasePackage([bool]$isSelfContained) {
 
     # 3. Create Portable ZIP
     Write-Host "`n[2/3] Creating Portable ZIP..." -ForegroundColor Yellow
+    $portableMarker = Join-Path $publishDir ".portable"
+    New-Item -ItemType File -Path $portableMarker -Force | Out-Null
+
     $portableZip = Join-Path $distDir "PAMP-v$version-win-x64-$zipSuffix.zip"
     if (Test-Path $portableZip) { Remove-Item -Force $portableZip }
     Compress-Archive -Path "$publishDir\*" -DestinationPath $portableZip -CompressionLevel Optimal
     Write-Host "  -> Created: $portableZip" -ForegroundColor Green
+
+    # Usuwamy znacznik .portable przed budowaniem instalatora Inno Setup,
+    # aby instalator (.exe) nie traktowal instalacji jako portable.
+    if (Test-Path $portableMarker) { Remove-Item -Force $portableMarker }
 
     # 4. Compile Inno Setup Installer
     Write-Host "`n[3/3] Building Inno Setup Installer..." -ForegroundColor Yellow

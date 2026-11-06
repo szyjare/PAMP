@@ -39,6 +39,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        AppPaths.EnsureDirectoriesCreated();
+
         ApplyThemeResources();
         SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
 

@@ -6,7 +6,7 @@ namespace PAMP
 {
     public class AppSettings
     {
-        private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "conf", "settings.json");
+        private static string SettingsPath => Path.Combine(AppPaths.ConfDir, "settings.json");
 
         public string Language { get; set; } = DetectDefaultLanguage();
         public bool FirstRun { get; set; } = true;

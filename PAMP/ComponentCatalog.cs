@@ -204,7 +204,7 @@ public static class ComponentCatalog
     public static async Task<bool> LoadFromRemoteAsync(string? manifestUrl = null)
     {
         string url = manifestUrl ?? DefaultRepositoryManifestUrl;
-        string cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "cached_manifest.json");
+        string cachePath = Path.Combine(AppPaths.DataDir, "cached_manifest.json");
 
         try
         {

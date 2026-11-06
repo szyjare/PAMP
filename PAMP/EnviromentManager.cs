@@ -24,15 +24,13 @@ namespace PAMP
 
         public EnvironmentManager()
         {
-            // 1. Definicja ścieżek
-            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _systemDir = Path.Combine(localAppData, "PAMP");
 
-            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            _userPampRoot = Path.Combine(userProfile, "PAMP");
-            _htdocsDir = Path.Combine(_userPampRoot, "LocalSites");
+            // Inicjalizacja ścieżek z uwzględnieniem trybu Portable / Zainstalowanego
+            _systemDir = AppPaths.DataDir;
+            _userPampRoot = AppPaths.UserPampRoot;
+            _htdocsDir = AppPaths.LocalSitesDir;
+            _appBinDir = AppPaths.AppDir;
 
-            _appBinDir = AppDomain.CurrentDomain.BaseDirectory;
         }
 
         public void InitializeEnvironment()
@@ -250,14 +248,13 @@ $cfg['SaveDir'] = '';
             {
                 Directory.CreateDirectory(_htdocsDir);
                 // Plik README.txt dla użytkownika
-                File.WriteAllText(Path.Combine(_userPampRoot, "CZYTAJ_TO.txt"),
+                if (!AppPaths.IsPortable) File.WriteAllText(Path.Combine(_userPampRoot, "CZYTAJ_TO.txt"),
                     "W folderze LocalSites umieszczaj swoje pliki PHP i HTML.");
             }
 
             // Tworzenie ukrytej struktury systemowej w AppData
-            Directory.CreateDirectory(Path.Combine(_systemDir, "mysql_data"));
-            Directory.CreateDirectory(Path.Combine(_systemDir, "conf"));
-            Directory.CreateDirectory(Path.Combine(_systemDir, "logs"));
+            AppPaths.EnsureDirectoriesCreated();
+
         }
 
         private void CreateApacheConfig()

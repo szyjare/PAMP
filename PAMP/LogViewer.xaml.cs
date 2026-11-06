@@ -161,8 +161,7 @@ public partial class LogViewer : Window
 
     private void InitializeLogs()
     {
-        string appDataPamp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP");
-        string logsDir = Path.Combine(appDataPamp, "logs");
+        string logsDir = AppPaths.LogsDir;
 
         _logFiles.Add(TranslationSource.Instance["logsListApacheLogError"] ?? "Błędy i system Apache", Path.Combine(logsDir, "apache_error.log"));
         _logFiles.Add(TranslationSource.Instance["logsListApacheNetwork"] ?? "Dostęp Apache (HTTP)", Path.Combine(logsDir, "apache_access.log"));

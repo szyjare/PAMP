@@ -191,7 +191,7 @@ public sealed class UpdateService
         IProgress<InstallProgress> progress,
         CancellationToken cancellationToken = default)
     {
-        string updateDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "temp", "update");
+        string updateDir = Path.Combine(AppPaths.TempDir, "update");
         Directory.CreateDirectory(updateDir);
 
         string downloadedFilePath = Path.Combine(updateDir, update.SelectedAssetName);
@@ -348,6 +348,7 @@ public sealed class UpdateService
 
     public static bool IsRunningInstalled()
     {
+        if (AppPaths.IsPortable) return false;
         string baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
 
         // Check if Inno Setup uninstaller exists in base directory

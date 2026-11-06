@@ -241,7 +241,7 @@ public sealed class ServerService : IDisposable
         if (_mysqlProcess.HasExited)
         {
             string errOutput = await _mysqlProcess.StandardError.ReadToEndAsync();
-            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "logs", "mysql_error.log");
+            string logPath = Path.Combine(AppPaths.LogsDir, "mysql_error.log");
             string errorDetails = "";
             if (File.Exists(logPath))
             {
@@ -353,8 +353,8 @@ public sealed class ServerService : IDisposable
 
     private async Task EnsureDatabaseInitializedAsync()
     {
-        string appDataPamp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP");
-        string mysqlDataDir = Path.Combine(appDataPamp, "mysql_data");
+        string mysqlDataDir = AppPaths.MariaDbDataDir;
+
 
         if (!Directory.Exists(Path.Combine(mysqlDataDir, "mysql")))
         {
@@ -420,7 +420,7 @@ public sealed class ServerService : IDisposable
 
         if (!isReady)
         {
-            string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "logs", "mysql_error.log");
+            string logPath = Path.Combine(AppPaths.LogsDir, "mysql_error.log");
             string errorDetails = "";
             if (File.Exists(logPath))
             {
@@ -485,7 +485,7 @@ public sealed class ServerService : IDisposable
     {
         await StopAllAsync();
 
-        string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+        string dataDir = AppPaths.MariaDbDataDir;
         bool deleted = false;
 
         for (int i = 0; i < 5; i++)

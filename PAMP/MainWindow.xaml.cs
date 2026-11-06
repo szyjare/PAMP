@@ -25,6 +25,11 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        if (AppPaths.IsPortable)
+        {
+            Title = "PAMP (Portable)";
+        }
+
         SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         ContentRendered += MainWindow_ContentRendered;
 
@@ -58,7 +63,7 @@ public partial class MainWindow : Window
         ContentRendered -= MainWindow_ContentRendered;
         VCRedistHelper.CheckAndPrompt(this);
 
-        if (AdminHelper.IsAdministrator)
+        if (AdminHelper.IsAdministrator && !AppPaths.IsPortable)
         {
             _ = Task.Run(() =>
             {
@@ -216,7 +221,7 @@ public partial class MainWindow : Window
                         }
                         catch (Exception ex)
                         {
-                            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+                            string dataDir = AppPaths.MariaDbDataDir;
                             if (Directory.Exists(dataDir))
                             {
                                 var result = MessageBox.Show(
@@ -303,7 +308,11 @@ public partial class MainWindow : Window
 
     private void BtnOpenFolder_Click(object sender, RoutedEventArgs e)
     {
-        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "PAMP", "LocalSites");
+        string path = AppPaths.LocalSitesDir;
+        if (!Directory.Exists(path))
+        {
+            try { Directory.CreateDirectory(path); } catch { }
+        }
         if (Directory.Exists(path))
             Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
         else

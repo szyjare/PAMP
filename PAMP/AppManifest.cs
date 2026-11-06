@@ -74,14 +74,17 @@ public static class ManifestLoader
     public static AppManifest Load()
     {
         // 1. Usuń przestarzały manifest z AppData bieżącego użytkownika jeśli istnieje
-        try
+        if (!AppPaths.IsPortable)
         {
-            if (File.Exists(StaleUserManifestPath))
+            try
             {
-                File.Delete(StaleUserManifestPath);
+                if (File.Exists(StaleUserManifestPath))
+                {
+                    File.Delete(StaleUserManifestPath);
+                }
             }
+            catch { }
         }
-        catch { }
 
         // 2. Szukamy wyłącznie w lokalizacjach współdzielonych
         string[] candidates = [SharedBinManifestPath, CommonDataManifestPath, LegacyAppManifestPath];
@@ -133,19 +136,22 @@ public static class ManifestLoader
             }
             catch { }
 
-            // 2. Zapisz w ProgramData (wspólnym dla całego komputera)
-            try
+            // 2. Zapisz w ProgramData (wspólnym dla całego komputera) - pomijane w trybie portable
+            if (!AppPaths.IsPortable)
             {
-                string progDataDir = Path.GetDirectoryName(CommonDataManifestPath)!;
-                Directory.CreateDirectory(progDataDir);
-                File.WriteAllText(CommonDataManifestPath, json);
-
-                if (AdminHelper.IsAdministrator)
+                try
                 {
-                    ComponentInstallerService.EnsureDirectoryPermissions(progDataDir);
+                    string progDataDir = Path.GetDirectoryName(CommonDataManifestPath)!;
+                    Directory.CreateDirectory(progDataDir);
+                    File.WriteAllText(CommonDataManifestPath, json);
+
+                    if (AdminHelper.IsAdministrator)
+                    {
+                        ComponentInstallerService.EnsureDirectoryPermissions(progDataDir);
+                    }
                 }
+                catch { }
             }
-            catch { }
 
             // 3. Zapisz w katalogu aplikacji (dla wersji portable)
             try

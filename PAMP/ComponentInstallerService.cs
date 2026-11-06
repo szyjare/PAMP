@@ -30,7 +30,7 @@ public sealed class ComponentInstallerService
         IProgress<InstallProgress> progress,
         CancellationToken cancellationToken = default)
     {
-        string appDataTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "temp");
+        string appDataTemp = AppPaths.TempDir;
         Directory.CreateDirectory(appDataTemp);
 
         string zipPath = Path.Combine(appDataTemp, $"{package.Id}_{versionInfo.Version}.zip");

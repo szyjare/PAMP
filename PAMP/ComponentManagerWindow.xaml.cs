@@ -330,7 +330,7 @@ public partial class ComponentManagerWindow : Window
         var ckeMaria = ComponentCatalog.GetCkeProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
         if (ckeMaria.Package != null && ckeMaria.Version != null)
         {
-            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            string dataDir = AppPaths.MariaDbDataDir;
             var currentManifest = ManifestLoader.Load();
             string? currentMaria = currentManifest.Versions?.MariaDb;
             if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
@@ -420,7 +420,7 @@ public partial class ComponentManagerWindow : Window
         var latestMaria = ComponentCatalog.GetLatestProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
         if (latestMaria.Package != null && latestMaria.Version != null)
         {
-            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            string dataDir = AppPaths.MariaDbDataDir;
             var currentManifest = ManifestLoader.Load();
             string? currentMaria = currentManifest.Versions?.MariaDb;
             if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
@@ -553,7 +553,7 @@ public partial class ComponentManagerWindow : Window
                 else return;
             }
 
-            string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PAMP", "mysql_data");
+            string dataDir = AppPaths.MariaDbDataDir;
             var currentManifest = ManifestLoader.Load();
             string? currentMaria = currentManifest.Versions?.MariaDb;
             if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
