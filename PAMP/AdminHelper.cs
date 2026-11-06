@@ -23,6 +23,39 @@ public static class AdminHelper
 
     public static bool IsAdministrator => _isAdmin.Value;
 
+    /// <summary>
+    /// Zwraca true, jeśli proces działa jako Administrator LUB bieżący użytkownik posiada
+    /// uprawnienia zapisu do katalogu aplikacji (np. instalacja per-user w AppData lub wersja portable).
+    /// </summary>
+    public static bool CanManageComponents => IsAdministrator || HasWriteAccessToAppDirectory();
+
+    /// <summary>
+    /// Sprawdza, czy bieżący proces ma uprawnienia zapisu do katalogu bin aplikacji.
+    /// </summary>
+    public static bool HasWriteAccessToAppDirectory()
+    {
+        try
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string binDir = Path.Combine(baseDir, "bin");
+            if (!Directory.Exists(binDir))
+            {
+                Directory.CreateDirectory(binDir);
+            }
+
+            string testFile = Path.Combine(binDir, $".write_test_{Guid.NewGuid():N}.tmp");
+            using (var fs = new FileStream(testFile, FileMode.Create, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose))
+            {
+                fs.WriteByte(0);
+            }
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public static bool RestartAsAdministrator(string? additionalArgs = null)
     {
         try

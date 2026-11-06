@@ -51,6 +51,12 @@ public partial class ComponentManagerWindow : Window
 
     private void LoadCurrentVersions()
     {
+        BannerNonAdmin.Visibility = Visibility.Collapsed;
+        CmbPhpVersions.IsEnabled = true;
+        CmbApacheVersions.IsEnabled = true;
+        CmbMariaDbVersions.IsEnabled = true;
+        CmbPmaVersions.IsEnabled = true;
+
         var manifest = ManifestLoader.Load();
         if (manifest.Versions is not { } v) return;
 
@@ -62,6 +68,12 @@ public partial class ComponentManagerWindow : Window
 
     private void PopulateAvailableVersions()
     {
+        BannerNonAdmin.Visibility = Visibility.Collapsed;
+        CmbPhpVersions.IsEnabled = true;
+        CmbApacheVersions.IsEnabled = true;
+        CmbMariaDbVersions.IsEnabled = true;
+        CmbPmaVersions.IsEnabled = true;
+
         var manifest = ManifestLoader.Load();
         var installed = manifest.Versions;
 
@@ -128,11 +140,17 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
-        if (!AdminHelper.IsAdministrator)
+        if (!AdminHelper.CanManageComponents)
         {
             ApplyNonAdminRestrictions();
             return;
         }
+
+        BannerNonAdmin.Visibility = Visibility.Collapsed;
+        CmbPhpVersions.IsEnabled = true;
+        CmbApacheVersions.IsEnabled = true;
+        CmbMariaDbVersions.IsEnabled = true;
+        CmbPmaVersions.IsEnabled = true;
 
         var manifest = ManifestLoader.Load();
         var installed = manifest.Versions;
@@ -289,7 +307,7 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
-        if (!AdminHelper.IsAdministrator)
+        if (!AdminHelper.CanManageComponents)
         {
             MessageBox.Show(
                 this,
@@ -379,7 +397,7 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
-        if (!AdminHelper.IsAdministrator)
+        if (!AdminHelper.CanManageComponents)
         {
             MessageBox.Show(
                 this,
@@ -486,7 +504,7 @@ public partial class ComponentManagerWindow : Window
 
 
 
-        if (!AdminHelper.IsAdministrator)
+        if (!AdminHelper.CanManageComponents)
 
         {
 

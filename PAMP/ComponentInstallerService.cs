@@ -342,7 +342,10 @@ public sealed class ComponentInstallerService
         try { Directory.Delete(sourceDir, true); } catch { }
 
         // Dodatkowo wymuszamy uprawnienia dla wszystkich kont użytkowników
-        EnsureDirectoryPermissions(targetDir);
+        if (AdminHelper.IsAdministrator)
+        {
+            EnsureDirectoryPermissions(targetDir);
+        }
     }
 
     private static void CopyDirectory(string source, string destination)

@@ -103,7 +103,7 @@ public partial class MainWindow : Window
         // Jeśli to pierwsze uruchomienie LUB na komputerze w ogóle brak zainstalowanych komponentów PAMP:
         if (isFirstRun || !hasAnyComponents)
         {
-            if (!AdminHelper.IsAdministrator)
+            if (!AdminHelper.CanManageComponents)
             {
                 var result = MessageBox.Show(
                     this,
