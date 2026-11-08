@@ -351,6 +351,24 @@ public sealed class ServerService : IDisposable
         await Task.WhenAll(StopApacheAsync(), StopMariaDbAsync());
     }
 
+    public void ForceKillAll()
+    {
+        try
+        {
+            foreach (var p in Process.GetProcessesByName("httpd"))
+            {
+                try { if (!p.HasExited) p.Kill(entireProcessTree: true); } catch { }
+                p.Dispose();
+            }
+            foreach (var p in GetMariaDbProcesses())
+            {
+                try { if (!p.HasExited) p.Kill(entireProcessTree: true); } catch { }
+                p.Dispose();
+            }
+        }
+        catch { }
+    }
+
     private async Task EnsureDatabaseInitializedAsync()
     {
         string mysqlDataDir = AppPaths.MariaDbDataDir;

@@ -463,17 +463,9 @@ public partial class MainWindow : Window
         BannerUpdate.Visibility = Visibility.Collapsed;
     }
 
-    private async void Exit_Click(object sender, RoutedEventArgs e)
+    private void Exit_Click(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            await _serverService.StopAllAsync();
-        }
-        catch { }
-        finally
-        {
-            Application.Current.Shutdown();
-        }
+        Close();
     }
 
     private bool _isClosingServers;
@@ -486,20 +478,44 @@ public partial class MainWindow : Window
             return;
         }
 
+        // Natychmiast zatrzymujemy timer odswiezania stanu
+        _statusTimer.Stop();
+
+        // Jesli zadne uslugi nie dzialaja, zamykamy okno od razu bez zadnych opoznien
+        if (!_serverService.IsApacheRunning && !_serverService.IsMariaDbRunning)
+        {
+            base.OnClosing(e);
+            return;
+        }
+
+        // Gdy uslugi dzialaja: ukrywamy okno natychmiast (0 ms widocznego opoznienia),
+        // a procesy Apache i MariaDB wygaszamy w tle.
         e.Cancel = true;
         _isClosingServers = true;
 
+        Hide();
+        foreach (Window window in Application.Current.Windows)
+        {
+            if (window != this)
+            {
+                try { window.Hide(); } catch { }
+            }
+        }
+
         try
         {
-            await _serverService.StopAllAsync();
+            var stopTask = _serverService.StopAllAsync();
+            if (await Task.WhenAny(stopTask, Task.Delay(2500)) != stopTask)
+            {
+                _serverService.ForceKillAll();
+            }
         }
         catch { }
         finally
         {
-            Close();
+            Application.Current.Shutdown();
         }
     }
-
     protected override void OnClosed(EventArgs e)
     {
         _statusTimer.Stop();
