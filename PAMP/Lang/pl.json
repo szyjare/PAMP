@@ -6,6 +6,7 @@
 	"mnuToolsPMA": "Otwórz phpMyAdmin",
 	"mnuToolsWWW": "Otwórz katalog WWW",
 	"mnuToolsWipe": "Wyczyść bazę danych",
+	"mnuToolsClearHtdocs": "Wyczyść katalog stron (LocalSites)",
 	"mnuSettings": "Ustawienia",
 	"mnuHelp": "Pomoc",
 	"mnuHelpAbout": "O programie",
@@ -122,5 +123,7 @@
 	"logsSearchPrompt": "Szukaj w logach...",
 	"logsOpenInEditor": "Otwórz w edytorze",
 	"logsClearView": "Wyczyść widok",
-	"logsLinesCount": "Wyświetlono: {0} z {1} wpisów"
+	"logsLinesCount": "Wyświetlono: {0} z {1} wpisów",
+	"msgConfirmClearHtdocs": "Czy na pewno chcesz wyczyścić katalog stron (LocalSites)?\n\nWszystkie pliki i foldery zostaną trwale usunięte, a plik index.php zostanie przywrócony do stanu początkowego.\n\nTej operacji nie można cofnąć.",
+	"msgClearHtdocsSuccess": "Katalog stron LocalSites został pomyślnie wyczyszczony."
 }

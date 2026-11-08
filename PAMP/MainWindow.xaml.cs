@@ -365,6 +365,55 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void BtnClearHtdocs_Click(object sender, RoutedEventArgs e)
+    {
+        if (MessageBox.Show(
+            TranslationSource.Instance["msgConfirmClearHtdocs"] ?? "Czy na pewno chcesz wyczyścić katalog stron (LocalSites)?\n\nWszystkie pliki i foldery zostaną trwale usunięte, a plik index.php zostanie przywrócony do stanu początkowego.\n\nTej operacji nie można cofnąć.",
+            TranslationSource.Instance["pampWarning"] ?? "Ostrzeżenie",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            return;
+
+        string htdocs = AppPaths.LocalSitesDir;
+        if (!Directory.Exists(htdocs))
+        {
+            Directory.CreateDirectory(htdocs);
+        }
+
+        bool success = false;
+        try
+        {
+            await Task.Run(() =>
+            {
+                var dirInfo = new DirectoryInfo(htdocs);
+                foreach (var file in dirInfo.GetFiles())
+                {
+                    try { file.Delete(); } catch { }
+                }
+                foreach (var subDir in dirInfo.GetDirectories())
+                {
+                    try { subDir.Delete(true); } catch { }
+                }
+
+                _serverService.EnvManager.CreateDefaultIndexPhp(overwrite: true);
+            });
+            success = true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, TranslationSource.Instance["pampError"] ?? "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        if (success)
+        {
+            MessageBox.Show(
+                TranslationSource.Instance["msgClearHtdocsSuccess"] ?? "Katalog stron LocalSites został pomyślnie wyczyszczony.",
+                TranslationSource.Instance["pampSuccess"] ?? "Sukces",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+    }
+
     private async void BtnFactoryReset_Click(object sender, RoutedEventArgs e)
     {
         if (MessageBox.Show(

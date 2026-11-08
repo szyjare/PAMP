@@ -6,6 +6,7 @@
 	"mnuToolsPMA": "Open phpMyAdmin",
 	"mnuToolsWWW": "Open WWW direcotry",
 	"mnuToolsWipe": "Wipe database",
+	"mnuToolsClearHtdocs": "Clear web directory (LocalSites)",
 	"mnuSettings": "Settings",
 	"mnuHelp": "Help",
 	"mnuHelpAbout": "About",
@@ -122,5 +123,7 @@
 	"logsSearchPrompt": "Search logs...",
 	"logsOpenInEditor": "Open in editor",
 	"logsClearView": "Clear view",
-	"logsLinesCount": "Showing: {0} of {1} entries"
+	"logsLinesCount": "Showing: {0} of {1} entries",
+	"msgConfirmClearHtdocs": "Are you sure you want to clear the web directory (LocalSites)?\n\nAll files and subfolders will be permanently deleted, and the default index.php will be restored.\n\nThis action cannot be undone.",
+	"msgClearHtdocsSuccess": "LocalSites web directory has been successfully cleared."
 }

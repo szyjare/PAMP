@@ -35,6 +35,7 @@
                     <Separator/>
                     <MenuItem Header="{local:Loc mnuToolsComponents}" FontWeight="Medium" Click="BtnShowComponents_Click"/>
                     <Separator/>
+                    <MenuItem Header="{local:Loc mnuToolsClearHtdocs}" Click="BtnClearHtdocs_Click"/>
                     <MenuItem Header="{local:Loc mnuToolsWipe}" FontWeight="SemiBold" Click="BtnFactoryReset_Click"/>
                 </MenuItem>
                 <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click"/>

@@ -6,6 +6,7 @@
 	"mnuToolsPMA": "Відкрити phpMyAdmin",
 	"mnuToolsWWW": "Відкрити каталог WWW",
 	"mnuToolsWipe": "Очистити базу даних",
+	"mnuToolsClearHtdocs": "Очистити каталог веб-сайтів (LocalSites)",
 	"mnuSettings": "Налаштування",
 	"mnuHelp": "Довідка",
 	"mnuHelpAbout": "Про програму",
@@ -122,5 +123,7 @@
 	"logsSearchPrompt": "Пошук у логах...",
 	"logsOpenInEditor": "Відкрити в редакторі",
 	"logsClearView": "Очистити вигляд",
-	"logsLinesCount": "Відображено: {0} з {1} записів"
+	"logsLinesCount": "Відображено: {0} з {1} записів",
+	"msgConfirmClearHtdocs": "Ви дійсно бажаєте очистити каталог веб-сайтів (LocalSites)?\n\nВсі файли та підпапки в цьому каталозі буде остаточно видалено, а файл index.php буде відновлено до початкового стану.\n\nЦю дію неможливо скасувати.",
+	"msgClearHtdocsSuccess": "Каталог веб-сайтів LocalSites успішно очищено."
 }

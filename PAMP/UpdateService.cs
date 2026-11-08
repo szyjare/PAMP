@@ -424,6 +424,7 @@ public sealed class UpdateService
                 // PAMP-{version}-win-x64-portable.zip
                 return assets.FirstOrDefault(a =>
                     a.Name.Contains("portable", StringComparison.OrdinalIgnoreCase) &&
+                    !a.Name.Contains("standalone", StringComparison.OrdinalIgnoreCase) &&
                     a.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
                     ?? assets.FirstOrDefault(a => a.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
             }

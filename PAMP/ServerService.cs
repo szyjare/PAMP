@@ -6,6 +6,7 @@ namespace PAMP;
 public sealed class ServerService : IDisposable
 {
     private readonly EnvironmentManager _envManager = new();
+    public EnvironmentManager EnvManager => _envManager;
     private Process? _apacheProcess;
     private Process? _mysqlProcess;
 

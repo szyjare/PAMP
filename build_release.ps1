@@ -41,7 +41,7 @@ if (!(Test-Path $distDir)) { New-Item -ItemType Directory -Path $distDir | Out-N
 
 function Build-ReleasePackage([bool]$isSelfContained) {
     $mode = if ($isSelfContained) { "Self-Contained (bundles .NET 10 runtime)" } else { "Framework-Dependent (lightweight)" }
-    $zipSuffix = if ($isSelfContained) { "standalone" } else { "portable" }
+    $zipSuffix = if ($isSelfContained) { "portable-standalone" } else { "portable" }
     $installerName = if ($isSelfContained) { "PAMP-Setup-$version-standalone" } else { "PAMP-Setup-$version" }
 
     Write-Host "`n-----------------------------------------" -ForegroundColor Cyan
