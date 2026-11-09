@@ -403,7 +403,7 @@ $cfg['SaveDir'] = '';
 <head>
     <meta charset=""UTF-8"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>PAMP - Welcome / Witaj</title>
+    <title>PAMP - Welcome</title>
     <style>
         :root {
             --bg-color: #f1f5f9;
@@ -427,18 +427,21 @@ $cfg['SaveDir'] = '';
                 --code-bg: #0b1120;
             }
         }
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 40px 16px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .container {
-            max-width: 680px;
+            max-width: 1100px;
             width: 100%;
         }
         .card {
@@ -449,38 +452,22 @@ $cfg['SaveDir'] = '';
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
             margin-bottom: 24px;
         }
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            background-color: rgba(34, 197, 94, 0.15);
-            color: #16a34a;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        @media (prefers-color-scheme: dark) {
-            .status-badge {
-                color: #4ade80;
-                background-color: rgba(74, 222, 128, 0.15);
-            }
-        }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: currentColor;
-        }
         h1 {
             margin: 0 0 10px 0;
             font-size: 26px;
+            font-weight: 700;
         }
         p {
             margin: 8px 0;
             line-height: 1.6;
             color: var(--muted-color);
+        }
+        .path-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 4px;
+            color: var(--text-color);
         }
         .path-box {
             background-color: var(--code-bg);
@@ -490,7 +477,8 @@ $cfg['SaveDir'] = '';
             font-family: Consolas, monospace;
             font-size: 13px;
             word-break: break-all;
-            margin: 12px 0 20px 0;
+            margin: 6px 0 20px 0;
+            color: var(--accent-color);
         }
         .btn-group {
             display: flex;
@@ -505,7 +493,7 @@ $cfg['SaveDir'] = '';
             background-color: var(--accent-color);
             color: #ffffff;
             text-decoration: none;
-            padding: 9px 16px;
+            padding: 10px 18px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: 500;
@@ -522,59 +510,109 @@ $cfg['SaveDir'] = '';
         .btn-secondary:hover {
             background-color: var(--border-color);
         }
-        .divider {
-            border: none;
-            border-top: 1px dashed var(--border-color);
-            margin: 20px 0;
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
         }
-        .lang-section {
-            font-size: 13px;
-            color: var(--muted-color);
-            line-height: 1.6;
+        .card-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .phpinfo-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .phpinfo-wrapper table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 16px 0 !important;
+            font-size: 13px !important;
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 6px;
+        }
+        .phpinfo-wrapper th,
+        .phpinfo-wrapper td {
+            padding: 8px 12px !important;
+            border: 1px solid var(--border-color) !important;
+            text-align: left !important;
+            word-break: break-word !important;
+        }
+        .phpinfo-wrapper .e {
+            background-color: var(--code-bg) !important;
+            font-weight: 600 !important;
+            color: var(--text-color) !important;
+            width: 28% !important;
+            min-width: 180px;
+        }
+        .phpinfo-wrapper .v {
+            color: var(--muted-color) !important;
+            font-family: Consolas, monospace !important;
+            font-size: 12px !important;
+        }
+        .phpinfo-wrapper .h {
+            background-color: var(--code-bg) !important;
+            font-weight: 700 !important;
+            text-align: center !important;
+            color: var(--text-color) !important;
+        }
+        .phpinfo-wrapper h1,
+        .phpinfo-wrapper h2 {
+            font-size: 18px;
+            margin: 24px 0 10px 0;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+        .phpinfo-wrapper hr {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+            }
+            .card {
+                padding: 20px 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class=""container"">
         <div class=""card"">
-            <div class=""status-badge"">
-                <span class=""status-dot""></span>
-                <span>PAMP is Running / PAMP Działa</span>
-            </div>
-            <h1>Welcome to PAMP!</h1>
-            <p>Your local web development environment (Apache, PHP, MariaDB) is ready to use.</p>
+            <h1>Welcome to PAMP</h1>
+            <p>Your local web development stack (Apache, PHP, MariaDB) is installed and active.</p>
             
-            <p style=""font-size: 13px; margin-top: 14px; margin-bottom: 2px;"">Your web project directory (Document Root):</p>
+            <div class=""path-label"">Web Project Directory (Document Root):</div>
             <div class=""path-box""><?php echo htmlspecialchars(__DIR__); ?></div>
+            <p style=""font-size: 13px;"">Place your PHP scripts, HTML files, and assets in this folder to view them at <code>http://localhost/</code>.</p>
 
             <div class=""btn-group"">
-                <a class=""btn"" href=""/phpmyadmin"" target=""_blank"">phpMyAdmin</a>
-                <a class=""btn btn-secondary"" href=""?phpinfo=1"">PHP Info</a>
-            </div>
-
-            <hr class=""divider"">
-
-            <div class=""lang-section"">
-                <strong>PL:</strong> Twoje lokalne środowisko serwerowe działa poprawnie. Umieszczaj pliki swoich stron i projektów w powyższym katalogu <code>LocalSites</code>.
+                <a class=""btn"" href=""/phpmyadmin"" target=""_blank"">Open phpMyAdmin</a>
+                <a class=""btn btn-secondary"" href=""#phpinfo"">Jump to PHP Info</a>
             </div>
         </div>
 
-        <?php if (isset($_GET['phpinfo'])): ?>
-        <div class=""card"" style=""padding: 16px; overflow-x: auto;"">
-            <div style=""display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;"">
-                <h3 style=""margin:0;"">PHP Configuration (phpinfo)</h3>
-                <a href=""<?php echo strtok($_SERVER['REQUEST_URI'], '?'); ?>"" class=""btn btn-secondary"" style=""padding: 4px 10px; font-size: 12px;"">Close / Zamknij</a>
+        <div class=""card"" id=""phpinfo"">
+            <div class=""card-header"">
+                <h2>PHP Configuration</h2>
             </div>
-            <?php
-            ob_start();
-            phpinfo();
-            $pinfo = ob_get_clean();
-            $pinfo = preg_replace('%^.*<body>%is', '', $pinfo);
-            $pinfo = preg_replace('%</body>.*$%is', '', $pinfo);
-            echo $pinfo;
-            ?>
+            <div class=""phpinfo-wrapper"">
+                <?php
+                ob_start();
+                phpinfo();
+                $pinfo = ob_get_clean();
+                $pinfo = preg_replace('%^.*<body>%is', '', $pinfo);
+                $pinfo = preg_replace('%</body>.*$%is', '', $pinfo);
+                echo $pinfo;
+                ?>
+            </div>
         </div>
-        <?php endif; ?>
     </div>
 </body>
 </html>";
