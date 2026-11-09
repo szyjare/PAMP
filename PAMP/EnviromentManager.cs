@@ -370,11 +370,19 @@ $cfg['SaveDir'] = '';
             string localShareDir = Path.Combine(_appBinDir, "bin", "mariadb", "share");
 
             var sb = new StringBuilder();
+            sb.AppendLine("[client]");
+            sb.AppendLine("default-character-set=utf8mb4");
+            sb.AppendLine();
+            sb.AppendLine("[mysql]");
+            sb.AppendLine("default-character-set=utf8mb4");
+            sb.AppendLine();
             sb.AppendLine("[mysqld]");
             sb.AppendLine($"basedir=\"{baseDirSlash}\"");
             sb.AppendLine($"datadir=\"{dataDir}\"");
             sb.AppendLine("port=3306");
             sb.AppendLine($"socket=\"{socketPath}\"");
+            sb.AppendLine("character-set-server=utf8mb4");
+            sb.AppendLine("collation-server=utf8mb4_unicode_ci");
 
             // Wskazujemy lc-messages-dir tylko jeśli folder share istnieje w obecnej instalacji bin/mariadb
             if (Directory.Exists(localShareDir))
