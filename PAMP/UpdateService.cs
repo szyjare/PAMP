@@ -46,9 +46,17 @@ public sealed class UpdateService
 
             return new UpdatePackageInfo
             {
-                Version = "1.3.0-beta.3",
-                Title = "PAMP v1.3.0-beta.3 - Pre-release",
-                Changelog = "## What's new in PAMP v1.3.0-beta.1:\n\n- Built-in automatic update checker and in-app updater\n- Real-time download progress bar and dedicated release notes dialog\n- Support for both Inno Setup installer and Portable ZIP self-updating\n- Auto-detection of releases and pre-releases from GitHub API\n- Component Manager: Install latest components profile and version mixing warnings\n- Language support: Added Ukrainian localization and system language auto-detection\n- Visual and accessibility improvements for dark theme and disabled button states\n- General stability, layout, and performance enhancements",
+                Version = "1.3.0",
+                Title = "PAMP v1.3.0 - Official Release",
+                Changelog = @"## What's new in PAMP v1.3.0:
+
+- **Built-in In-App Auto Updater:** Automatic updates checking with release notes dialog and instant in-place upgrade.
+- **Component Manager:** Full remote catalog integration with repo.sjarecki.pl, supporting 1-click CKE Exam Profile and Latest profile.
+- **Portable Single-Folder Mode:** Self-contained portable mode storing binaries, database data, and websites in one unified folder ready for USB drives.
+- **Bilingual & Multi-Language Support:** Fully translated interface in English, Polish, and Ukrainian with auto-detection.
+- **Advanced Log Viewer:** Filter by log level, real-time query search, autoscroll, and light/dark theme optimization.
+- **LocalSites Management:** Clean and modern English index.php template with embedded live PHP info and instant directory wipe tool.
+- **Windows 11 Fluent UI:** Seamless Mica backdrop, system accent color integration, and high-contrast styling.",
                 ReleaseUrl = "https://github.com/szyjare/PAMP/releases",
                 SelectedAssetUrl = mockAssetUrl,
                 SelectedAssetName = isInst ? "PAMP-Setup-1.3.0-mock.exe" : "PAMP-v1.3.0-mock.zip",
