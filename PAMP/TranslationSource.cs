@@ -22,6 +22,30 @@ namespace PAMP
             }
         }
 
+        public string Get(string key, string? fallback = null)
+        {
+            if (_translations.TryGetValue(key, out string? value) && !string.IsNullOrWhiteSpace(value))
+                return value;
+            return fallback ?? $"!{key}!";
+        }
+
+        public string Format(string key, params object[] args)
+        {
+            string pattern = Get(key);
+            if (pattern.StartsWith("!") && pattern.EndsWith("!"))
+            {
+                return pattern;
+            }
+            try
+            {
+                return string.Format(pattern, args);
+            }
+            catch
+            {
+                return pattern;
+            }
+        }
+
         public void LoadLanguage(string langCode)
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Lang", $"{langCode}.json");

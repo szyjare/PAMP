@@ -31,9 +31,9 @@ public partial class ComponentManagerWindow : Window
                 _ = Task.Run(() => ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")));
             }
 
-            TxtRepoStatus.Text = "repo.sjarecki.pl (synchronizacja...)";
+            TxtRepoStatus.Text = TranslationSource.Instance.Get("compRepoSyncing", "repo.sjarecki.pl (synchronizacja...)");
             bool success = await ComponentCatalog.EnsureLoadedAsync();
-            TxtRepoStatus.Text = success ? "✓ repo.sjarecki.pl" : "repo.sjarecki.pl (offline)";
+            TxtRepoStatus.Text = success ? "✓ repo.sjarecki.pl" : TranslationSource.Instance.Get("compRepoOffline", "repo.sjarecki.pl (offline)");
             PopulateAvailableVersions();
         };
     }
@@ -399,7 +399,7 @@ public partial class ComponentManagerWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Błąd instalacji profilu CKE: {ex.Message}",
+                TranslationSource.Instance.Format("ckeProfileError", ex.Message),
                 TranslationSource.Instance["pampWarning"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
@@ -489,7 +489,7 @@ public partial class ComponentManagerWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Błąd instalacji najnowszych wersji: {ex.Message}",
+                TranslationSource.Instance.Format("compInstallLatestError", ex.Message),
                 TranslationSource.Instance["pampWarning"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
@@ -546,7 +546,7 @@ public partial class ComponentManagerWindow : Window
         if (packageId is "php" or "apache" && _serverService.IsApacheRunning)
         {
             var res = MessageBox.Show(
-                "Apache jest aktualnie uruchomiony. Czy chcesz go zatrzymać, aby zaktualizować komponenty?",
+                TranslationSource.Instance.Get("compStopApacheWarn", "Apache jest aktualnie uruchomiony. Czy chcesz go zatrzymać, aby zaktualizować komponenty?"),
                 TranslationSource.Instance["pampWarning"], MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (res == MessageBoxResult.Yes)
@@ -561,7 +561,7 @@ public partial class ComponentManagerWindow : Window
             if (_serverService.IsMariaDbRunning)
             {
                 var res = MessageBox.Show(
-                    "MariaDB jest aktualnie uruchomiona. Czy chcesz ją zatrzymać, aby zaktualizować komponenty?",
+                    TranslationSource.Instance.Get("compStopMariaDbWarn", "MariaDB jest aktualnie uruchomiona. Czy chcesz ją zatrzymać, aby zaktualizować komponenty?"),
                     TranslationSource.Instance["pampWarning"], MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (res == MessageBoxResult.Yes)
@@ -619,7 +619,7 @@ public partial class ComponentManagerWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Błąd instalacji: {ex.Message}",
+                TranslationSource.Instance.Format("compInstallError", ex.Message),
                 TranslationSource.Instance["pampWarning"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);

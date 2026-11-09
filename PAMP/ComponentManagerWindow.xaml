@@ -101,7 +101,7 @@
                         <!-- Pasek postępu dla profilu CKE / Najnowszych -->
                         <StackPanel x:Name="PnlCkeProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgCke" Height="8" Margin="0,0,0,4" Foreground="{DynamicResource AccentBrush}"/>
-                            <TextBlock x:Name="TxtCkeStatus" Text="Instalowanie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="TxtCkeStatus" Text="{local:Loc compInstalling}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -163,7 +163,7 @@
                         <!-- Pasek postępu -->
                         <StackPanel x:Name="PnlPhpProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgPhp" Height="6" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="TxtPhpStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="TxtPhpStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -204,7 +204,7 @@
 
                         <StackPanel x:Name="PnlApacheProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgApache" Height="6" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="TxtApacheStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="TxtApacheStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -245,7 +245,7 @@
 
                         <StackPanel x:Name="PnlMariaDbProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgMariaDb" Height="6" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="TxtMariaDbStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="TxtMariaDbStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -286,7 +286,7 @@
 
                         <StackPanel x:Name="PnlPmaProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgPma" Height="6" Margin="0,0,0,4"/>
-                            <TextBlock x:Name="TxtPmaStatus" Text="Pobieranie..." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock x:Name="TxtPmaStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>

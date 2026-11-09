@@ -39,7 +39,7 @@ public sealed class ComponentInstallerService
         try
         {
             // 1. Pobieranie pliku
-            progress.Report(new InstallProgress($"Pobieranie {versionInfo.DisplayName}...", 0));
+            progress.Report(new InstallProgress(TranslationSource.Instance.Format("compProgressDownloadingPackage", versionInfo.DisplayName), 0));
 
             using (var response = await HttpClient.GetAsync(versionInfo.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
             {
@@ -49,7 +49,7 @@ public sealed class ComponentInstallerService
                 var mediaType = response.Content.Headers.ContentType?.MediaType;
                 if (mediaType != null && mediaType.Contains("html", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new InvalidOperationException($"Serwer zwrócił stronę HTML zamiast archiwum ZIP. Adres URL może być nieaktualny: {versionInfo.DownloadUrl}");
+                    throw new InvalidOperationException(TranslationSource.Instance.Format("compErrorHtmlReturned", versionInfo.DownloadUrl));
                 }
 
                 long? totalBytes = response.Content.Headers.ContentLength;
@@ -70,12 +70,12 @@ public sealed class ComponentInstallerService
                         double percent = (double)totalRead / totalBytes.Value * 100.0;
                         double mbRead = totalRead / 1048576.0;
                         double mbTotal = totalBytes.Value / 1048576.0;
-                        progress.Report(new InstallProgress($"Pobieranie: {percent:0}% ({mbRead:0.0} / {mbTotal:0.0} MB)", percent));
+                        progress.Report(new InstallProgress(TranslationSource.Instance.Format("compProgressDownloadingPercent", percent, mbRead, mbTotal), percent));
                     }
                     else
                     {
                         double mbRead = totalRead / 1048576.0;
-                        progress.Report(new InstallProgress($"Pobrano: {mbRead:0.0} MB", 0, true));
+                        progress.Report(new InstallProgress(TranslationSource.Instance.Format("compProgressDownloadedMb", mbRead), 0, true));
                     }
                 }
             }
@@ -83,14 +83,14 @@ public sealed class ComponentInstallerService
             // Weryfikacja sumy kontrolnej SHA-256 (jeśli dostępna)
             if (!string.IsNullOrWhiteSpace(versionInfo.Sha256))
             {
-                progress.Report(new InstallProgress("Weryfikacja sumy kontrolnej SHA-256...", 100, true));
+                progress.Report(new InstallProgress(TranslationSource.Instance.Get("compProgressVerifyingHash", "Weryfikacja sumy kontrolnej SHA-256..."), 100, true));
                 using var sha256 = System.Security.Cryptography.SHA256.Create();
                 using var hashStream = File.OpenRead(zipPath);
                 byte[] hashBytes = await sha256.ComputeHashAsync(hashStream, cancellationToken);
                 string actualHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
                 if (!actualHash.Equals(versionInfo.Sha256.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new InvalidOperationException($"Niezgodność sumy kontrolnej SHA-256 dla {versionInfo.DisplayName}.\nOczekiwano: {versionInfo.Sha256}\nOtrzymano: {actualHash}");
+                    throw new InvalidOperationException(TranslationSource.Instance.Format("compErrorHashMismatch", versionInfo.DisplayName, versionInfo.Sha256, actualHash));
                 }
             }
 
@@ -101,12 +101,12 @@ public sealed class ComponentInstallerService
                 int read = checkStream.Read(header, 0, 4);
                 if (read < 4 || header[0] != 0x50 || header[1] != 0x4B)
                 {
-                    throw new InvalidOperationException($"Pobrany plik nie jest prawidłowym archiwum ZIP (brak nagłówka PK). Rozmiar: {new FileInfo(zipPath).Length} bajtów.");
+                    throw new InvalidOperationException(TranslationSource.Instance.Format("compErrorInvalidZip", new FileInfo(zipPath).Length));
                 }
             }
 
             // 2. Rozpakowywanie archiwum
-            progress.Report(new InstallProgress("Rozpakowywanie archiwum...", 100, true));
+            progress.Report(new InstallProgress(TranslationSource.Instance.Get("compProgressExtracting", "Rozpakowywanie archiwum..."), 100, true));
 
             if (Directory.Exists(extractDir))
             {
@@ -120,7 +120,7 @@ public sealed class ComponentInstallerService
             string sourceDir = DetectSourceDirectory(extractDir, package.Id);
 
             // 4. Bezpieczna podmiana w folderze bin aplikacji (BEZ NARUSZANIA BAZ DANYCH W %LocalAppData%\PAMP\mysql_data!)
-            progress.Report(new InstallProgress("Instalacja plików w katalogu bin...", 100, true));
+            progress.Report(new InstallProgress(TranslationSource.Instance.Get("compProgressInstallingFiles", "Instalacja plików w katalogu bin..."), 100, true));
 
             string targetBinDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", package.TargetSubfolder);
 
@@ -134,7 +134,7 @@ public sealed class ComponentInstallerService
             }, cancellationToken);
 
             // 5. Aktualizacja manifest.json
-            progress.Report(new InstallProgress("Aktualizacja konfiguracji wersji...", 100, true));
+            progress.Report(new InstallProgress(TranslationSource.Instance.Get("compProgressUpdatingConfig", "Aktualizacja konfiguracji wersji..."), 100, true));
 
             var manifest = ManifestLoader.Load();
             switch (package.Id)
@@ -154,7 +154,7 @@ public sealed class ComponentInstallerService
             }
             ManifestLoader.Save(manifest);
 
-            progress.Report(new InstallProgress("Zakończono pomyślnie!", 100));
+            progress.Report(new InstallProgress(TranslationSource.Instance.Get("compProgressCompleted", "Zakończono pomyślnie!"), 100));
         }
         finally
         {
@@ -191,7 +191,7 @@ public sealed class ComponentInstallerService
             await DownloadAndInstallAsync(package, versionInfo, subProgress, cancellationToken);
         }
 
-        progress.Report(new InstallProgress("Pakiet CKE został pomyślnie zainstalowany!", 100));
+        progress.Report(new InstallProgress(TranslationSource.Instance.Get("ckeProfileInstalledStatus", "Pakiet CKE został pomyślnie zainstalowany!"), 100));
     }
 
     public async Task InstallLatestProfileAsync(
@@ -217,7 +217,7 @@ public sealed class ComponentInstallerService
             await DownloadAndInstallAsync(package, versionInfo, subProgress, cancellationToken);
         }
 
-        progress.Report(new InstallProgress("Najnowsze pakiety zostały pomyślnie zainstalowane!", 100));
+        progress.Report(new InstallProgress(TranslationSource.Instance.Get("compLatestInstalledStatus", "Najnowsze pakiety zostały pomyślnie zainstalowane!"), 100));
     }
 
     private static string DetectSourceDirectory(string extractDir, string packageId)
