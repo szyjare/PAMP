@@ -146,5 +146,13 @@
 	"compStopMariaDbWarn": "MariaDB is currently running. Do you want to stop it to update components?",
 	"compErrorHtmlReturned": "The server returned an HTML page instead of a ZIP archive. The download URL may be outdated: {0}",
 	"compErrorHashMismatch": "SHA-256 checksum mismatch for {0}.\nExpected: {1}\nActual: {2}",
-	"compErrorInvalidZip": "Downloaded file is not a valid ZIP archive (missing PK header). Size: {0} bytes."
+	"compErrorInvalidZip": "Downloaded file is not a valid ZIP archive (missing PK header). Size: {0} bytes.",
+	"settingsTrayHeader": "System Tray",
+	"settingsMinimizeToTray": "Minimize to system tray",
+	"settingsCloseToTray": "Close to system tray (keep servers running in background)",
+	"trayShowApp": "Open PAMP",
+	"trayStartAll": "Start all services",
+	"trayStopAll": "Stop all services",
+	"trayRunning": "Running",
+	"trayStopped": "Stopped"
 }

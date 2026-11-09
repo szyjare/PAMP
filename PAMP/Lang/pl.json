@@ -146,5 +146,13 @@
 	"compStopMariaDbWarn": "MariaDB jest aktualnie uruchomiona. Czy chcesz ją zatrzymać, aby zaktualizować komponenty?",
 	"compErrorHtmlReturned": "Serwer zwrócił stronę HTML zamiast archiwum ZIP. Adres URL może być nieaktualny: {0}",
 	"compErrorHashMismatch": "Niezgodność sumy kontrolnej SHA-256 dla {0}.\nOczekiwano: {1}\nOtrzymano: {2}",
-	"compErrorInvalidZip": "Pobrany plik nie jest prawidłowym archiwum ZIP (brak nagłówka PK). Rozmiar: {0} bajtów."
+	"compErrorInvalidZip": "Pobrany plik nie jest prawidłowym archiwum ZIP (brak nagłówka PK). Rozmiar: {0} bajtów.",
+	"settingsTrayHeader": "Zasobnik systemowy",
+	"settingsMinimizeToTray": "Minimalizuj do zasobnika systemowego",
+	"settingsCloseToTray": "Zamykaj do zasobnika (serwery działają w tle)",
+	"trayShowApp": "Otwórz PAMP",
+	"trayStartAll": "Uruchom wszystkie usługi",
+	"trayStopAll": "Zatrzymaj wszystkie usługi",
+	"trayRunning": "Działa",
+	"trayStopped": "Zatrzymany"
 }

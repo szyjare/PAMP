@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Height="445" Width="440"
+        Title="{local:Loc settingsTtile}" Height="540" Width="440"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -81,7 +81,29 @@
                         HorizontalAlignment="Left" 
                         Click="BtnCheckUpdatesNow_Click"/>
 
-                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,20,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
+                <Separator Margin="0,14,0,12" Background="{DynamicResource CardBorderBrush}"/>
+
+                <!-- Zasobnik systemowy -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="📌" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{local:Loc settingsTrayHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <CheckBox x:Name="ChkMinimizeToTray" 
+                          Content="{local:Loc settingsMinimizeToTray}" 
+                          FontSize="12" 
+                          Margin="0,6,0,6" 
+                          Checked="ChkMinimizeToTray_Changed" 
+                          Unchecked="ChkMinimizeToTray_Changed"/>
+
+                <CheckBox x:Name="ChkCloseToTray" 
+                          Content="{local:Loc settingsCloseToTray}" 
+                          FontSize="12" 
+                          Margin="0,0,0,6" 
+                          Checked="ChkCloseToTray_Changed" 
+                          Unchecked="ChkCloseToTray_Changed"/>
+
+                <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,16,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
             </StackPanel>
         </Border>
     </Grid>

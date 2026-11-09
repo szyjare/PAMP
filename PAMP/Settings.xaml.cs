@@ -36,6 +36,8 @@ namespace PAMP
                 ?? CmbLanguage.Items.OfType<ComboBoxItem>().First();
             ChkAutoCheckUpdates.IsChecked = App.Settings.AutoCheckUpdates;
             ChkIncludeBetaUpdates.IsChecked = App.Settings.IncludeBetaUpdates;
+            ChkMinimizeToTray.IsChecked = App.Settings.MinimizeToTray;
+            ChkCloseToTray.IsChecked = App.Settings.CloseToTray;
 
             _isInitialized = true;
         }
@@ -72,6 +74,22 @@ namespace PAMP
             if (!_isInitialized) return;
 
             App.Settings.IncludeBetaUpdates = ChkIncludeBetaUpdates.IsChecked == true;
+            App.Settings.Save();
+        }
+
+        private void ChkMinimizeToTray_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_isInitialized) return;
+
+            App.Settings.MinimizeToTray = ChkMinimizeToTray.IsChecked == true;
+            App.Settings.Save();
+        }
+
+        private void ChkCloseToTray_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_isInitialized) return;
+
+            App.Settings.CloseToTray = ChkCloseToTray.IsChecked == true;
             App.Settings.Save();
         }
 

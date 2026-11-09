@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
         Title="PAMP Launcher" Height="465" Width="590" 
         ResizeMode="CanMinimize"
@@ -22,6 +23,30 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
+
+        <!-- Zasobnik systemowy (Tray Icon) -->
+        <tb:TaskbarIcon x:Name="PampTrayIcon"
+                        IconSource="/pamp_icon.ico"
+                        ToolTipText="PAMP Launcher"
+                        TrayMouseDoubleClick="PampTrayIcon_TrayMouseDoubleClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu Background="{DynamicResource CardBackgroundBrush}"
+                             BorderBrush="{DynamicResource CardBorderBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}">
+                    <MenuItem Header="{local:Loc trayShowApp}" FontWeight="Bold" Click="TrayShowApp_Click"/>
+                    <Separator Margin="0,4"/>
+                    <MenuItem x:Name="trayMenuStartAll" Header="{local:Loc trayStartAll}" Click="TrayStartAll_Click"/>
+                    <MenuItem x:Name="trayMenuStopAll" Header="{local:Loc trayStopAll}" Click="TrayStopAll_Click"/>
+                    <Separator Margin="0,4"/>
+                    <MenuItem x:Name="trayMenuLocalhost" Header="{local:Loc btnLocalhost}" Click="BtnOpenLocalhost_Click"/>
+                    <MenuItem x:Name="trayMenuPma" Header="{local:Loc btnPMA}" Click="BtnOpenPma_Click"/>
+                    <MenuItem Header="{local:Loc btnWWW}" Click="BtnOpenFolder_Click"/>
+                    <Separator Margin="0,4"/>
+                    <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click"/>
+                    <MenuItem Header="{local:Loc mnuExit}" Click="TrayExit_Click"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
 
         <!-- Menu zintegrowane z tłem Mica oraz baner aktualizacji -->
         <StackPanel Grid.Row="0" Grid.ColumnSpan="2">

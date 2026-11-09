@@ -13,6 +13,8 @@ namespace PAMP
         public bool AutoCheckUpdates { get; set; } = true;
         public string? SkippedVersion { get; set; } = null;
         public DateTime? LastUpdateCheckUtc { get; set; } = null;
+        public bool MinimizeToTray { get; set; } = true;
+        public bool CloseToTray { get; set; } = true;
 
         private bool? _includeBetaUpdates;
 

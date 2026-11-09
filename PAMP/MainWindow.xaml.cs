@@ -35,7 +35,11 @@ public partial class MainWindow : Window
 
         SetupTimer();
         LoadVersionsToUI();
-        TranslationSource.Instance.PropertyChanged += (_, _) => Dispatcher.Invoke(LoadVersionsToUI);
+        TranslationSource.Instance.PropertyChanged += (_, _) => Dispatcher.Invoke(() =>
+        {
+            LoadVersionsToUI();
+            _ = RefreshStatusAsync();
+        });
         _ = ComponentCatalog.EnsureLoadedAsync();
         _ = CheckInitialProcessesAsync();
     }
@@ -173,6 +177,7 @@ public partial class MainWindow : Window
 
             btnOpenPma.IsEnabled = apacheActive && mysqlActive;
             menuToolsPMA.IsEnabled = apacheActive && mysqlActive;
+            UpdateTrayState(apacheActive, apachePort, mysqlActive, mysqlPort);
         }
         finally
         {
@@ -514,9 +519,11 @@ public partial class MainWindow : Window
 
     private void Exit_Click(object sender, RoutedEventArgs e)
     {
+        _isExplicitExit = true;
         Close();
     }
 
+    private bool _isExplicitExit;
     private bool _isClosingServers;
 
     protected override async void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -526,6 +533,15 @@ public partial class MainWindow : Window
             base.OnClosing(e);
             return;
         }
+
+        if (!_isExplicitExit && App.Settings.CloseToTray)
+        {
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+
+        try { PampTrayIcon?.Dispose(); } catch { }
 
         // Natychmiast zatrzymujemy timer odswiezania stanu
         _statusTimer.Stop();
@@ -569,7 +585,95 @@ public partial class MainWindow : Window
     {
         _statusTimer.Stop();
         SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
+        try { PampTrayIcon?.Dispose(); } catch { }
         _serverService.Dispose();
         base.OnClosed(e);
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        if (WindowState == WindowState.Minimized && App.Settings.MinimizeToTray)
+        {
+            Hide();
+        }
+    }
+
+    private void ShowAndRestoreWindow()
+    {
+        if (!IsVisible)
+        {
+            Show();
+        }
+        if (WindowState == WindowState.Minimized)
+        {
+            WindowState = WindowState.Normal;
+        }
+        Activate();
+        Focus();
+    }
+
+    private void PampTrayIcon_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
+    {
+        ShowAndRestoreWindow();
+    }
+
+    private void TrayShowApp_Click(object sender, RoutedEventArgs e)
+    {
+        ShowAndRestoreWindow();
+    }
+
+    private void TrayExit_Click(object sender, RoutedEventArgs e)
+    {
+        _isExplicitExit = true;
+        Close();
+    }
+
+    private async void TrayStartAll_Click(object sender, RoutedEventArgs e)
+    {
+        if (!VCRedistHelper.CheckAndPrompt(this)) return;
+        try
+        {
+            if (!_serverService.IsApacheRunning)
+                await _serverService.StartApacheAsync();
+            if (!_serverService.IsMariaDbRunning)
+                await _serverService.StartMariaDbAsync();
+            await RefreshStatusAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"{TranslationSource.Instance["msgFailedToStart"]}{ex.Message}", "PAMP", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private async void TrayStopAll_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await _serverService.StopAllAsync();
+            await RefreshStatusAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"{TranslationSource.Instance["msgFailedToStop"]}{ex.Message}", "PAMP", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void UpdateTrayState(bool apacheActive, int apachePort, bool mysqlActive, int mysqlPort)
+    {
+        if (PampTrayIcon == null) return;
+
+        string runningText = TranslationSource.Instance["trayRunning"] ?? "Działa";
+        string stoppedText = TranslationSource.Instance["trayStopped"] ?? "Zatrzymany";
+
+        string apacheStatus = apacheActive ? $"{runningText} (:{apachePort})" : stoppedText;
+        string mysqlStatus = mysqlActive ? $"{runningText} (:{mysqlPort})" : stoppedText;
+
+        PampTrayIcon.ToolTipText = $"PAMP Launcher\nApache: {apacheStatus}\nMariaDB: {mysqlStatus}";
+
+        if (trayMenuStartAll != null) trayMenuStartAll.IsEnabled = !apacheActive || !mysqlActive;
+        if (trayMenuStopAll != null) trayMenuStopAll.IsEnabled = apacheActive || mysqlActive;
+        if (trayMenuLocalhost != null) trayMenuLocalhost.IsEnabled = apacheActive;
+        if (trayMenuPma != null) trayMenuPma.IsEnabled = apacheActive && mysqlActive;
     }
 }
