@@ -11,12 +11,14 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
 [![pl](https://img.shields.io/badge/lang-pl-green.svg)](README.pl.md)
 
+ 🌐 **Website:** [pamp.sjarecki.pl](https://pamp.sjarecki.pl)
+
 > 🇵🇱 **Polska wersja:** Kliknij tutaj, aby zobaczyć [dokumentację w języku polskim](README.pl.md).
 
 ---
 
 <p align="center">
-  <img width="566" height="403" alt="PAMP Main Window" src="https://github.com/user-attachments/assets/b725e35a-a5e6-458c-926e-f388dabbb73b" />
+  <img width="576" height="458" alt="PAMP Main Window" src="https://github.com/user-attachments/assets/7ac1eee9-f0a0-4a62-90da-e705e6fe3437" />
 </p>
 
 **PAMP!** is a modern, lightweight, and truly portable server stack environment for Windows, built with C# 14 (.NET 10 WPF). It allows you to launch a local web server stack in seconds, with zero configuration headaches, full user isolation, modular package management, and an integrated in-app updater.
