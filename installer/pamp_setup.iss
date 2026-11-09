@@ -46,7 +46,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Dirs]
 ; Nadaje uprawnienia zapisu dla folderu bin (aby pobieranie modułów działało nawet przy instalacji w Program Files)
-Name: "{app}\bin"; Permissions: users-modify
+Name: "{app}\bin"; Permissions: users-readandexec
 Name: "{commonappdata}\PAMP"; Permissions: users-modify
 
 [UninstallDelete]

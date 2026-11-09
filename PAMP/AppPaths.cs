@@ -30,6 +30,43 @@ public static class AppPaths
     public static bool IsPortable => _isPortable.Value;
 
     /// <summary>
+    /// Zwraca true, jeśli aplikacja została zainstalowana dla całego systemu (np. w Program Files lub Program Files (x86)).
+    /// W instalacji systemowej zarządzanie komponentami wymaga podniesienia uprawnień do konta Administratora.
+    /// </summary>
+    public static bool IsSystemInstalled
+    {
+        get
+        {
+            if (IsPortable) return false;
+
+            string appDir = Path.GetFullPath(AppDir).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            string pfX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            string pf64 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string commonPf = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles);
+            string commonPfX86 = Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86);
+            string winDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+
+            if (!string.IsNullOrEmpty(pfX86) && appDir.StartsWith(Path.GetFullPath(pfX86), StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (!string.IsNullOrEmpty(pf64) && appDir.StartsWith(Path.GetFullPath(pf64), StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (!string.IsNullOrEmpty(commonPf) && appDir.StartsWith(Path.GetFullPath(commonPf), StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (!string.IsNullOrEmpty(commonPfX86) && appDir.StartsWith(Path.GetFullPath(commonPfX86), StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (!string.IsNullOrEmpty(winDir) && appDir.StartsWith(Path.GetFullPath(winDir), StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Główny katalog wykonywalny aplikacji (gdzie znajduje się PAMP.exe).
     /// </summary>
     public static string AppDir => AppDomain.CurrentDomain.BaseDirectory;

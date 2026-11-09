@@ -296,7 +296,7 @@ public sealed class ComponentInstallerService
         return extractDir;
     }
 
-    public static void EnsureDirectoryPermissions(string targetDir)
+    public static void EnsureDirectoryPermissions(string targetDir, bool modify = true)
     {
         if (!Directory.Exists(targetDir)) return;
 
@@ -307,7 +307,7 @@ public sealed class ComponentInstallerService
             var psi = new ProcessStartInfo
             {
                 FileName = "icacls.exe",
-                Arguments = $"\"{targetDir}\" /grant \"*S-1-5-32-545:(OI)(CI)M\" /t /c /q",
+                Arguments = $"\"{targetDir}\" /grant \"*S-1-5-32-545:(OI)(CI){(modify ? "M" : "RX")}\" /t /c /q",
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden
@@ -344,7 +344,7 @@ public sealed class ComponentInstallerService
         // Dodatkowo wymuszamy uprawnienia dla wszystkich kont użytkowników
         if (AdminHelper.IsAdministrator)
         {
-            EnsureDirectoryPermissions(targetDir);
+            EnsureDirectoryPermissions(targetDir, modify: !AppPaths.IsSystemInstalled);
         }
     }
 

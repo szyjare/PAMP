@@ -27,7 +27,19 @@ public static class AdminHelper
     /// Zwraca true, jeśli proces działa jako Administrator LUB bieżący użytkownik posiada
     /// uprawnienia zapisu do katalogu aplikacji (np. instalacja per-user w AppData lub wersja portable).
     /// </summary>
-    public static bool CanManageComponents => IsAdministrator || HasWriteAccessToAppDirectory();
+    public static bool CanManageComponents
+    {
+        get
+        {
+            if (IsAdministrator)
+                return true;
+
+            if (AppPaths.IsSystemInstalled)
+                return false;
+
+            return HasWriteAccessToAppDirectory();
+        }
+    }
 
     /// <summary>
     /// Sprawdza, czy bieżący proces ma uprawnienia zapisu do katalogu bin aplikacji.
@@ -77,7 +89,7 @@ public static class AdminHelper
             };
 
             Process.Start(psi);
-            Application.Current.Shutdown();
+            ShutdownApplication();
             return true;
         }
         catch
@@ -102,12 +114,24 @@ public static class AdminHelper
             };
 
             Process.Start(psi);
-            Application.Current.Shutdown();
+            ShutdownApplication();
             return true;
         }
         catch
         {
             return false; // Użytkownik odrzucił monit UAC
+        }
+    }
+
+    private static void ShutdownApplication()
+    {
+        if (Application.Current != null)
+        {
+            if (Application.Current.MainWindow is MainWindow mw)
+            {
+                mw.Dispatcher.Invoke(mw.SetExplicitExit);
+            }
+            Application.Current.Shutdown();
         }
     }
 }

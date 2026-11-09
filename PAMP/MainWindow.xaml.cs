@@ -71,7 +71,7 @@ public partial class MainWindow : Window
         {
             _ = Task.Run(() =>
             {
-                ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin"));
+                ComponentInstallerService.EnsureDirectoryPermissions(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin"), modify: !AppPaths.IsSystemInstalled);
                 string progData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "PAMP");
                 ComponentInstallerService.EnsureDirectoryPermissions(progData);
             });
@@ -511,6 +511,12 @@ public partial class MainWindow : Window
     }
 
     private bool _isExplicitExit;
+
+    public void SetExplicitExit()
+    {
+        _isExplicitExit = true;
+        try { PampTrayIcon?.Dispose(); } catch { }
+    }
     private bool _isClosingServers;
 
     protected override async void OnClosing(System.ComponentModel.CancelEventArgs e)
