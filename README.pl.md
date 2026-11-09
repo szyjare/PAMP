@@ -4,7 +4,7 @@
 
 # PAMP! - Portable Apache MariaDB PHP Stack
 
-[![version](https://img.shields.io/badge/wersja-1.3.0-blue.svg)](https://github.com/szyjare/PAMP/releases)
+[![version](https://img.shields.io/badge/wersja-1.4.0-blue.svg)](https://github.com/szyjare/PAMP/releases)
 [![dotnet](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 [![platform](https://img.shields.io/badge/platforma-Windows%2010%20%7C%2011%20(x64)-lightgrey.svg)]()
 [![license](https://img.shields.io/badge/licencja-MIT-green.svg)](LICENSE.txt)
@@ -23,7 +23,7 @@
 
 **PAMP!** to nowoczesne, lekkie i w pełni przenośne środowisko serwerowe dla systemu Windows, napisane w języku C# 14 (.NET 10 WPF). Umożliwia błyskawiczne uruchomienie lokalnego serwera WWW bez zbędnej konfiguracji, z pełną izolacją danych użytkowników, modułowym menedżerem pobierania pakietów oraz wbudowanym mechanizmem automatycznych aktualizacji.
 
-> **Aktualna stabilna wersja:** `1.3.0`  
+> **Aktualna stabilna wersja:** `1.4.0`  
 > Obsługiwane języki interfejsu: **polski**, **angielski** oraz **ukraiński** (wybór w Ustawieniach lub automatyczne dopasowanie do języka systemu).
 
 ---

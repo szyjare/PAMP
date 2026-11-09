@@ -99,7 +99,7 @@
 	"updateBannerNewVersion": "New version available: PAMP v{0}!",
 	"updateBannerBtn": "Update",
 	"updateBtnCancel": "Cancel",
-	"updateMockSuccessMessage": "Update download and mechanism test (v1.3.0 Mock) completed successfully!\n\nThe progress bar, downloaded megabytes counter, and dialog handling work properly.",
+	"updateMockSuccessMessage": "Update download and mechanism test (v1.4.0 Mock) completed successfully!\n\nThe progress bar, downloaded megabytes counter, and dialog handling work properly.",
 	"msgCantConnectToUpdateServer": "Could not connect to update server.",
 	"msgDbWipingInProgress": "Wiping and initializing database...",
 	"msgMariaDbIncompatiblePrompt": "MariaDB server failed to start. This may be caused by database data incompatibility (e.g. after changing or downgrading the MariaDB version).\n\nWould you like to wipe (reset) the database now to initialize a compatible structure and retry starting?\n\nWarning: existing database data will be erased.",

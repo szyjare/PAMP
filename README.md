@@ -4,7 +4,7 @@
 
 # PAMP! - Portable Apache MariaDB PHP Stack
 
-[![version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/szyjare/PAMP/releases)
+[![version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/szyjare/PAMP/releases)
 [![dotnet](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 [![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011%20(x64)-lightgrey.svg)]()
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
@@ -23,7 +23,7 @@
 
 **PAMP!** is a modern, lightweight, and truly portable server stack environment for Windows, built with C# 14 (.NET 10 WPF). It allows you to launch a local web server stack in seconds, with zero configuration headaches, full user isolation, modular package management, and an integrated in-app updater.
 
-> **Current stable version:** `1.3.0`  
+> **Current stable version:** `1.4.0`  
 > Supported interface languages: **English**, **Polish**, and **Ukrainian** (selectable in Settings or auto-detected).
 
 ---

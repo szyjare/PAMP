@@ -15,7 +15,7 @@ public class AppManifest
 public class ComponentVersions
 {
     [JsonPropertyName("pamp")]
-    public string Pamp { get; set; } = "1.3.0";
+    public string Pamp { get; set; } = "1.4.0";
 
     [JsonPropertyName("php")]
     public string Php { get; set; } = "—";
@@ -175,7 +175,7 @@ public static class ManifestLoader
         }
 
         var ver = typeof(AppManifest).Assembly.GetName().Version;
-        return ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "1.3.0";
+        return ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "1.4.0";
     }
 
     private static void ValidateAndSyncWithDisk(ComponentVersions v)

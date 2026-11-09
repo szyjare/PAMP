@@ -37,7 +37,7 @@
 
                 <TextBlock Text="{local:Loc updateLatestVersion}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
                 <Border Padding="6,2" CornerRadius="4" Background="#25107C41">
-                    <TextBlock x:Name="TxtNewVersion" Text="v1.3.0" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
+                    <TextBlock x:Name="TxtNewVersion" Text="v1.4.0" FontSize="11" FontWeight="SemiBold" Foreground="#4CAF50"/>
                 </Border>
             </StackPanel>
         </StackPanel>
