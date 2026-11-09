@@ -85,8 +85,8 @@ public partial class MainWindow : Window
 
         if (openComponents)
         {
-            var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
-            compWindow.ShowDialog();
+            WindowManager.ShowSingle(() => new ComponentManagerWindow(this, _serverService, LoadVersionsToUI), this);
+
         }
 
         _ = CheckUpdatesOnStartupAsync();
@@ -128,8 +128,8 @@ public partial class MainWindow : Window
                 }
             }
 
-            var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
-            compWindow.ShowDialog();
+            WindowManager.ShowSingle(() => new ComponentManagerWindow(this, _serverService, LoadVersionsToUI), this);
+
         }
     }
 
@@ -292,12 +292,12 @@ public partial class MainWindow : Window
     }
 
     private void BtnShowSettings_Click(object sender, RoutedEventArgs e) =>
-        new Settings(this).ShowDialog();
+        WindowManager.ShowSingle(() => new Settings(this), this);
 
     private void BtnShowComponents_Click(object sender, RoutedEventArgs e)
     {
-        var compWindow = new ComponentManagerWindow(this, _serverService, LoadVersionsToUI);
-        compWindow.ShowDialog();
+        WindowManager.ShowSingle(() => new ComponentManagerWindow(this, _serverService, LoadVersionsToUI), this);
+
     }
 
     private void BtnOpenLocalhost_Click(object sender, RoutedEventArgs e) =>
@@ -324,24 +324,11 @@ public partial class MainWindow : Window
             MessageBox.Show(TranslationSource.Instance["msgDirectoryNotExisting"], TranslationSource.Instance["pampWarning"], MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
-    private LogViewer? _logViewer;
+    private void BtnShowLogs_Click(object sender, RoutedEventArgs e) =>
+        WindowManager.ShowSingle(() => new LogViewer(), this);
 
-    private void BtnShowLogs_Click(object sender, RoutedEventArgs e)
-    {
-        if (_logViewer != null && _logViewer.IsLoaded)
-        {
-            if (_logViewer.WindowState == WindowState.Minimized)
-                _logViewer.WindowState = WindowState.Normal;
-            _logViewer.Activate();
-            return;
-        }
-
-        _logViewer = new LogViewer { Owner = this };
-        _logViewer.Closed += (_, _) => _logViewer = null;
-        _logViewer.Show();
-    }
-
-    private void BtnShowAbout_Click(object sender, RoutedEventArgs e) => new About(this).ShowDialog();
+    private void BtnShowAbout_Click(object sender, RoutedEventArgs e) =>
+        WindowManager.ShowSingle(() => new About(this), this);
 
     private void BtnOpenSqlShell_Click(object sender, RoutedEventArgs e)
     {
@@ -472,7 +459,7 @@ public partial class MainWindow : Window
 
                 if (update.IsMock)
                 {
-                    new UpdateDialog(this, update, _serverService).ShowDialog();
+                    WindowManager.ShowSingle(() => new UpdateDialog(this, update, _serverService), this);
                 }
             }
         }
@@ -487,7 +474,7 @@ public partial class MainWindow : Window
             if (update != null)
             {
                 _pendingUpdate = update;
-                new UpdateDialog(this, update, _serverService).ShowDialog();
+                WindowManager.ShowSingle(() => new UpdateDialog(this, update, _serverService), this);
             }
             else
             {
@@ -508,7 +495,7 @@ public partial class MainWindow : Window
     {
         if (_pendingUpdate != null)
         {
-            new UpdateDialog(this, _pendingUpdate, _serverService).ShowDialog();
+            WindowManager.ShowSingle(() => new UpdateDialog(this, _pendingUpdate, _serverService), this);
         }
     }
 

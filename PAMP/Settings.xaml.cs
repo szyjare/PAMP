@@ -22,9 +22,16 @@ namespace PAMP
     {
         private bool _isInitialized = false;
 
-        public Settings(Window owner)
+        public Settings(Window? owner = null)
         {
-            Owner = owner;
+            if (owner != null && owner.IsVisible)
+            {
+                Owner = owner;
+            }
+            else
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
             InitializeComponent();
 
             string currentLang = App.Settings.Language;
@@ -104,8 +111,9 @@ namespace PAMP
                 var update = await UpdateService.Instance.CheckForUpdatesAsync(force: true);
                 if (update != null)
                 {
-                    var srv = (Owner as MainWindow)?.ServerService ?? new ServerService();
-                    new UpdateDialog(this, update, srv).ShowDialog();
+                    var mainWin = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                    var srv = mainWin?.ServerService ?? new ServerService();
+                    WindowManager.ShowSingle(() => new UpdateDialog(this, update, srv), this);
                 }
                 else
                 {

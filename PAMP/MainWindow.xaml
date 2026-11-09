@@ -30,20 +30,55 @@
                         ToolTipText="PAMP Launcher"
                         TrayMouseDoubleClick="PampTrayIcon_TrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu Background="{DynamicResource CardBackgroundBrush}"
-                             BorderBrush="{DynamicResource CardBorderBrush}"
-                             Foreground="{DynamicResource TextPrimaryBrush}">
-                    <MenuItem Header="{local:Loc trayShowApp}" FontWeight="Bold" Click="TrayShowApp_Click"/>
-                    <Separator Margin="0,4"/>
-                    <MenuItem x:Name="trayMenuStartAll" Header="{local:Loc trayStartAll}" Click="TrayStartAll_Click"/>
-                    <MenuItem x:Name="trayMenuStopAll" Header="{local:Loc trayStopAll}" Click="TrayStopAll_Click"/>
-                    <Separator Margin="0,4"/>
-                    <MenuItem x:Name="trayMenuLocalhost" Header="{local:Loc btnLocalhost}" Click="BtnOpenLocalhost_Click"/>
-                    <MenuItem x:Name="trayMenuPma" Header="{local:Loc btnPMA}" Click="BtnOpenPma_Click"/>
-                    <MenuItem Header="{local:Loc btnWWW}" Click="BtnOpenFolder_Click"/>
-                    <Separator Margin="0,4"/>
-                    <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click"/>
-                    <MenuItem Header="{local:Loc mnuExit}" Click="TrayExit_Click"/>
+                <ContextMenu Style="{StaticResource Windows11ContextMenuStyle}">
+                    <ContextMenu.Resources>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource Windows11MenuItemStyle}"/>
+                        <Style TargetType="Separator" BasedOn="{StaticResource Windows11MenuSeparatorStyle}"/>
+                    </ContextMenu.Resources>
+
+                    <MenuItem Header="{local:Loc trayShowApp}" FontWeight="SemiBold" Click="TrayShowApp_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="🖥️" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem x:Name="trayMenuStartAll" Header="{local:Loc trayStartAll}" Click="TrayStartAll_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="▶️" FontSize="11" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="trayMenuStopAll" Header="{local:Loc trayStopAll}" Click="TrayStopAll_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="⏹️" FontSize="11" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem x:Name="trayMenuLocalhost" Header="{local:Loc btnLocalhost}" Click="BtnOpenLocalhost_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="🌐" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="trayMenuPma" Header="{local:Loc btnPMA}" Click="BtnOpenPma_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="🗄️" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{local:Loc btnWWW}" Click="BtnOpenFolder_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="📁" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="{local:Loc mnuSettings}" Click="BtnShowSettings_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="⚙️" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{local:Loc mnuExit}" Click="TrayExit_Click">
+                        <MenuItem.Icon>
+                            <TextBlock Text="🚪" FontSize="12" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>

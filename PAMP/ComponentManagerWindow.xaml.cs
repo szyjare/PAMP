@@ -14,9 +14,12 @@ public partial class ComponentManagerWindow : Window
     private readonly Action? _onInstalledCallback;
     private bool _isBusy;
 
-    public ComponentManagerWindow(Window owner, ServerService serverService, Action? onInstalledCallback = null)
+    public ComponentManagerWindow(Window? owner, ServerService serverService, Action? onInstalledCallback = null)
     {
-        Owner = owner;
+        if (owner != null && owner.IsVisible)
+            Owner = owner;
+        else
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _serverService = serverService;
         _onInstalledCallback = onInstalledCallback;
 

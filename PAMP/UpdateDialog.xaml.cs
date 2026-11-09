@@ -13,7 +13,10 @@ public partial class UpdateDialog : Window
 
     public UpdateDialog(Window? owner, UpdatePackageInfo update, ServerService serverService)
     {
-        Owner = owner;
+        if (owner != null && owner.IsVisible)
+            Owner = owner;
+        else
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _update = update;
         _serverService = serverService;
 

@@ -17,9 +17,16 @@ namespace PAMP
 {
     public partial class About : Window
     {
-        public About(Window owner)
+        public About(Window? owner = null)
         {
-            this.Owner = owner;
+            if (owner != null && owner.IsVisible)
+            {
+                this.Owner = owner;
+            }
+            else
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
             InitializeComponent();
             var manifest = ManifestLoader.Load();
             RunAboutVersionNumber.Text = $" {manifest.Versions.Pamp}";
@@ -41,7 +48,7 @@ namespace PAMP
         {
             base.OnClosed(e);
 
-            if (Owner != null)
+            if (Owner != null && Owner.IsVisible)
             {
                 if (Owner.WindowState == WindowState.Minimized)
                 {

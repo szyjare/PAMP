@@ -99,6 +99,19 @@ public partial class App : Application
         Current.Resources["AccentBorderBrush"] = accentBorderBrush;
         Current.Resources["AccentForegroundBrush"] = accentForegroundBrush;
 
+        // Dynamiczne pędzle natywnego menu kontekstowego Windows 11
+        var menuBg = CreateFrozenBrush(isDark ? Color.FromRgb(44, 44, 44) : Color.FromRgb(251, 251, 251));
+        var menuBorder = CreateFrozenBrush(isDark ? Color.FromRgb(61, 61, 61) : Color.FromRgb(225, 225, 225));
+        var menuHover = CreateFrozenBrush(isDark ? Color.FromArgb(28, 255, 255, 255) : Color.FromArgb(14, 0, 0, 0));
+        var menuPressed = CreateFrozenBrush(isDark ? Color.FromArgb(42, 255, 255, 255) : Color.FromArgb(24, 0, 0, 0));
+        var menuSeparator = CreateFrozenBrush(isDark ? Color.FromArgb(32, 255, 255, 255) : Color.FromArgb(20, 0, 0, 0));
+
+        Current.Resources["MenuBackgroundBrush"] = menuBg;
+        Current.Resources["MenuBorderBrush"] = menuBorder;
+        Current.Resources["MenuItemHoverBrush"] = menuHover;
+        Current.Resources["MenuItemPressedBrush"] = menuPressed;
+        Current.Resources["MenuSeparatorBrush"] = menuSeparator;
+
         // Nadpisujemy klucze systemowe, aby standardowe kontrolki WPF i teksty dziedziczące miały pełny kontrast w Dark Mode
         Current.Resources[SystemColors.WindowTextBrushKey] = textPrimary;
         Current.Resources[SystemColors.GrayTextBrushKey] = textSecondary;
