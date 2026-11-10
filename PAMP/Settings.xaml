@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PAMP"
         mc:Ignorable="d"
-        Title="{local:Loc settingsTtile}" Height="540" Width="440"
+        Title="{local:Loc settingsTtile}" Width="450" SizeToContent="Height" MinHeight="570"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackgroundBrush}"
