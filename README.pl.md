@@ -52,6 +52,7 @@ Chociaż XAMPP jest historycznie najpopularniejszym rozwiązaniem, posiada kilka
 * 🧹 **Narzędzia katalogu LocalSites i nowy szablon index.php** – Szybkie czyszczenie folderu stron oraz nowoczesny, w 100% anglojęzyczny, responsywny szablon `index.php` z wbudowanym podglądem konfiguracji `phpinfo()` i skrótem do phpMyAdmin.
 * 🛠️ **Zestaw narzędzi deweloperskich** – Bezpośredni dostęp do SQL Shell, phpMyAdmin, podglądu localhost w przeglądarce oraz opcji czyszczenia bazy danych (Factory Reset).
 * 🔒 **Instalacja bez uprawnień administratora** – Możliwość instalacji i zarządzania komponentami bez uprawnień administratora, gdy katalog aplikacji jest zapisywalny dla bieżącego użytkownika.
+* 📌 **Zasobnik systemowy (Tray) i szybkie akcje** – Zwijanie i zamykanie do zasobnika systemowego z działającymi w tle serwerami, natywne menu kontekstowe Windows 11 Fluent, podgląd portów w dymku oraz powiadomienia w tle.
 
 ---
 
@@ -111,7 +112,7 @@ Gdy aplikacja znajduje się poza Program Files lub w katalogu znajduje się plik
 - [x] **Prawdziwy tryb Portable Single-Folder:** Zapisywanie baz i stron bezpośrednio w folderze PAMP na USB.
 - [x] **Zaawansowana przeglądarka logów:** Wyszukiwanie fraz w czasie rzeczywistym, filtry poziomów i dwurzędowy układ paska narzędzi.
 - [x] **Narzędzia katalogu LocalSites:** Nowoczesny, anglojęzyczny szablon startowy z podglądem `phpinfo()` i czyszczeniem folderu stron.
-- [ ] **Minimalizacja do zasobnika systemowego (Tray):** Zwijanie do traya z menu kontekstowym (Start / Stop / Restart).
+- [x] **Minimalizacja do zasobnika systemowego (Tray):** Zwijanie do traya z menu kontekstowym Windows 11 Fluent (Start / Stop wszystkich usług, Localhost, phpMyAdmin) oraz powiadomieniami w tle.
 - [ ] **Menedżer lokalnego SSL/HTTPS:** Generowanie zaufanych certyfikatów self-signed dla localhost jednym kliknięciem.
 - [ ] **Wersja na system Linux:** Eksperymentalna kompilacja wieloplatformowa.
 

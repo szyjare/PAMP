@@ -51,6 +51,7 @@ While XAMPP has historically been a popular solution, it suffers from several cr
 * 🧹 **LocalSites Tools & Modern index.php** – Quick tools to wipe and refresh the web project folder with a modern, responsive, English-only default `index.php` featuring live PHP configuration (`phpinfo()`) and phpMyAdmin shortcuts.
 * 🛠️ **Developer Toolset** – Quick access to SQL Shell, phpMyAdmin, localhost browser shortcuts, and database reset tools.
 * 🔒 **Smart Non-Admin Support** – Install and change components without administrator privileges when the application directory is user-writable.
+* 📌 **Windows System Tray & Quick Actions** – Minimize or close to the system tray to keep servers active in the background, with a Windows 11 Fluent context menu, live tooltip statuses, and close-to-tray notification alerts.
 
 ---
 
@@ -110,7 +111,7 @@ When placed in a non-ProgramFiles directory or marked with `portable.lock`:
 - [x] **True Portable Single-Folder Mode:** Self-contained mode storing databases and websites in the app folder for USB drives.
 - [x] **Advanced Log Viewer:** Real-time log monitoring with live search queries, level filtering, and dual-row layout.
 - [x] **LocalSites Management:** Fresh English start template with live `phpinfo()` and directory wipe utility.
-- [ ] **System Tray Minimization:** Minimize to system tray with context menu controls (Start / Stop / Restart).
+- [x] **System Tray Minimization:** Minimize and close to system tray with Windows 11 Fluent context menu controls (Start / Stop All, Localhost, phpMyAdmin) and background notifications.
 - [ ] **Local SSL/HTTPS Manager:** One-click generation of trusted self-signed certificates for localhost development.
 - [ ] **Cross-Platform Linux version:** Experimental Linux build.
 
