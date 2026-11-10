@@ -16,11 +16,6 @@
 > 🇬🇧 **English version:** Click here to see the [English documentation](README.md).
 
 ---
-
-<p align="center">
-   <img width="576" height="458" alt="PAMP Główne okno" src="https://github.com/user-attachments/assets/090cb7a6-ce7b-4486-8e07-397edc1ae22a" />
-</p>
-
 **PAMP!** to nowoczesne, lekkie i w pełni przenośne środowisko serwerowe dla systemu Windows, napisane w języku C# 14 (.NET 10 WPF). Umożliwia błyskawiczne uruchomienie lokalnego serwera WWW bez zbędnej konfiguracji, z pełną izolacją danych użytkowników, modułowym menedżerem pobierania pakietów oraz wbudowanym mechanizmem automatycznych aktualizacji.
 
 > **Aktualna stabilna wersja:** `1.4.0`  
