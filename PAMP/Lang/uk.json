@@ -154,5 +154,10 @@
 	"trayStartAll": "Запустити всі служби",
 	"trayStopAll": "Зупинити всі служби",
 	"trayRunning": "Працює",
-	"trayStopped": "Зупинено"
+	"trayStopped": "Зупинено",
+	"settingsShowTrayNotification": "Сповіщати при закритті в трей",
+	"trayNotificationTitle": "PAMP працює у фоні",
+	"trayNotificationMessage": "Програму згорнуто в системний трей. Двічі клацніть піктограму PAMP у треї, щоб відновити вікно.",
+	"trayNotificationDontRemind": "Не нагадувати знову",
+	"trayNotificationGotIt": "Зрозуміло"
 }

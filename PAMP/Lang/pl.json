@@ -154,5 +154,10 @@
 	"trayStartAll": "Uruchom wszystkie usługi",
 	"trayStopAll": "Zatrzymaj wszystkie usługi",
 	"trayRunning": "Działa",
-	"trayStopped": "Zatrzymany"
+	"trayStopped": "Zatrzymany",
+	"settingsShowTrayNotification": "Powiadamiaj przy zamknięciu do zasobnika",
+	"trayNotificationTitle": "PAMP działa w tle",
+	"trayNotificationMessage": "Aplikacja została przeniesiona do zasobnika systemowego. Kliknij dwukrotnie ikonę PAMP w zasobniku, aby przywrócić okno.",
+	"trayNotificationDontRemind": "Nie przypominaj ponownie",
+	"trayNotificationGotIt": "Rozumiem"
 }

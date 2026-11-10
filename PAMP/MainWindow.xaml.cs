@@ -515,6 +515,7 @@ public partial class MainWindow : Window
     public void SetExplicitExit()
     {
         _isExplicitExit = true;
+        try { PampTrayIcon?.CloseBalloon(); } catch { }
         try { PampTrayIcon?.Dispose(); } catch { }
     }
     private bool _isClosingServers;
@@ -531,6 +532,7 @@ public partial class MainWindow : Window
         {
             e.Cancel = true;
             Hide();
+            ShowTrayCloseNotificationIfNeeded();
             return;
         }
 
@@ -592,8 +594,41 @@ public partial class MainWindow : Window
         }
     }
 
+
+    private void ShowTrayCloseNotificationIfNeeded()
+    {
+        if (!App.Settings.ShowTrayCloseNotification || PampTrayIcon == null) return;
+
+        try
+        {
+            var balloon = new TrayNotificationBalloon();
+            balloon.DontRemindRequested += () =>
+            {
+                App.Settings.ShowTrayCloseNotification = false;
+                App.Settings.Save();
+                try { PampTrayIcon.CloseBalloon(); } catch { }
+            };
+            balloon.DismissRequested += () =>
+            {
+                try { PampTrayIcon.CloseBalloon(); } catch { }
+            };
+            balloon.OpenAppRequested += () =>
+            {
+                try { PampTrayIcon.CloseBalloon(); } catch { }
+                ShowAndRestoreWindow();
+            };
+
+            PampTrayIcon.ShowCustomBalloon(balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 10000);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Błąd wyświetlania powiadomienia w zasobniku: {ex.Message}");
+        }
+    }
+
     private void ShowAndRestoreWindow()
     {
+        try { PampTrayIcon?.CloseBalloon(); } catch { }
         if (!IsVisible)
         {
             Show();

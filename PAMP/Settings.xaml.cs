@@ -45,6 +45,8 @@ namespace PAMP
             ChkIncludeBetaUpdates.IsChecked = App.Settings.IncludeBetaUpdates;
             ChkMinimizeToTray.IsChecked = App.Settings.MinimizeToTray;
             ChkCloseToTray.IsChecked = App.Settings.CloseToTray;
+            ChkShowTrayNotification.IsChecked = App.Settings.ShowTrayCloseNotification;
+            ChkShowTrayNotification.IsEnabled = App.Settings.CloseToTray;
 
             _isInitialized = true;
         }
@@ -92,11 +94,20 @@ namespace PAMP
             App.Settings.Save();
         }
 
+        private void ChkShowTrayNotification_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_isInitialized) return;
+
+            App.Settings.ShowTrayCloseNotification = ChkShowTrayNotification.IsChecked == true;
+            App.Settings.Save();
+        }
+
         private void ChkCloseToTray_Changed(object sender, RoutedEventArgs e)
         {
             if (!_isInitialized) return;
 
             App.Settings.CloseToTray = ChkCloseToTray.IsChecked == true;
+            if (ChkShowTrayNotification != null) ChkShowTrayNotification.IsEnabled = App.Settings.CloseToTray;
             App.Settings.Save();
         }
 

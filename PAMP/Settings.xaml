@@ -103,6 +103,13 @@
                           Checked="ChkCloseToTray_Changed" 
                           Unchecked="ChkCloseToTray_Changed"/>
 
+                <CheckBox x:Name="ChkShowTrayNotification" 
+                          Content="{local:Loc settingsShowTrayNotification}" 
+                          FontSize="12" 
+                          Margin="20,0,0,6" 
+                          Checked="ChkShowTrayNotification_Changed" 
+                          Unchecked="ChkShowTrayNotification_Changed"/>
+
                 <Button Content="{local:Loc settingsOkBtn}" Height="32" Width="90" Margin="0,16,0,0" HorizontalAlignment="Right" IsDefault="True" Click="BtnClose_Click"/>
             </StackPanel>
         </Border>

@@ -1,0 +1,137 @@
+<UserControl x:Class="PAMP.TrayNotificationBalloon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PAMP"
+             Width="360"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Display"
+             FontFamily="Segoe UI Variable Text, Segoe UI, sans-serif">
+    <Border Background="{DynamicResource MenuBackgroundBrush}"
+            BorderBrush="{DynamicResource MenuBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="14,12"
+            Cursor="Hand"
+            MouseLeftButtonUp="RootBorder_MouseLeftButtonUp">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="18" Direction="270" ShadowDepth="4" Opacity="0.32" Color="Black"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Nagłówek powiadomienia (ikona, tytuł i przycisk zamknięcia X) -->
+            <Grid Grid.Row="0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/pamp_icon.ico" Width="16" Height="16" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="PAMP" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button x:Name="BtnClose"
+                        Content="✕"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="22" Height="22"
+                        Background="Transparent"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        BorderThickness="0"
+                        FontSize="11"
+                        Cursor="Hand"
+                        Click="BtnClose_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+
+            <!-- Główny tytuł / nagłówek komunikatu -->
+            <TextBlock Grid.Row="1"
+                       Text="{local:Loc trayNotificationTitle}"
+                       FontWeight="SemiBold"
+                       FontSize="13.5"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       Margin="0,8,0,3"/>
+
+            <!-- Treść komunikatu -->
+            <TextBlock Grid.Row="2"
+                       Text="{local:Loc trayNotificationMessage}"
+                       TextWrapping="Wrap"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       LineHeight="16"
+                       Margin="0,0,0,12"/>
+
+            <!-- Przyciski akcji -->
+            <Grid Grid.Row="3">
+                <Button x:Name="BtnDontRemind"
+                        Content="{local:Loc trayNotificationDontRemind}"
+                        HorizontalAlignment="Left"
+                        FontSize="11.5"
+                        Padding="10,5"
+                        Background="{DynamicResource MenuItemHoverBrush}"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        BorderBrush="{DynamicResource MenuBorderBrush}"
+                        BorderThickness="1"
+                        Cursor="Hand"
+                        Click="BtnDontRemind_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    CornerRadius="4" 
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemPressedBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button x:Name="BtnGotIt"
+                        Content="{local:Loc trayNotificationGotIt}"
+                        HorizontalAlignment="Right"
+                        FontSize="11.5"
+                        FontWeight="SemiBold"
+                        Padding="14,5"
+                        Background="{DynamicResource AccentBrush}"
+                        Foreground="{DynamicResource AccentForegroundBrush}"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="BtnGotIt_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

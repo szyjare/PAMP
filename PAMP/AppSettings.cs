@@ -15,6 +15,7 @@ namespace PAMP
         public DateTime? LastUpdateCheckUtc { get; set; } = null;
         public bool MinimizeToTray { get; set; } = true;
         public bool CloseToTray { get; set; } = true;
+        public bool ShowTrayCloseNotification { get; set; } = true;
 
         private bool? _includeBetaUpdates;
 
