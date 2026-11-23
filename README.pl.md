@@ -4,7 +4,7 @@
 
 # PAMP! - Portable Apache MariaDB PHP Stack
 
-[![version](https://img.shields.io/badge/wersja-1.4.0-blue.svg)](https://github.com/szyjare/PAMP/releases)
+[![version](https://img.shields.io/badge/wersja-1.4.1-blue.svg)](https://github.com/szyjare/PAMP/releases)
 [![dotnet](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
 [![platform](https://img.shields.io/badge/platforma-Windows%2010%20%7C%2011%20(x64)-lightgrey.svg)]()
 [![license](https://img.shields.io/badge/licencja-MIT-green.svg)](LICENSE.txt)
@@ -23,7 +23,7 @@
 
 **PAMP!** to nowoczesne, lekkie i w pełni przenośne środowisko serwerowe dla systemu Windows, napisane w języku C# 14 (.NET 10 WPF). Umożliwia błyskawiczne uruchomienie lokalnego serwera WWW bez zbędnej konfiguracji, z pełną izolacją danych użytkowników, modułowym menedżerem pobierania pakietów oraz wbudowanym mechanizmem automatycznych aktualizacji.
 
-> **Aktualna stabilna wersja:** `1.4.0`  
+> **Aktualna stabilna wersja:** `1.4.1`  
 > Obsługiwane języki interfejsu: **polski**, **angielski** oraz **ukraiński** (wybór w Ustawieniach lub automatyczne dopasowanie do języka systemu).
 
 ---
@@ -32,27 +32,27 @@
 
 Chociaż XAMPP jest historycznie najpopularniejszym rozwiązaniem, posiada kilka istotnych wad architektonicznych, które PAMP skutecznie rozwiązuje:
 
-- **Brak izolacji użytkowników** – W tradycyjnych stackach wszyscy użytkownicy systemu Windows dzielą ten sam folder `htdocs` i pliki baz danych. PAMP w trybie instalacyjnym gwarantuje każdemu użytkownikowi Windows własne, odizolowane środowisko i bazy, a w trybie portable przechowuje wszystko lokalnie w jednym katalogu.
-- **Niestabilność baz i blokowanie portów** – Użytkownicy XAMPP regularnie napotykają błędy uszkodzenia tabel MariaDB, zablokowane porty 80/3306 lub procesy-widma. PAMP dba o bezpieczne zamykanie procesów, czyste zwalnianie zasobów i automatyczną diagnostykę konfliktów portów.
-- **Bezpieczna zmiana wersji silników** – Zmiana wersji modułów w innych stackach często wiąże się z ryzykiem utraty baz danych. W PAMP bazy danych użytkownika są bezpiecznie odseparowane i zachowywane podczas zmiany binarek.
-- **Prawdziwy tryb Portable Single-Folder** – Możliwość przeniesienia całego środowiska, silników, baz danych i projektów stron na pendrive lub dysk przenośny USB, bez zapisywania jakichkolwiek plików w profilu Windows.
-- **Idealny dla edukacji i egzaminów zawodowych (INF.03)** – Dedykowany dla techników i szkół branżowych. Uczniowie i nauczyciele mogą jednym kliknięciem zainstalować oficjalny **Profil Egzaminacyjny CKE** lub swobodnie korzystać z najnowszych wersji deweloperskich.
+- **Brak izolacji użytkowników** - W tradycyjnych stackach wszyscy użytkownicy systemu Windows dzielą ten sam folder `htdocs` i pliki baz danych. PAMP w trybie instalacyjnym gwarantuje każdemu użytkownikowi Windows własne, odizolowane środowisko i bazy, a w trybie portable przechowuje wszystko lokalnie w jednym katalogu.
+- **Niestabilność baz i blokowanie portów** - Użytkownicy XAMPP regularnie napotykają błędy uszkodzenia tabel MariaDB, zablokowane porty 80/3306 lub procesy-widma. PAMP dba o bezpieczne zamykanie procesów, czyste zwalnianie zasobów i automatyczną diagnostykę konfliktów portów.
+- **Bezpieczna zmiana wersji silników** - Zmiana wersji modułów w innych stackach często wiąże się z ryzykiem utraty baz danych. W PAMP bazy danych użytkownika są bezpiecznie odseparowane i zachowywane podczas zmiany binarek.
+- **Prawdziwy tryb Portable Single-Folder** - Możliwość przeniesienia całego środowiska, silników, baz danych i projektów stron na pendrive lub dysk przenośny USB, bez zapisywania jakichkolwiek plików w profilu Windows.
+- **Przygotowanie do nauki i egzaminów (wersje z XAMPP)** - Stworzony z myślą o uczniach i nauczycielach kierunków informatycznych. Umożliwia zainstalowanie jednym kliknięciem **Profilu Zgodności z XAMPP** (zawierającego dokładnie te same wersje modułów Apache, PHP, MariaDB i phpMyAdmin, które znajdują się w pakiecie XAMPP używanym na egzaminach) lub korzystanie z najnowszych wydań deweloperskich.
 
 ---
 
 ## ✨ Główne funkcje
 
-* 🚀 **Przenośny i lekki** – Dostępny w wersji lekkiej (wymagającej .NET Desktop Runtime) oraz wersji Standalone (z wbudowanym środowiskiem .NET 10 – działa od razu na każdym komputerze bez instalacji czegokolwiek).
-* 🔄 **Wbudowany automatyczny aktualizator** – Sprawdzanie aktualizacji z GitHub Releases API, dedykowane okno z listą zmian (changelog) oraz bezpieczna aktualizacja aplikacji w locie (zarówno dla instalatorów, jak i wersji Portable ZIP).
-* 💾 **Prawdziwy tryb przenośny (Single-Folder)** – W wersji portable wszystkie pliki stron (`LocalSites/`), bazy danych (`data/mysql_data/`) oraz konfiguracja znajdują się wewnątrz folderu PAMP – idealne do pracy z pendrive'a.
-* 🎨 **Nowoczesny interfejs Windows 11 Fluent UI** – Pełne wsparcie dla ciemnego i jasnego motywu, materiał Mica, integracja z kolorem wiodącym Windows (Accent Color) oraz czytelne ikony.
-* 🌐 **Menedżer Komponentów** – Wbudowany instalator łączący się z oficjalnym repozytorium PAMP (`repo.sjarecki.pl`). Wybieraj, pobieraj i przełączaj wersje Apache, PHP, MariaDB oraz phpMyAdmin jednym kliknięciem.
-* 🎓 **1-klikowy Profil Egzaminacyjny CKE i Profil Najnowszych wersji** – Błyskawiczna instalacja zestawu w 100% zgodnego z wytycznymi egzaminacyjnymi CKE lub najnowszego stabilnego stosu technologicznego.
-* 🔍 **Zaawansowana przeglądarka logów** – Podgląd logów w czasie rzeczywistym z dwurzędowym paskiem narzędzi, filtrami poziomów (Wszystkie / Ostrzeżenia i błędy / Tylko błędy), wyszukiwarką fraz, autoscrollem oraz kontrastową paletą dla trybu jasnego i ciemnego.
-* 🧹 **Narzędzia katalogu LocalSites i nowy szablon index.php** – Szybkie czyszczenie folderu stron oraz nowoczesny, w 100% anglojęzyczny, responsywny szablon `index.php` z wbudowanym podglądem konfiguracji `phpinfo()` i skrótem do phpMyAdmin.
-* 🛠️ **Zestaw narzędzi deweloperskich** – Bezpośredni dostęp do SQL Shell, phpMyAdmin, podglądu localhost w przeglądarce oraz opcji czyszczenia bazy danych (Factory Reset).
-* 🔒 **Instalacja bez uprawnień administratora** – Możliwość instalacji i zarządzania komponentami bez uprawnień administratora, gdy katalog aplikacji jest zapisywalny dla bieżącego użytkownika.
-* 📌 **Zasobnik systemowy (Tray) i szybkie akcje** – Zwijanie i zamykanie do zasobnika systemowego z działającymi w tle serwerami, natywne menu kontekstowe Windows 11 Fluent, podgląd portów w dymku oraz powiadomienia w tle.
+* 🚀 **Przenośny i lekki** - Dostępny w wersji lekkiej (wymagającej .NET Desktop Runtime) oraz wersji Standalone (z wbudowanym środowiskiem .NET 10 - działa od razu na każdym komputerze bez instalacji czegokolwiek).
+* 🔄 **Wbudowany automatyczny aktualizator** - Sprawdzanie aktualizacji z GitHub Releases API, dedykowane okno z listą zmian (changelog) oraz bezpieczna aktualizacja aplikacji w locie (zarówno dla instalatorów, jak i wersji Portable ZIP).
+* 💾 **Prawdziwy tryb przenośny (Single-Folder)** - W wersji portable wszystkie pliki stron (`LocalSites/`), bazy danych (`data/mysql_data/`) oraz konfiguracja znajdują się wewnątrz folderu PAMP - idealne do pracy z pendrive'a.
+* 🎨 **Nowoczesny interfejs Windows 11 Fluent UI** - Pełne wsparcie dla ciemnego i jasnego motywu, materiał Mica, integracja z kolorem wiodącym Windows (Accent Color) oraz czytelne ikony.
+* 🌐 **Menedżer Komponentów** - Wbudowany instalator łączący się z oficjalnym repozytorium PAMP (`repo.sjarecki.pl`). Wybieraj, pobieraj i przełączaj wersje Apache, PHP, MariaDB oraz phpMyAdmin jednym kliknięciem.
+* 📦 **1-klikowy Profil Zgodności z XAMPP i Profil Najnowszych wersji** - Błyskawiczna instalacja zestawu modułów w wersjach odpowiadających pakietowi XAMPP używanemu na egzaminach lub przełączenie na najnowszy stabilny stos technologiczny.
+* 🔍 **Zaawansowana przeglądarka logów** - Podgląd logów w czasie rzeczywistym z dwurzędowym paskiem narzędzi, filtrami poziomów (Wszystkie / Ostrzeżenia i błędy / Tylko błędy), wyszukiwarką fraz, autoscrollem oraz kontrastową paletą dla trybu jasnego i ciemnego.
+* 🧹 **Narzędzia katalogu LocalSites i nowy szablon index.php** - Szybkie czyszczenie folderu stron oraz nowoczesny, w 100% anglojęzyczny, responsywny szablon `index.php` z wbudowanym podglądem konfiguracji `phpinfo()` i skrótem do phpMyAdmin.
+* 🛠️ **Zestaw narzędzi deweloperskich** - Bezpośredni dostęp do SQL Shell, phpMyAdmin, podglądu localhost w przeglądarce oraz opcji czyszczenia bazy danych (Factory Reset).
+* 🔒 **Instalacja bez uprawnień administratora** - Możliwość instalacji i zarządzania komponentami bez uprawnień administratora, gdy katalog aplikacji jest zapisywalny dla bieżącego użytkownika.
+* 📌 **Zasobnik systemowy (Tray) i szybkie akcje** - Zwijanie i zamykanie do zasobnika systemowego z działającymi w tle serwerami, natywne menu kontekstowe Windows 11 Fluent, podgląd portów w dymku oraz powiadomienia w tle.
 
 ---
 
@@ -60,14 +60,14 @@ Chociaż XAMPP jest historycznie najpopularniejszym rozwiązaniem, posiada kilka
 
 PAMP umożliwia dynamiczną instalację i zmianę wersji komponentów poprzez wbudowany **Menedżer Komponentów** (`Narzędzia -> Pobierz i zmień wersje...`):
 
-| Komponent | Wersje w repozytorium | Zgodność z CKE |
+| Komponent | Wersje w repozytorium | Profil Zgodności z XAMPP |
 | :--- | :--- | :--- |
-| **PHP** | 8.5.x, 8.2.x | Tak (zgodne z 8.2) |
-| **MariaDB** | 12.3.x, 10.4.x | Tak (zgodne z 10.4) |
-| **Apache** | 2.4.68, 2.4.58 | Tak (zgodne z 2.4) |
-| **phpMyAdmin** | 5.2.3, 5.2.1 | Tak (zgodne z 5.2) |
+| **PHP** | 8.5.x, 8.2.x | 8.2.x (wersja z XAMPP) |
+| **MariaDB** | 12.3.x, 10.4.x | 10.4.x (wersja z XAMPP) |
+| **Apache** | 2.4.69, 2.4.68, 2.4.58 | 2.4.58 (wersja z XAMPP) |
+| **phpMyAdmin** | 5.2.3, 5.2.1 | 5.2.1 (wersja z XAMPP) |
 
-*Wersje pobierane są bezpośrednio z repozytorium PAMP i sortowane semantycznie – najnowsze wydanie zawsze znajduje się na samej górze.*
+*Wersje pobierane są bezpośrednio z repozytorium PAMP i sortowane semantycznie - najnowsze wydanie zawsze znajduje się na samej górze. Uwaga: Profil Zgodności z XAMPP udostępnia jedynie te same wersje otwartoźródłowych modułów, które znajdują się w pakiecie XAMPP wykorzystywanym na egzaminach. PAMP jest niezależnym projektem open source.*
 
 ---
 
@@ -78,17 +78,17 @@ PAMP umożliwia dynamiczną instalację i zmianę wersji komponentów poprzez wb
   `%UserProfile%\PAMP\LocalSites` *(np. `C:\Users\<nazwa_użytkownika>\PAMP\LocalSites`)*
 * **Dane i konfiguracja użytkownika:**  
   Przechowywane w `%LocalAppData%\PAMP`:
-  * `conf/` – Generowane pliki konfiguracyjne Apache (`httpd_user.conf`) i MariaDB (`my_user.ini`).
-  * `logs/` – Logi błędów i dostępu Apache oraz MariaDB.
-  * `mysql_data/` – Pliki bazy danych użytkownika (nienaruszane podczas aktualizacji silników).
-  * `installed_versions.json` – Manifest z aktualnie zainstalowanymi wersjami komponentów.
+  * `conf/` - Generowane pliki konfiguracyjne Apache (`httpd_user.conf`) i MariaDB (`my_user.ini`).
+  * `logs/` - Logi błędów i dostępu Apache oraz MariaDB.
+  * `mysql_data/` - Pliki bazy danych użytkownika (nienaruszane podczas aktualizacji silników).
+  * `installed_versions.json` - Manifest z aktualnie zainstalowanymi wersjami komponentów.
 
 ### Tryb przenośny (Portable Single-Folder na USB)
 Gdy aplikacja znajduje się poza Program Files lub w katalogu znajduje się plik `portable.lock`:
-* `<KatalogPAMP>\LocalSites\` – Projekty i strony WWW użytkownika.
-* `<KatalogPAMP>\data\mysql_data\` – Bazy danych MariaDB.
-* `<KatalogPAMP>\conf\` – Pliki konfiguracyjne.
-* `<KatalogPAMP>\logs\` – Logi serwerów.
+* `<KatalogPAMP>\LocalSites\` - Projekty i strony WWW użytkownika.
+* `<KatalogPAMP>\data\mysql_data\` - Bazy danych MariaDB.
+* `<KatalogPAMP>\conf\` - Pliki konfiguracyjne.
+* `<KatalogPAMP>\logs\` - Logi serwerów.
 
 ---
 
@@ -98,7 +98,7 @@ Gdy aplikacja znajduje się poza Program Files lub w katalogu znajduje się plik
 * **Środowisko uruchomieniowe:**
   * *Wydanie standardowe:* .NET Desktop Runtime 10.0 (x64)
   * *Wydanie Standalone:* Brak wymagań (środowisko .NET 10 jest wbudowane w program)
-* **Biblioteki systemowe:** Microsoft Visual C++ 2015–2022 Redistributable (x64) — PAMP wykrywa brak bibliotek i oferuje ich pobranie.
+* **Biblioteki systemowe:** Microsoft Visual C++ 2015-2022 Redistributable (x64) — PAMP wykrywa brak bibliotek i oferuje ich pobranie.
 
 ---
 
@@ -107,7 +107,7 @@ Gdy aplikacja znajduje się poza Program Files lub w katalogu znajduje się plik
 - [x] **Wielojęzyczność:** Dynamiczny interfejs po polsku, angielsku i ukraińsku z autowykrywaniem języka systemu.
 - [x] **Tryb ciemny i jasny:** Efekt Mica z Windows 11 oraz integracja z kolorem wiodącym systemu.
 - [x] **Menedżer Komponentów:** Pobieranie i przełączanie wersji w locie z repozytorium `repo.sjarecki.pl`.
-- [x] **1-klikowy Profil Egzaminacyjny CKE i Profil Najnowszych:** Szybkie przygotowanie środowiska do egzaminów zawodowych i nowoczesnego developmentu.
+- [x] **1-klikowy Profil Zgodności z XAMPP i Profil Najnowszych:** Szybkie przygotowanie wersji modułów odpowiadających pakietowi XAMPP używanemu na egzaminach lub najnowszych wersji deweloperskich.
 - [x] **Wbudowany Auto-Updater:** Automatyczne pobieranie aktualizacji z GitHub Releases.
 - [x] **Prawdziwy tryb Portable Single-Folder:** Zapisywanie baz i stron bezpośrednio w folderze PAMP na USB.
 - [x] **Zaawansowana przeglądarka logów:** Wyszukiwanie fraz w czasie rzeczywistym, filtry poziomów i dwurzędowy układ paska narzędzi.

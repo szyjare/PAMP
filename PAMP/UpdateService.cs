@@ -46,12 +46,12 @@ public sealed class UpdateService
 
             return new UpdatePackageInfo
             {
-                Version = "1.4.0",
-                Title = "PAMP v1.4.0 - Official Release",
-                Changelog = @"## What's new in PAMP v1.4.0:
+                Version = "1.4.1",
+                Title = "PAMP v1.4.1 - Official Release",
+                Changelog = @"## What's new in PAMP v1.4.1:
 
 - **Built-in In-App Auto Updater:** Automatic updates checking with release notes dialog and instant in-place upgrade.
-- **Component Manager:** Full remote catalog integration with repo.sjarecki.pl, supporting 1-click CKE Exam Profile and Latest profile.
+- **Component Manager:** Full remote catalog integration with repo.sjarecki.pl, supporting 1-click XAMPP Compatibility Profile (matching module versions used in XAMPP during exams) and Latest profile.
 - **Portable Single-Folder Mode:** Self-contained portable mode storing binaries, database data, and websites in one unified folder ready for USB drives.
 - **Bilingual & Multi-Language Support:** Fully translated interface in English, Polish, and Ukrainian with auto-detection.
 - **Advanced Log Viewer:** Filter by log level, real-time query search, autoscroll, and light/dark theme optimization.
@@ -59,7 +59,7 @@ public sealed class UpdateService
 - **Windows 11 Fluent UI:** Seamless Mica backdrop, system accent color integration, and high-contrast styling.",
                 ReleaseUrl = "https://github.com/szyjare/PAMP/releases",
                 SelectedAssetUrl = mockAssetUrl,
-                SelectedAssetName = isInst ? "PAMP-Setup-1.4.0-mock.exe" : "PAMP-v1.4.0-mock.zip",
+                SelectedAssetName = isInst ? "PAMP-Setup-1.4.1-mock.exe" : "PAMP-v1.4.1-mock.zip",
                 SizeBytes = 2674435,
                 IsInstaller = isInst,
                 IsSelfContained = isSelf,
@@ -224,7 +224,7 @@ public sealed class UpdateService
                 progress.Report(new InstallProgress($"{downloadingText} {i}% ({mbRead:0.0} / {mbTotal:0.0} MB)", i));
             }
 
-            string msg = TranslationSource.Instance["updateMockSuccessMessage"] ?? "Test pobierania i mechanizmu aktualizacji (v1.4.0 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.";
+            string msg = TranslationSource.Instance["updateMockSuccessMessage"] ?? "Test pobierania i mechanizmu aktualizacji (v1.4.1 Mock) zakończony sukcesem!\n\nPasek postępu, raportowanie pobranych megabajtów oraz obsługa dialogu działają prawidłowo.";
             MessageBox.Show(
                 msg,
                 "PAMP — Mock Update",

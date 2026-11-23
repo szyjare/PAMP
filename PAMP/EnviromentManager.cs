@@ -85,7 +85,7 @@ namespace PAMP
                 modified = true;
             }
 
-            // 2. Włączenie wtyczek zgodnych ze standardem XAMPP i wymogami CKE
+            // 2. Włączenie wtyczek zgodnych ze standardem XAMPP
             // Uwaga: mbstring musi być załadowany przed exif!
             string[] xamppExtensions =
             [
@@ -124,7 +124,7 @@ namespace PAMP
                 }
             }
 
-            // 3. Konfiguracja parametrów pod kątem developmentu i egzaminów CKE (pma/importy/timezone)
+            // 3. Konfiguracja parametrów pod kątem developmentu i kompatybilności z XAMPP (pma/importy/timezone)
             var regexSettings = new (string Pattern, string Replacement)[]
             {
                 (@"(?m)^;?\s*upload_max_filesize\s*=.*$", "upload_max_filesize = 128M"),
@@ -182,7 +182,7 @@ declare(strict_types=1);
  */
 {langConfig}
 
-$cfg['blowfish_secret'] = 'pamp_secret_key_32_bytes_long_random_string_cke';
+$cfg['blowfish_secret'] = 'pamp_secret_key_32_bytes_long_random_string_cfg';
 
 $i = 0;
 $i++;

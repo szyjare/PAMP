@@ -168,11 +168,11 @@ public sealed class ComponentInstallerService
         }
     }
 
-    public async Task InstallCkeProfileAsync(
+    public async Task InstallXamppProfileAsync(
         IProgress<InstallProgress> progress,
         CancellationToken cancellationToken = default)
     {
-        var items = ComponentCatalog.GetCkeProfile();
+        var items = ComponentCatalog.GetXamppProfile();
         int total = items.Count;
         int current = 0;
 
@@ -191,7 +191,7 @@ public sealed class ComponentInstallerService
             await DownloadAndInstallAsync(package, versionInfo, subProgress, cancellationToken);
         }
 
-        progress.Report(new InstallProgress(TranslationSource.Instance.Get("ckeProfileInstalledStatus", "Pakiet CKE został pomyślnie zainstalowany!"), 100));
+        progress.Report(new InstallProgress(TranslationSource.Instance.Get("xamppProfileInstalledStatus", "Profil Zgodności z XAMPP został pomyślnie zainstalowany!"), 100));
     }
 
     public async Task InstallLatestProfileAsync(

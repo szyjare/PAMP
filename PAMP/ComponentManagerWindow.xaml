@@ -74,11 +74,11 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🎓" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="{local:Loc ckeProfileTitle}" FontSize="14" FontWeight="Bold"/>
+                            <TextBlock Text="📦" FontSize="15" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="{local:Loc xamppProfileTitle}" FontSize="14" FontWeight="Bold"/>
                         </StackPanel>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Loc ckeProfileDesc}" 
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Loc xamppProfileDesc}" 
                                    FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" 
                                    Margin="0,6,12,0" TextWrapping="Wrap"/>
 
@@ -89,19 +89,19 @@
                                     Height="36" Padding="14,0" FontWeight="SemiBold" Margin="0,0,8,0"
                                     ToolTipService.ShowOnDisabled="True"
                                     Click="BtnInstallLatest_Click"/>
-                            <Button x:Name="BtnInstallCke"
-                                    Content="{local:Loc ckeProfileInstallBtn}"
+                            <Button x:Name="BtnInstallXampp"
+                                    Content="{local:Loc xamppProfileInstallBtn}"
                                     Height="36" Padding="16,0" FontWeight="Bold"
                                     Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentForegroundBrush}" BorderThickness="0"
                                     HorizontalAlignment="Right" VerticalAlignment="Center"
                                     ToolTipService.ShowOnDisabled="True"
-                                    Click="BtnInstallCke_Click"/>
+                                    Click="BtnInstallXampp_Click"/>
                         </StackPanel>
 
-                        <!-- Pasek postępu dla profilu CKE / Najnowszych -->
-                        <StackPanel x:Name="PnlCkeProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" Visibility="Collapsed">
-                            <ProgressBar x:Name="ProgCke" Height="8" Margin="0,0,0,4" Foreground="{DynamicResource AccentBrush}"/>
-                            <TextBlock x:Name="TxtCkeStatus" Text="{local:Loc compInstalling}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <!-- Pasek postępu dla profilu XAMPP / Najnowszych -->
+                        <StackPanel x:Name="PnlProfileProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" Visibility="Collapsed">
+                            <ProgressBar x:Name="ProgProfile" Height="8" Margin="0,0,0,4" Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock x:Name="TxtProfileStatus" Text="{local:Loc compInstalling}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>
                 </Border>

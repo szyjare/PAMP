@@ -1,5 +1,5 @@
 #define MyAppName "PAMP!"
-#define MyAppVersion "1.4.0"
+#define MyAppVersion "1.4.1"
 #define MyAppPublisher "Szymon Jarecki"
 #define MyAppURL "https://github.com/szyjare/PAMP"
 #define MyAppExeName "PAMP.exe"

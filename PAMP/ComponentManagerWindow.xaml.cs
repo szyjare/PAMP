@@ -124,8 +124,8 @@ public partial class ComponentManagerWindow : Window
                     string.Equals(NormalizeVersion(v.Version), NormalizeVersion(previousSelectedVer), StringComparison.OrdinalIgnoreCase));
             }
 
-            // 3. Fallback: profil CKE lub najnowsza wersja na górze
-            toSelect ??= pkg.Versions.FirstOrDefault(v => v.IsCkeCompatible) ?? pkg.Versions.FirstOrDefault();
+            // 3. Fallback: profil XAMPP lub najnowsza wersja na górze
+            toSelect ??= pkg.Versions.FirstOrDefault(v => v.IsXamppCompatible) ?? pkg.Versions.FirstOrDefault();
             cmb.SelectedItem = toSelect;
 
             cmb.SelectionChanged += CmbVersions_SelectionChanged;
@@ -163,7 +163,7 @@ public partial class ComponentManagerWindow : Window
         UpdateSinglePackageButton(CmbMariaDbVersions, BtnInstallMariaDb, installed?.MariaDb);
         UpdateSinglePackageButton(CmbPmaVersions, BtnInstallPma, installed?.PhpMyAdmin);
 
-        UpdateCkeButton(installed);
+        UpdateXamppButton(installed);
         UpdateLatestButton(installed);
     }
 
@@ -177,8 +177,8 @@ public partial class ComponentManagerWindow : Window
         BtnInstallLatest.IsEnabled = false;
         BtnInstallLatest.ToolTip = tooltipMsg;
 
-        BtnInstallCke.IsEnabled = false;
-        BtnInstallCke.ToolTip = tooltipMsg;
+        BtnInstallXampp.IsEnabled = false;
+        BtnInstallXampp.ToolTip = tooltipMsg;
 
         BtnInstallPhp.IsEnabled = false;
         BtnInstallPhp.ToolTip = tooltipMsg;
@@ -246,17 +246,17 @@ public partial class ComponentManagerWindow : Window
         }
     }
 
-    private void UpdateCkeButton(ComponentVersions? installed)
+    private void UpdateXamppButton(ComponentVersions? installed)
     {
         if (installed == null)
         {
-            BtnInstallCke.IsEnabled = true;
-            BtnInstallCke.ToolTip = null;
+            BtnInstallXampp.IsEnabled = true;
+            BtnInstallXampp.ToolTip = null;
             return;
         }
 
-        var ckeProfile = ComponentCatalog.GetCkeProfile();
-        bool allCkeInstalled = ckeProfile.Count > 0 && ckeProfile.All(item =>
+        var xamppProfile = ComponentCatalog.GetXamppProfile();
+        bool allXamppInstalled = xamppProfile.Count > 0 && xamppProfile.All(item =>
         {
             string? installedVer = item.Package.Id switch
             {
@@ -272,15 +272,15 @@ public partial class ComponentManagerWindow : Window
                    string.Equals(NormalizeVersion(item.Version.Version), NormalizeVersion(installedVer), StringComparison.OrdinalIgnoreCase);
         });
 
-        if (allCkeInstalled)
+        if (allXamppInstalled)
         {
-            BtnInstallCke.IsEnabled = false;
-            BtnInstallCke.ToolTip = TranslationSource.Instance["ckeAlreadyInstalled"];
+            BtnInstallXampp.IsEnabled = false;
+            BtnInstallXampp.ToolTip = TranslationSource.Instance["xamppAlreadyInstalled"];
         }
         else
         {
-            BtnInstallCke.IsEnabled = true;
-            BtnInstallCke.ToolTip = null;
+            BtnInstallXampp.IsEnabled = true;
+            BtnInstallXampp.ToolTip = null;
         }
     }
 
@@ -324,7 +324,7 @@ public partial class ComponentManagerWindow : Window
 
     private static string NormalizeVersion(string? v) => string.IsNullOrWhiteSpace(v) ? "" : v.Trim().TrimStart('v', 'V');
 
-    public async void BtnInstallCke_Click(object sender, RoutedEventArgs e)
+    public async void BtnInstallXampp_Click(object sender, RoutedEventArgs e)
     {
         if (_isBusy) return;
 
@@ -340,23 +340,23 @@ public partial class ComponentManagerWindow : Window
         }
 
         var result = MessageBox.Show(
-            TranslationSource.Instance["ckeProfileConfirm"],
-            TranslationSource.Instance["ckeProfileTitle"],
+            TranslationSource.Instance["xamppProfileConfirm"],
+            TranslationSource.Instance["xamppProfileTitle"],
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 
         if (result != MessageBoxResult.Yes) return;
 
         // Ostrzeżenie przed zmianą / downgrade wersji MariaDB przy istniejących danych
-        var ckeMaria = ComponentCatalog.GetCkeProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
-        if (ckeMaria.Package != null && ckeMaria.Version != null)
+        var xamppMaria = ComponentCatalog.GetXamppProfile().FirstOrDefault(p => p.Package?.Id == "mariadb");
+        if (xamppMaria.Package != null && xamppMaria.Version != null)
         {
             string dataDir = AppPaths.MariaDbDataDir;
             var currentManifest = ManifestLoader.Load();
             string? currentMaria = currentManifest.Versions?.MariaDb;
             if (Directory.Exists(dataDir) && !string.IsNullOrWhiteSpace(currentMaria) && currentMaria != "—")
             {
-                if (!string.Equals(NormalizeVersion(ckeMaria.Version.Version), NormalizeVersion(currentMaria), StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(NormalizeVersion(xamppMaria.Version.Version), NormalizeVersion(currentMaria), StringComparison.OrdinalIgnoreCase))
                 {
                     var warnRes = MessageBox.Show(
                         TranslationSource.Instance["compMariaDbDowngradeWarn"],
@@ -375,26 +375,26 @@ public partial class ComponentManagerWindow : Window
             await _serverService.StopAllAsync();
         }
 
-        SetBusyState(true, BtnInstallCke);
-        PnlCkeProgress.Visibility = Visibility.Visible;
+        SetBusyState(true, BtnInstallXampp);
+        PnlProfileProgress.Visibility = Visibility.Visible;
 
         var progress = new Progress<InstallProgress>(p =>
         {
-            TxtCkeStatus.Text = p.StatusText;
-            ProgCke.IsIndeterminate = p.IsIndeterminate;
-            if (!p.IsIndeterminate) ProgCke.Value = p.Percentage;
+            TxtProfileStatus.Text = p.StatusText;
+            ProgProfile.IsIndeterminate = p.IsIndeterminate;
+            if (!p.IsIndeterminate) ProgProfile.Value = p.Percentage;
         });
 
         try
         {
-            await _installerService.InstallCkeProfileAsync(progress);
+            await _installerService.InstallXamppProfileAsync(progress);
 
             LoadCurrentVersions();
             PopulateAvailableVersions();
             _onInstalledCallback?.Invoke();
 
             MessageBox.Show(
-                TranslationSource.Instance["ckeProfileSuccess"],
+                TranslationSource.Instance["xamppProfileSuccess"],
                 TranslationSource.Instance["pampSuccess"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -402,15 +402,15 @@ public partial class ComponentManagerWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show(
-                TranslationSource.Instance.Format("ckeProfileError", ex.Message),
+                TranslationSource.Instance.Format("xamppProfileError", ex.Message),
                 TranslationSource.Instance["pampWarning"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
         finally
         {
-            SetBusyState(false, BtnInstallCke);
-            PnlCkeProgress.Visibility = Visibility.Collapsed;
+            SetBusyState(false, BtnInstallXampp);
+            PnlProfileProgress.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -466,13 +466,13 @@ public partial class ComponentManagerWindow : Window
         }
 
         SetBusyState(true, BtnInstallLatest);
-        PnlCkeProgress.Visibility = Visibility.Visible;
+        PnlProfileProgress.Visibility = Visibility.Visible;
 
         var progress = new Progress<InstallProgress>(p =>
         {
-            TxtCkeStatus.Text = p.StatusText;
-            ProgCke.IsIndeterminate = p.IsIndeterminate;
-            if (!p.IsIndeterminate) ProgCke.Value = p.Percentage;
+            TxtProfileStatus.Text = p.StatusText;
+            ProgProfile.IsIndeterminate = p.IsIndeterminate;
+            if (!p.IsIndeterminate) ProgProfile.Value = p.Percentage;
         });
 
         try
@@ -500,7 +500,7 @@ public partial class ComponentManagerWindow : Window
         finally
         {
             SetBusyState(false, BtnInstallLatest);
-            PnlCkeProgress.Visibility = Visibility.Collapsed;
+            PnlProfileProgress.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -640,7 +640,7 @@ public partial class ComponentManagerWindow : Window
         if (busy)
         {
             BtnInstallLatest.IsEnabled = false;
-            BtnInstallCke.IsEnabled = false;
+            BtnInstallXampp.IsEnabled = false;
             BtnInstallPhp.IsEnabled = false;
             BtnInstallApache.IsEnabled = false;
             BtnInstallMariaDb.IsEnabled = false;
@@ -651,7 +651,7 @@ public partial class ComponentManagerWindow : Window
         else
         {
             BtnInstallLatest.Content = TranslationSource.Instance["compInstallLatestBtn"];
-            BtnInstallCke.Content = TranslationSource.Instance["ckeProfileInstallBtn"];
+            BtnInstallXampp.Content = TranslationSource.Instance["xamppProfileInstallBtn"];
             BtnInstallPhp.Content = TranslationSource.Instance["compInstallBtn"];
             BtnInstallApache.Content = TranslationSource.Instance["compInstallBtn"];
             BtnInstallMariaDb.Content = TranslationSource.Instance["compInstallBtn"];

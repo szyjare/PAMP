@@ -2,6 +2,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace PAMP;
 
@@ -11,7 +12,7 @@ public record ComponentVersionInfo(
     string DownloadUrl,
     string Notes,
     bool IsRecommended = false,
-    bool IsCkeCompatible = false,
+    bool IsXamppCompatible = false,
     string? Sha256 = null,
     long SizeBytes = 0
 );
@@ -142,7 +143,7 @@ public static class ComponentCatalog
             Versions =
             [
                 new("8.5.10", "PHP 8.5.10 (VS17 x64 TS)", "https://repo.sjarecki.pl/api/files/packages/ioww0esuzio9z5c/php_8_5_Ac7pRNlkpW.0-Win32-vs17-x64.zip", "Wydanie deweloperskie"),
-                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) - CKE", "https://repo.sjarecki.pl/api/files/packages/f3lm07mbl0uku1y/php_8_2_JbdsQEeEoh.2-Win32-vs16-x64.zip", "Zgodne z CKE", IsRecommended: true, IsCkeCompatible: true)
+                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/f3lm07mbl0uku1y/php_8_2_JbdsQEeEoh.2-Win32-vs16-x64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
             ]
         },
         new ComponentPackage
@@ -155,7 +156,7 @@ public static class ComponentCatalog
             Versions =
             [
                 new("2.4.68", "Apache 2.4.68 Win64", "https://repo.sjarecki.pl/api/files/packages/gpxca54e9t3lj4g/httpd_2_4_hFeYTbCVSB.60827-Win64-VS18.zip", "Stabilne wydanie Apache 2.4", IsRecommended: true),
-                new("2.4.58", "Apache 2.4.58 Win64 - CKE", "https://repo.sjarecki.pl/api/files/packages/e2be2s784cu1lzj/apache_2_4_58_winx64_2PbNelJKwl.zip.zip", "Zgodne z CKE", IsCkeCompatible: true)
+                new("2.4.58", "Apache 2.4.58 Win64 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/e2be2s784cu1lzj/apache_2_4_58_winx64_2PbNelJKwl.zip.zip", "Wersja używana w XAMPP na egzaminach", IsXamppCompatible: true)
             ]
         },
         new ComponentPackage
@@ -168,7 +169,7 @@ public static class ComponentCatalog
             Versions =
             [
                 new("12.3.3", "MariaDB 12.3.3", "https://repo.sjarecki.pl/api/files/packages/134c5r21r2i6odx/mariadb_12_3_IEC41MIVLV.3-winx64.zip", "Najnowsze wydanie"),
-                new("10.4.32", "MariaDB 10.4.32 - CKE", "https://repo.sjarecki.pl/api/files/packages/ofpkqom94g7tyoh/mariadb_10_4_n8yRHEBNqJ.32-winx64.zip", "Zgodne z CKE", IsRecommended: true, IsCkeCompatible: true)
+                new("10.4.32", "MariaDB 10.4.32 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/ofpkqom94g7tyoh/mariadb_10_4_n8yRHEBNqJ.32-winx64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
             ]
         },
         new ComponentPackage
@@ -181,7 +182,7 @@ public static class ComponentCatalog
             Versions =
             [
                 new("5.2.3", "phpMyAdmin 5.2.3", "https://repo.sjarecki.pl/api/files/packages/9kdfn86ui1tukpo/php_my_admin_5_2_bt7MGmqNxO.3-all-languages.zip", "Najnowsze wydanie"),
-                new("5.2.1", "phpMyAdmin 5.2.1 - CKE", "https://repo.sjarecki.pl/api/files/packages/4b7i3vq6o9qsdqz/php_my_admin_5_2_v0OhQZRMWk.1-all-languages.zip", "Zgodne z CKE", IsRecommended: true, IsCkeCompatible: true)
+                new("5.2.1", "phpMyAdmin 5.2.1 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/4b7i3vq6o9qsdqz/php_my_admin_5_2_v0OhQZRMWk.1-all-languages.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
             ]
         }
     ];
@@ -273,19 +274,30 @@ public static class ComponentCatalog
             {
                 foreach (var item in remoteItems)
                 {
-                    string display = item.DisplayName;
-                    if (item.IsCke && !display.Contains("CKE", StringComparison.OrdinalIgnoreCase))
+                    bool isXampp = item.IsXamppCompatible;
+                    string display = Regex.Replace(item.DisplayName ?? "", @"\s*[-–—]?\s*\bCKE\b", "", RegexOptions.IgnoreCase).Trim();
+                    if (isXampp && !display.Contains("XAMPP", StringComparison.OrdinalIgnoreCase))
                     {
-                        display = $"{display} - CKE";
+                        display = $"{display} (XAMPP)";
+                    }
+
+                    string notes = item.Notes ?? "";
+                    if (string.IsNullOrWhiteSpace(notes))
+                    {
+                        notes = isXampp ? "Wersja używana w XAMPP na egzaminach" : "";
+                    }
+                    else if (notes.Contains("CKE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        notes = "Wersja używana w XAMPP na egzaminach";
                     }
 
                     versionsList.Add(new ComponentVersionInfo(
                         Version: item.Version,
                         DisplayName: display,
                         DownloadUrl: item.Url,
-                        Notes: item.Notes ?? (item.IsCke ? "Zgodne ze standardem CKE" : ""),
-                        IsRecommended: item.IsCke,
-                        IsCkeCompatible: item.IsCke,
+                        Notes: notes,
+                        IsRecommended: isXampp,
+                        IsXamppCompatible: isXampp,
                         Sha256: item.Sha256,
                         SizeBytes: item.SizeBytes
                     ));
@@ -328,17 +340,17 @@ public static class ComponentCatalog
         }
     }
 
-    public static IReadOnlyList<(ComponentPackage Package, ComponentVersionInfo Version)> GetCkeProfile()
+    public static IReadOnlyList<(ComponentPackage Package, ComponentVersionInfo Version)> GetXamppProfile()
     {
         var list = new List<(ComponentPackage, ComponentVersionInfo)>();
 
         foreach (var pkg in Packages)
         {
-            // Pobierz wersję oznaczoną jako CKE; jeśli jej brak, pobierz najnowszą dostępną wersję
-            var ckeVer = pkg.Versions.FirstOrDefault(v => v.IsCkeCompatible) ?? pkg.Versions.FirstOrDefault();
-            if (ckeVer != null)
+            // Pobierz wersję oznaczoną jako zgodną z XAMPP; jeśli jej brak, pobierz najnowszą dostępną wersję
+            var xamppVer = pkg.Versions.FirstOrDefault(v => v.IsXamppCompatible) ?? pkg.Versions.FirstOrDefault();
+            if (xamppVer != null)
             {
-                list.Add((pkg, ckeVer));
+                list.Add((pkg, xamppVer));
             }
         }
 
@@ -371,8 +383,11 @@ public class RemoteManifestDto
     [JsonPropertyName("generatedAt")]
     public string? GeneratedAt { get; set; }
 
+    [JsonPropertyName("xamppProfile")]
+    public Dictionary<string, string?>? XamppProfile { get; set; }
+
     [JsonPropertyName("ckeProfile")]
-    public Dictionary<string, string?>? CkeProfile { get; set; }
+    public Dictionary<string, string?>? LegacyProfile { get; set; }
 
     [JsonPropertyName("components")]
     public Dictionary<string, List<RemoteComponentItemDto>>? Components { get; set; }
@@ -395,8 +410,14 @@ public class RemoteComponentItemDto
     [JsonPropertyName("sha256")]
     public string? Sha256 { get; set; }
 
+    [JsonPropertyName("isXampp")]
+    public bool IsXampp { get; set; }
+
     [JsonPropertyName("isCke")]
-    public bool IsCke { get; set; }
+    public bool IsLegacyProfile { get; set; }
+
+    [JsonIgnore]
+    public bool IsXamppCompatible => IsXampp || IsLegacyProfile;
 
     [JsonPropertyName("sizeBytes")]
     public long SizeBytes { get; set; }
