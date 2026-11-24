@@ -133,6 +133,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -161,7 +162,30 @@
                                 Tag="php" Click="BtnInstall_Click"/>
 
                         <!-- Pasek postępu -->
-                        <StackPanel x:Name="PnlPhpProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                        <!-- Suma kontrolna SHA-256 -->
+                        <StackPanel x:Name="PnlPhpSha256" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                    Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,0" Visibility="Collapsed">
+                            <TextBlock Text="SHA-256: " FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtPhpSha256" FontFamily="Cascadia Mono, Consolas, Courier New" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnCopyPhpSha256" Margin="6,0,0,0" Padding="5,2" Height="22" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                    ToolTip="{local:Loc compCopySha256Tooltip}" Click="BtnCopySha256_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <TextBlock Text="&#xE8C8;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PnlPhpProgress" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgPhp" Height="6" Margin="0,0,0,4"/>
                             <TextBlock x:Name="TxtPhpStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
@@ -175,6 +199,7 @@
                         BorderThickness="1">
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -202,7 +227,30 @@
                                 ToolTipService.ShowOnDisabled="True"
                                 Tag="apache" Click="BtnInstall_Click"/>
 
-                        <StackPanel x:Name="PnlApacheProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                        <!-- Suma kontrolna SHA-256 -->
+                        <StackPanel x:Name="PnlApacheSha256" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                    Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,0" Visibility="Collapsed">
+                            <TextBlock Text="SHA-256: " FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtApacheSha256" FontFamily="Cascadia Mono, Consolas, Courier New" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnCopyApacheSha256" Margin="6,0,0,0" Padding="5,2" Height="22" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                    ToolTip="{local:Loc compCopySha256Tooltip}" Click="BtnCopySha256_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <TextBlock Text="&#xE8C8;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PnlApacheProgress" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgApache" Height="6" Margin="0,0,0,4"/>
                             <TextBlock x:Name="TxtApacheStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
@@ -216,6 +264,7 @@
                         BorderThickness="1">
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -243,7 +292,30 @@
                                 ToolTipService.ShowOnDisabled="True"
                                 Tag="mariadb" Click="BtnInstall_Click"/>
 
-                        <StackPanel x:Name="PnlMariaDbProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                        <!-- Suma kontrolna SHA-256 -->
+                        <StackPanel x:Name="PnlMariaDbSha256" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                    Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,0" Visibility="Collapsed">
+                            <TextBlock Text="SHA-256: " FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtMariaDbSha256" FontFamily="Cascadia Mono, Consolas, Courier New" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnCopyMariaDbSha256" Margin="6,0,0,0" Padding="5,2" Height="22" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                    ToolTip="{local:Loc compCopySha256Tooltip}" Click="BtnCopySha256_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <TextBlock Text="&#xE8C8;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PnlMariaDbProgress" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgMariaDb" Height="6" Margin="0,0,0,4"/>
                             <TextBlock x:Name="TxtMariaDbStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
@@ -257,6 +329,7 @@
                         BorderThickness="1">
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -284,7 +357,30 @@
                                 ToolTipService.ShowOnDisabled="True"
                                 Tag="phpmyadmin" Click="BtnInstall_Click"/>
 
-                        <StackPanel x:Name="PnlPmaProgress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
+                        <!-- Suma kontrolna SHA-256 -->
+                        <StackPanel x:Name="PnlPmaSha256" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                    Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,0" Visibility="Collapsed">
+                            <TextBlock Text="SHA-256: " FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtPmaSha256" FontFamily="Cascadia Mono, Consolas, Courier New" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnCopyPmaSha256" Margin="6,0,0,0" Padding="5,2" Height="22" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                    ToolTip="{local:Loc compCopySha256Tooltip}" Click="BtnCopySha256_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <TextBlock Text="&#xE8C8;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11.5" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PnlPmaProgress" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0" Visibility="Collapsed">
                             <ProgressBar x:Name="ProgPma" Height="6" Margin="0,0,0,4"/>
                             <TextBlock x:Name="TxtPmaStatus" Text="{local:Loc compDownloading}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>

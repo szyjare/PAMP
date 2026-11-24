@@ -162,5 +162,7 @@
 	"trayNotificationGotIt": "Rozumiem",
 	"settingsTabGeneral": "Ogólne",
 	"settingsTabTray": "Zasobnik",
-	"settingsTabUpdates": "Aktualizacje"
+	"settingsTabUpdates": "Aktualizacje",
+	"compCopySha256Tooltip": "Kopiuj pełną sumę kontrolną SHA-256",
+	"compSha256Copied": "Skopiowano sumę SHA-256!"
 }

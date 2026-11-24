@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace PAMP;
@@ -13,6 +14,7 @@ public partial class ComponentManagerWindow : Window
     private readonly ComponentInstallerService _installerService = new();
     private readonly Action? _onInstalledCallback;
     private bool _isBusy;
+    private readonly Dictionary<Button, int> _copyFeedbackTokens = [];
 
     public ComponentManagerWindow(Window? owner, ServerService serverService, Action? onInstalledCallback = null)
     {
@@ -143,6 +145,8 @@ public partial class ComponentManagerWindow : Window
     {
         if (_isBusy) return;
 
+        UpdateAllSha256Displays();
+
         if (!AdminHelper.CanManageComponents)
         {
             ApplyNonAdminRestrictions();
@@ -165,6 +169,68 @@ public partial class ComponentManagerWindow : Window
 
         UpdateXamppButton(installed);
         UpdateLatestButton(installed);
+    }
+
+    private void UpdateAllSha256Displays()
+    {
+        UpdateSha256Display(CmbPhpVersions, PnlPhpSha256, TxtPhpSha256, BtnCopyPhpSha256);
+        UpdateSha256Display(CmbApacheVersions, PnlApacheSha256, TxtApacheSha256, BtnCopyApacheSha256);
+        UpdateSha256Display(CmbMariaDbVersions, PnlMariaDbSha256, TxtMariaDbSha256, BtnCopyMariaDbSha256);
+        UpdateSha256Display(CmbPmaVersions, PnlPmaSha256, TxtPmaSha256, BtnCopyPmaSha256);
+    }
+
+    private static void UpdateSha256Display(ComboBox cmb, StackPanel panel, TextBlock txt, Button btn)
+    {
+        string? rawHash = (cmb.SelectedItem as ComponentVersionInfo)?.Sha256?.Trim();
+        if (!string.IsNullOrWhiteSpace(rawHash))
+        {
+            string normalizedHash = rawHash.ToLowerInvariant();
+            panel.Visibility = Visibility.Visible;
+            txt.Text = normalizedHash.Length > 24 ? $"{normalizedHash[..12]}…{normalizedHash[^12..]}" : normalizedHash;
+            txt.ToolTip = normalizedHash;
+            btn.Tag = normalizedHash;
+        }
+        else
+        {
+            panel.Visibility = Visibility.Collapsed;
+            txt.Text = "";
+            txt.ToolTip = null;
+            btn.Tag = null;
+        }
+    }
+
+    private async void BtnCopySha256_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string fullHash } btn || string.IsNullOrWhiteSpace(fullHash))
+            return;
+
+        try
+        {
+            Clipboard.SetText(fullHash);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (btn.Content is TextBlock iconText)
+        {
+            int token = _copyFeedbackTokens.GetValueOrDefault(btn) + 1;
+            _copyFeedbackTokens[btn] = token;
+
+            iconText.Text = "\uE73E";
+            iconText.Foreground = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
+            btn.ToolTip = TranslationSource.Instance["compSha256Copied"];
+
+            await Task.Delay(1500);
+
+            if (_copyFeedbackTokens.GetValueOrDefault(btn) == token)
+            {
+                iconText.Text = "\uE8C8";
+                iconText.Foreground = TryFindResource("TextSecondaryBrush") as Brush ?? Brushes.Gray;
+                btn.ToolTip = TranslationSource.Instance["compCopySha256Tooltip"];
+            }
+        }
     }
 
     private void ApplyNonAdminRestrictions()

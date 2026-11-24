@@ -162,5 +162,7 @@
 	"trayNotificationGotIt": "Got it",
 	"settingsTabGeneral": "General",
 	"settingsTabTray": "System Tray",
-	"settingsTabUpdates": "Updates"
+	"settingsTabUpdates": "Updates",
+	"compCopySha256Tooltip": "Copy full SHA-256 checksum",
+	"compSha256Copied": "SHA-256 checksum copied!"
 }

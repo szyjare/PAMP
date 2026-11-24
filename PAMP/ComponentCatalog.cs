@@ -142,8 +142,8 @@ public static class ComponentCatalog
             TargetSubfolder = "php",
             Versions =
             [
-                new("8.5.10", "PHP 8.5.10 (VS17 x64 TS)", "https://repo.sjarecki.pl/api/files/packages/ioww0esuzio9z5c/php_8_5_Ac7pRNlkpW.0-Win32-vs17-x64.zip", "Wydanie deweloperskie"),
-                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/f3lm07mbl0uku1y/php_8_2_JbdsQEeEoh.2-Win32-vs16-x64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
+                new("8.5.10", "PHP 8.5.10 (VS17 x64 TS)", "https://repo.sjarecki.pl/api/files/packages/ioww0esuzio9z5c/php_8_5_Ac7pRNlkpW.0-Win32-vs17-x64.zip", "Wydanie deweloperskie", Sha256: "A6BC8B2F3D7BFB397CCB973DB2F959E61E530E0986C9CEA262DD4A317EC599D8"),
+                new("8.2.12", "PHP 8.2.12 (VS16 x64 TS) (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/f3lm07mbl0uku1y/php_8_2_JbdsQEeEoh.2-Win32-vs16-x64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true, Sha256: "DB26EC72D352E7FE7F9B542A1E70D868EEC18332093BCA21EB74C2824B3D418F")
             ]
         },
         new ComponentPackage
@@ -155,8 +155,8 @@ public static class ComponentCatalog
             TargetSubfolder = "apache",
             Versions =
             [
-                new("2.4.68", "Apache 2.4.68 Win64", "https://repo.sjarecki.pl/api/files/packages/gpxca54e9t3lj4g/httpd_2_4_hFeYTbCVSB.60827-Win64-VS18.zip", "Stabilne wydanie Apache 2.4", IsRecommended: true),
-                new("2.4.58", "Apache 2.4.58 Win64 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/e2be2s784cu1lzj/apache_2_4_58_winx64_2PbNelJKwl.zip.zip", "Wersja używana w XAMPP na egzaminach", IsXamppCompatible: true)
+                new("2.4.68", "Apache 2.4.68 Win64", "https://repo.sjarecki.pl/api/files/packages/gpxca54e9t3lj4g/httpd_2_4_hFeYTbCVSB.60827-Win64-VS18.zip", "Stabilne wydanie Apache 2.4", IsRecommended: true, Sha256: "A6B7DE9FDCCB28456F5B1F884920FE0B2425AADFCA25C63AE1C0969D43BB355B"),
+                new("2.4.58", "Apache 2.4.58 Win64 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/e2be2s784cu1lzj/apache_2_4_58_winx64_2PbNelJKwl.zip.zip", "Wersja używana w XAMPP na egzaminach", IsXamppCompatible: true, Sha256: "8A2017EEA7F4C9A7905F25B45C461CFC9C79848762C1D8E419690A3B4A352360")
             ]
         },
         new ComponentPackage
@@ -168,8 +168,8 @@ public static class ComponentCatalog
             TargetSubfolder = "mariadb",
             Versions =
             [
-                new("12.3.3", "MariaDB 12.3.3", "https://repo.sjarecki.pl/api/files/packages/134c5r21r2i6odx/mariadb_12_3_IEC41MIVLV.3-winx64.zip", "Najnowsze wydanie"),
-                new("10.4.32", "MariaDB 10.4.32 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/ofpkqom94g7tyoh/mariadb_10_4_n8yRHEBNqJ.32-winx64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
+                new("12.3.3", "MariaDB 12.3.3", "https://repo.sjarecki.pl/api/files/packages/134c5r21r2i6odx/mariadb_12_3_IEC41MIVLV.3-winx64.zip", "Najnowsze wydanie", Sha256: "4B5706B47148B47C8F36963C8352D1DDEE37A1287B4690428F631A74B09B85A0"),
+                new("10.4.32", "MariaDB 10.4.32 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/ofpkqom94g7tyoh/mariadb_10_4_n8yRHEBNqJ.32-winx64.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true, Sha256: "C7239062B1E491C8292ED53F38DA633F0642C9E5B78A08673FDB4919EE7194BC")
             ]
         },
         new ComponentPackage
@@ -181,8 +181,8 @@ public static class ComponentCatalog
             TargetSubfolder = "phpmyadmin",
             Versions =
             [
-                new("5.2.3", "phpMyAdmin 5.2.3", "https://repo.sjarecki.pl/api/files/packages/9kdfn86ui1tukpo/php_my_admin_5_2_bt7MGmqNxO.3-all-languages.zip", "Najnowsze wydanie"),
-                new("5.2.1", "phpMyAdmin 5.2.1 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/4b7i3vq6o9qsdqz/php_my_admin_5_2_v0OhQZRMWk.1-all-languages.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true)
+                new("5.2.3", "phpMyAdmin 5.2.3", "https://repo.sjarecki.pl/api/files/packages/9kdfn86ui1tukpo/php_my_admin_5_2_bt7MGmqNxO.3-all-languages.zip", "Najnowsze wydanie", Sha256: "2D2E13C735366D318425C78E4EE2CC8FC648D77FABA3DDEA2CD516E43885733F"),
+                new("5.2.1", "phpMyAdmin 5.2.1 (XAMPP)", "https://repo.sjarecki.pl/api/files/packages/4b7i3vq6o9qsdqz/php_my_admin_5_2_v0OhQZRMWk.1-all-languages.zip", "Wersja używana w XAMPP na egzaminach", IsRecommended: true, IsXamppCompatible: true, Sha256: "31C95FE5C00E0F899B5D31AC6FFF506CF8061F2F746E9D7084C395F47451946E")
             ]
         }
     ];

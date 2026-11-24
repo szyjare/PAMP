@@ -162,5 +162,7 @@
 	"trayNotificationGotIt": "Зрозуміло",
 	"settingsTabGeneral": "Загальні",
 	"settingsTabTray": "Трей",
-	"settingsTabUpdates": "Оновлення"
+	"settingsTabUpdates": "Оновлення",
+	"compCopySha256Tooltip": "Копіювати повну контрольну суму SHA-256",
+	"compSha256Copied": "Контрольну суму SHA-256 скопійовано!"
 }
