@@ -159,5 +159,8 @@
 	"trayNotificationTitle": "PAMP is running in background",
 	"trayNotificationMessage": "The application has been minimized to the system tray. Double-click the PAMP icon in the tray to restore the window.",
 	"trayNotificationDontRemind": "Do not remind again",
-	"trayNotificationGotIt": "Got it"
+	"trayNotificationGotIt": "Got it",
+	"settingsTabGeneral": "General",
+	"settingsTabTray": "System Tray",
+	"settingsTabUpdates": "Updates"
 }

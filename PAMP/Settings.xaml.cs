@@ -47,6 +47,7 @@ namespace PAMP
             ChkCloseToTray.IsChecked = App.Settings.CloseToTray;
             ChkShowTrayNotification.IsChecked = App.Settings.ShowTrayCloseNotification;
             ChkShowTrayNotification.IsEnabled = App.Settings.CloseToTray;
+            TxtCurrentAppVersion.Text = $"v{ManifestLoader.GetAppVersion()}";
 
             _isInitialized = true;
         }

@@ -159,5 +159,8 @@
 	"trayNotificationTitle": "PAMP działa w tle",
 	"trayNotificationMessage": "Aplikacja została przeniesiona do zasobnika systemowego. Kliknij dwukrotnie ikonę PAMP w zasobniku, aby przywrócić okno.",
 	"trayNotificationDontRemind": "Nie przypominaj ponownie",
-	"trayNotificationGotIt": "Rozumiem"
+	"trayNotificationGotIt": "Rozumiem",
+	"settingsTabGeneral": "Ogólne",
+	"settingsTabTray": "Zasobnik",
+	"settingsTabUpdates": "Aktualizacje"
 }

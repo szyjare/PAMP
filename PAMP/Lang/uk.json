@@ -159,5 +159,8 @@
 	"trayNotificationTitle": "PAMP працює у фоні",
 	"trayNotificationMessage": "Програму згорнуто в системний трей. Двічі клацніть піктограму PAMP у треї, щоб відновити вікно.",
 	"trayNotificationDontRemind": "Не нагадувати знову",
-	"trayNotificationGotIt": "Зрозуміло"
+	"trayNotificationGotIt": "Зрозуміло",
+	"settingsTabGeneral": "Загальні",
+	"settingsTabTray": "Трей",
+	"settingsTabUpdates": "Оновлення"
 }
