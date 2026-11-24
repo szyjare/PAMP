@@ -170,13 +170,8 @@ public partial class MainWindow : Window
 
             // Aktualizacja dostępności przycisków i pozycji menu
             btnOpenLocalhost.IsEnabled = apacheActive;
-            menuToolsLocalhost.IsEnabled = apacheActive;
-
             btnOpenSqlShell.IsEnabled = mysqlActive;
-            menuToolsSQL.IsEnabled = mysqlActive;
-
             btnOpenPma.IsEnabled = apacheActive && mysqlActive;
-            menuToolsPMA.IsEnabled = apacheActive && mysqlActive;
             UpdateTrayState(apacheActive, apachePort, mysqlActive, mysqlPort);
         }
         finally
