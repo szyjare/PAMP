@@ -24,7 +24,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TabPanel Grid.Row="0" IsItemsHost="True" Margin="0,0,0,12"/>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" IsItemsHost="True" Margin="0,0,0,12"/>
                             <Border Grid.Row="1"
                                     Background="{DynamicResource CardBackgroundBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}"
@@ -42,7 +42,6 @@
         <Style x:Key="FluentSettingsTabItemStyle" TargetType="TabItem">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="0,0,6,0"/>
             <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
             <Setter Property="FontSize" Value="12.5"/>
             <Setter Property="Template">
@@ -50,10 +49,10 @@
                     <ControlTemplate TargetType="TabItem">
                         <Border x:Name="TabBorder"
                                 Background="Transparent"
-                                BorderBrush="Transparent"
-                                BorderThickness="1"
-                                CornerRadius="6"
-                                Padding="12,7,12,0">
+                                BorderThickness="0"
+                                CornerRadius="5"
+                                Padding="12,7,12,4"
+                                Margin="0,0,4,0">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -61,15 +60,16 @@
                                 </Grid.RowDefinitions>
                                 <ContentPresenter Grid.Row="0"
                                                   ContentSource="Header"
-                                                  Margin="0,0,0,6"
+                                                  Margin="0,0,0,4"
                                                   HorizontalAlignment="Center"
                                                   VerticalAlignment="Center"/>
                                 <Border x:Name="ActiveIndicator"
                                         Grid.Row="1"
                                         Height="3"
+                                        Width="20"
+                                        HorizontalAlignment="Center"
                                         CornerRadius="1.5"
                                         Background="{DynamicResource AccentBrush}"
-                                        Margin="2,0,2,0"
                                         Opacity="0"/>
                             </Grid>
                         </Border>
@@ -79,8 +79,7 @@
                                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
-                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
                                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                 <Setter TargetName="ActiveIndicator" Property="Opacity" Value="1"/>
@@ -105,13 +104,13 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🌐" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE774;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{local:Loc settingsTabGeneral}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                        <TextBlock Text="🌐" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE774;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{local:Loc settingsLanguageHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
 
@@ -150,13 +149,13 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📌" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE718;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{local:Loc settingsTabTray}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <TextBlock Text="📌" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE718;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{local:Loc settingsTrayHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
 
@@ -187,14 +186,14 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🚀" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE895;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="{local:Loc settingsTabUpdates}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <Grid Margin="0,0,0,12">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🚀" FontSize="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="&#xE895;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="{local:Loc settingsUpdatesHeader}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
                         <Border HorizontalAlignment="Right" VerticalAlignment="Center"
