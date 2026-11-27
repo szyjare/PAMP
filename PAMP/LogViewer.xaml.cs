@@ -33,6 +33,8 @@ public partial class LogViewer : Window
     private string _currentFilterLevel = "all";
     private string _currentSearchQuery = string.Empty;
     private bool _isInitialized = false;
+    private ScrollViewer? _logScrollViewer;
+    private bool _isAutoScrolling;
 
     private const int MaxInitialBytes = 150_000;
     private const int MaxRetainedEntries = 1500;
@@ -120,11 +122,83 @@ public partial class LogViewer : Window
     public LogViewer()
     {
         InitializeComponent();
+        Loaded += LogViewer_Loaded;
         _isInitialized = true;
         ComboLogLevelFilter.SelectedIndex = 0;
         InitializeLogs();
         SetupTimer();
         SetupSearchDebounce();
+    }
+
+    private void LogViewer_Loaded(object sender, RoutedEventArgs e)
+    {
+        _logScrollViewer ??= (RtbLogContent.Template?.FindName("PART_ContentHost", RtbLogContent) as ScrollViewer)
+            ?? FindVisualChild<ScrollViewer>(RtbLogContent);
+
+        if (_logScrollViewer != null)
+        {
+            _logScrollViewer.ScrollChanged -= LogScrollViewer_ScrollChanged;
+            _logScrollViewer.ScrollChanged += LogScrollViewer_ScrollChanged;
+        }
+
+        if (ChkAutoScroll.IsChecked == true)
+        {
+            ScrollToBottom();
+        }
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T typed) return typed;
+            T? nested = FindVisualChild<T>(child);
+            if (nested != null) return nested;
+        }
+        return null;
+    }
+
+    private void LogScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+    {
+        if (_isAutoScrolling || e.ExtentHeightChange != 0 || e.VerticalChange == 0)
+            return;
+
+        // Gdy użytkownik przewinie ręcznie w górę, wyłączamy autoprzewijanie, aby nie odrywać go od czytania
+        if (e.VerticalChange < 0 && e.VerticalOffset + e.ViewportHeight < e.ExtentHeight - 24)
+        {
+            ChkAutoScroll.IsChecked = false;
+        }
+    }
+
+    private void ChkAutoScroll_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_isInitialized)
+        {
+            ScrollToBottom();
+        }
+    }
+
+    private void ScrollToBottom()
+    {
+        if (RtbLogContent == null || DocLogs == null) return;
+
+        Dispatcher.InvokeAsync(() =>
+        {
+            _isAutoScrolling = true;
+            try
+            {
+                RtbLogContent.CaretPosition = DocLogs.ContentEnd;
+                RtbLogContent.UpdateLayout();
+                RtbLogContent.ScrollToEnd();
+                _logScrollViewer?.ScrollToEnd();
+            }
+            finally
+            {
+                Dispatcher.InvokeAsync(() => _isAutoScrolling = false, DispatcherPriority.Background);
+            }
+        }, DispatcherPriority.ContextIdle);
     }
 
     private void SetupSearchDebounce()
@@ -366,10 +440,7 @@ public partial class LogViewer : Window
 
                 if (anyAdded && ChkAutoScroll.IsChecked == true)
                 {
-                    RtbLogContent.Dispatcher.InvokeAsync(() =>
-                    {
-                        RtbLogContent.ScrollToEnd();
-                    }, DispatcherPriority.Background);
+                    ScrollToBottom();
                 }
             }
         }
@@ -649,7 +720,7 @@ public partial class LogViewer : Window
 
         if (ChkAutoScroll.IsChecked == true)
         {
-            RtbLogContent.ScrollToEnd();
+            ScrollToBottom();
         }
     }
 
@@ -664,6 +735,10 @@ public partial class LogViewer : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        if (_logScrollViewer != null)
+        {
+            _logScrollViewer.ScrollChanged -= LogScrollViewer_ScrollChanged;
+        }
         Microsoft.Win32.SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         _timer.Stop();
         _searchDebounceTimer.Stop();
